@@ -23,6 +23,17 @@ html, body{ min-height: 100%; margin: 0; }
   min-height: 0;
 }
 
+/* Conteúdo ALÉM da 1ª tela (2º grid-mesh em diante) fica FORA do
+   .app-shell de propósito — assim ele nunca compete por espaço com a
+   seção que trava na tela; é só conteúdo normal, empurra a página e
+   deixa ela rolar, sem nenhuma mágica de flex envolvida. */
+.page-content-extra{
+  padding: 0 24px 24px;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+}
+
 /* ===== NAVBAR (topo) — fixa, formato pílula ===== */
 .navbar-top{
   position: sticky;
@@ -214,11 +225,9 @@ html[data-bs-theme="light"] .theme-toggle .icon-moon{ display: none; }
 }
 
 /* ===================== GRID PERSONALIZADO (mesh) ===================== */
-/* Malha de 4 colunas. As linhas usam 1fr: o grid ocupa exatamente o espaço
-   vertical que sobrar até o fim da tela (flex:1, encadeado desde o
-   .app-shell) e reparte isso entre as linhas existentes — sem piso mínimo,
-   pra nunca forçar scroll, nem em telas baixas. Em telas MUITO baixas as
-   boxes ficam proporcionalmente mais rasas, mas o fundo da tela nunca some. */
+/* Malha de 4 colunas. Dentro do .app-shell (1ª tela), as linhas usam 1fr:
+   ocupa exatamente o espaço vertical que sobrar — sem piso mínimo, pra
+   nunca forçar scroll nem amassar o hero-header acima dela. */
 .grid-mesh{
   flex: 1;
   min-height: 0;
@@ -227,6 +236,14 @@ html[data-bs-theme="light"] .theme-toggle .icon-moon{ display: none; }
   grid-auto-rows: 1fr;
   gap: 1rem;
   padding: 4px 4px 24px;
+}
+
+/* Qualquer grid-mesh FORA do .app-shell (dentro de .page-content-extra):
+   altura NATURAL, nunca encolhe — é a página quem rola pra mostrar o
+   resto, em vez de espremer as boxes. */
+.grid-mesh--static{
+  flex: none;
+  grid-auto-rows: minmax(220px, auto);
 }
 
 .g-box{ overflow: auto; }
