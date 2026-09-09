@@ -9,7 +9,7 @@ class NavBar extends HTMLElement{
   // hrefs ainda como placeholder ("#") até essas sub-páginas existirem.
   static ITEMS = [
     { label: 'Acadêmico',  icon: 'bi-mortarboard',
-      subs: [{ label: 'Central Acadêmica', href: '/centralAcademico.html' }, { label: 'Horário de Aulas', href: '#' }, { label: 'Calendário de Provas', href: '#' }, { label: 'Notas e Faltas', href: '#' }, 
+      subs: [{ label: 'Central Acadêmica', href: '../../pages/centralAcademico.html' }, { label: 'Horário de Aulas', href: '#' }, { label: 'Calendário de Provas', href: '#' }, { label: 'Notas e Faltas', href: '#' }, 
         { label: 'Graficos de Desempenho', href: '#' }, { label: 'Consultar Dados Cadastrais', href: '#' }, { label: 'Confirmação de Matrícula', href: '#' }, { label: 'Documentação Integralização Curricular', href: '#' }, 
         { label: 'Atualização de Dados Cadastrais', href: '#' }, { label: 'Atividades Complementares', href: '#' }, { label: 'Plano de Ensino', href: '#' }, { label: 'Carterinha Digital', href: '#' }] },
     { label: 'Financeiro', icon: 'bi-currency-dollar',
