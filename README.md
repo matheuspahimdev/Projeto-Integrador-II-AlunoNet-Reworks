@@ -32,3 +32,7 @@ O projeto propõe uma reformulação da interface do AlunoNet, tornando a plataf
 Dessa forma, a proposta busca proporcionar uma plataforma mais acessível, organizada e eficiente para alunos e professores.
 
 ## Tecnologias utilizadas
+- Github
+- Visual Studio Code
+- Figma
+- Miro 
