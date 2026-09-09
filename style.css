@@ -1,8 +1,59 @@
 :root{
   --radius: 18px;
+
+  /* ===== Paleta de marca (Unifio) ===== */
+  --brand-blue: #1B468E;
+  --brand-blue-bright: #2f5fb0; /* versão mais clara do azul, pra contrastar no fundo escuro */
+  --brand-orange: #D98B3E;
+  --brand-offwhite: #f5f9ff;
+  --brand-ink: #22242A;
+}
+
+/* Tema escuro: fundo em azul-marinho quase preto (sombra do azul da marca),
+   não o azul vívido puro — em área grande ele cansa a vista e derruba o
+   contraste do texto. O azul vívido fica reservado pra destaque (item
+   ativo, botões primários). O laranja continua exclusivo de "ação". */
+[data-bs-theme="dark"]{
+  --bs-body-bg: #0b1b33;
+  --bs-body-bg-rgb: 11,27,51;
+  --bs-body-color: #eef1f6;
+  --bs-secondary-bg: #142a4d;
+  --bs-secondary-bg-rgb: 20,42,77;
+  --bs-tertiary-bg: #101f3a;
+  --bs-tertiary-bg-rgb: 16,31,58;
+  --bs-border-color: rgba(255,255,255,.08);
+  --bs-border-color-translucent: rgba(255,255,255,.08);
+  --bs-emphasis-color: #ffffff;
+  --bs-emphasis-color-rgb: 255,255,255;
+  --bs-secondary-color: #9fb0cc;
+  --bs-secondary-color-rgb: 159,176,204;
+  --bs-primary: var(--brand-blue-bright);
+  --bs-primary-rgb: 47,95,176;
+}
+
+/* Tema claro: fundo literalmente o off-white da própria logo. Item ativo
+   e detalhes usam o azul vívido; bordas ganham uma leve tintura azul em
+   vez do cinza neutro padrão do Bootstrap. */
+[data-bs-theme="light"]{
+  --bs-body-bg: var(--brand-offwhite);
+  --bs-body-bg-rgb: 247,247,247;
+  --bs-body-color: var(--brand-ink);
+  --bs-secondary-bg: #ffffff;
+  --bs-secondary-bg-rgb: 255,255,255;
+  --bs-tertiary-bg: #eef1f6;
+  --bs-tertiary-bg-rgb: 238,241,246;
+  --bs-border-color: rgba(27,70,142,.15);
+  --bs-border-color-translucent: rgba(27,70,142,.15);
+  --bs-emphasis-color: var(--brand-blue);
+  --bs-emphasis-color-rgb: 27,70,142;
+  --bs-secondary-color: #5a6478;
+  --bs-secondary-color-rgb: 90,100,120;
+  --bs-primary: var(--brand-blue);
+  --bs-primary-rgb: 27,70,142;
 }
 
 html, body{ min-height: 100%; margin: 0; }
+body{ background: var(--bs-body-bg); color: var(--bs-body-color); transition: background .2s ease, color .2s ease; }
 
 /* ===================== APP SHELL ===================== */
 /* página rola normalmente; a navbar é quem fica fixa (sticky) */
@@ -108,10 +159,10 @@ html, body{ min-height: 100%; margin: 0; }
   color: var(--bs-body-bg);
 }
 
-.navbar-top__link--accent{ color: #fd7e14; }
+.navbar-top__link--accent{ color: var(--brand-orange); }
 .navbar-top__link--accent:hover{
-  background: color-mix(in srgb, #fd7e14 16%, transparent);
-  color: #fd7e14;
+  background: color-mix(in srgb, var(--brand-orange) 16%, transparent);
+  color: var(--brand-orange);
 }
 
 /* seta indicando que o item expande — gira quando abre (hover ou clique) */
@@ -203,10 +254,12 @@ html, body{ min-height: 100%; margin: 0; }
 html[data-bs-theme="light"] .theme-toggle .icon-sun{ display: inline-block; }
 html[data-bs-theme="light"] .theme-toggle .icon-moon{ display: none; }
 
-/* ===================== CABEÇALHO DE BOAS-VINDAS ===================== */
+/* ===================== CABEÇALHO DE BOAS-VINDAS / CABEÇALHO PAGINAS ===================== */
 .hero-header{ padding: 28px 4px 6px; flex-shrink: 0; }
 .hero-header h1{ font-weight: 600; }
-
+.hero-header-pages{ padding: 5px 4px 6px; flex-shrink: 0; }
+.hero-header-pages h1{ font-weight: 600;
+                       font-size: 20px; }
 .hero-header__stats{
   margin-top: 20px;
   min-height: 100px;
