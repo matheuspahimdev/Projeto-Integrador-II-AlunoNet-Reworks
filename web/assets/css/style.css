@@ -255,7 +255,7 @@ html[data-bs-theme="light"] .theme-toggle .icon-sun{ display: inline-block; }
 html[data-bs-theme="light"] .theme-toggle .icon-moon{ display: none; }
 
 /* ===================== CABEÇALHO DE BOAS-VINDAS / CABEÇALHO PAGINAS ===================== */
-.hero-header{ padding: 28px 4px 6px; flex-shrink: 0; }
+.hero-header{ padding: 5px 4px 6px; flex-shrink: 0; }
 .hero-header h1{ font-weight: 600; }
 .hero-header-pages{ padding: 5px 4px 6px; flex-shrink: 0; }
 .hero-header-pages h1{ font-weight: 600;
