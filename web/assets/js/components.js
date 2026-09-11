@@ -21,26 +21,6 @@ const ROUTES = Object.freeze({
 
 class NavBar extends HTMLElement {
   static ITEMS = [
-<<<<<<< HEAD
-    { label: 'Acadêmico',  icon: 'bi-mortarboard',
-      subs: [{ label: 'Central Acadêmica', href: '/centralAcademico.html' }, { label: 'Horário de Aulas', href: '#' }, { label: 'Calendário de Provas', href: '#' }, { label: 'Notas e Faltas', href: '#' }, 
-        { label: 'Graficos de Desempenho', href: '#' }, { label: 'Consultar Dados Cadastrais', href: '#' }, { label: 'Confirmação de Matrícula', href: '#' }, { label: 'Documentação Integralização Curricular', href: '#' }, 
-        { label: 'Atualização de Dados Cadastrais', href: '#' }, { label: 'Atividades Complementares', href: '#' }, { label: 'Plano de Ensino', href: '#' }, { label: 'Carterinha Digital', href: '#' }] },
-    { label: 'Financeiro', icon: 'bi-currency-dollar',
-      subs: [{ label: 'Central Boletos', href: '#' }, { label: 'Consultar Extrato', href: '#' }, { label: 'Comprovante Imposto de Renda', href: '#' }] },
-    { label: 'Protocolos',  icon: 'bi-graph-up-arrow', href: '#' },
-    { label: 'Avalie-nos', icon: 'bi-pencil-square',
-      subs: [{ label: 'Avaliação Faculdade', href: '#' }] },
-    { label: 'Materiais',  icon: 'bi-book-half',
-      subs: [{ label: 'Repositório Aluno', href: '#' }] },
-    { label: 'Avisos',     icon: 'bi-envelope', href: '#' },
-    { label: 'Biblioteca', icon: 'bi-bookshelf', href: '#'},
-    { label: 'Eventos',    icon: 'bi-calendar-event', href: '#' },
-    { label: 'Moodle',     icon: 'bi-easel2', href: '#'},
-    { label: 'Carreiras',  icon: 'bi-rocket-takeoff', href: '#' },
-    { label: 'Suporte',    icon: 'bi-headset', accent: true,
-      subs: [{ label: 'Chamados', href: '#' }, { label: 'Fila de atendimento (secretaria)', href: '#' }] },
-=======
     {
       label: 'Acadêmico', icon: 'bi-mortarboard',
       subs: [
@@ -77,7 +57,6 @@ class NavBar extends HTMLElement {
         { label: 'Chamados', href: ROUTES.chamados },
       ],
     },
->>>>>>> dd313dd (grid-mesh logo e rotas melhorados)
   ];
 
   connectedCallback() {
