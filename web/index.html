@@ -28,14 +28,99 @@
          (sem precisar rolar) — cada uma com g-col-2, numa única linha que
          ocupa 100% do espaço vertical restante. -->
     <div class="grid-mesh">
-    <div class="g-box bg-body-secondary border rounded-4 g-col-2 g-row-4"></div>
-    <div class="g-box bg-body-secondary border rounded-4 g-col-1 g-row-1"></div>
-    <div class="g-box bg-body-secondary border rounded-4 g-col-1 g-row-1"></div>
-    <div class="g-box bg-body-secondary border rounded-4 g-col-1 g-row-1"></div>
-    <div class="g-box bg-body-secondary border rounded-4 g-col-1 g-row-1"></div>
-    
+    <div class="g-box bg-body-secondary border rounded-4 g-col-3 g-row-2">
+    <div class="box-content">
+    <div class="box-content box-content--schedule">
+      <h2 class="box-content__title">Horário de aulas</h2>
+
+      <div class="class-schedule">
+        <table class="class-schedule__table">
+          <thead>
+            <tr>
+              <th scope="col" class="class-schedule__time-header">Horário</th>
+              <th scope="col">Seg</th>
+              <th scope="col">Ter</th>
+              <th scope="col">Qua</th>
+              <th scope="col">Qui</th>
+              <th scope="col">Sex</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr>
+              <th scope="row">07:40<br>09:20</th>
+              <td class="schedule-cell schedule-cell--green">Políticas Públicas<br><small>Sala 1</small></td>
+              <td class="schedule-cell schedule-cell--blue">Seminário<br><small>Sala 1</small></td>
+              <td class="schedule-cell schedule-cell--soft-blue">Matemática<br><small>Sala 2</small></td>
+              <td class="schedule-cell schedule-cell--orange">Inglês<br><small>Sala 1</small></td>
+              <td class="schedule-cell schedule-cell--purple">Tendências<br><small>Sala 1</small></td>
+            </tr>
+
+            <tr>
+              <th scope="row">09:30<br>11:10</th>
+              <td class="schedule-cell schedule-cell--green">Políticas Públicas<br><small>Sala 1</small></td>
+              <td class="schedule-cell schedule-cell--pink">Empreendedorismo<br><small>Sala 1</small></td>
+              <td class="schedule-cell schedule-cell--soft-blue">Matemática<br><small>Sala 2</small></td>
+              <td class="schedule-cell schedule-cell--peach">LPT<br><small>Sala 1</small></td>
+              <td class="schedule-cell">Laboratório I<br><small>Sala 1</small></td>
+            </tr>
+
+            <tr>
+              <th scope="row">13:20<br>15:00</th>
+              <td class="schedule-cell">—</td>
+              <td class="schedule-cell">—</td>
+              <td class="schedule-cell">—</td>
+              <td class="schedule-cell">—</td>
+              <td class="schedule-cell">—</td>
+            </tr>
+
+            <tr>
+              <th scope="row">15:10<br>16:50</th>
+              <td class="schedule-cell">—</td>
+              <td class="schedule-cell">—</td>
+              <td class="schedule-cell">—</td>
+              <td class="schedule-cell">—</td>
+              <td class="schedule-cell">—</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+      </div>
     </div>
 
+    <div class="g-box bg-body-secondary border rounded-4 g-col-1 g-row-2">
+        <div class="box-content boleto-card">
+          <h2 class="box-content__title">Boleto a vencer</h2>
+
+          <div class="boleto-card__body">
+            <div class="boleto-card__status">
+              <span class="boleto-card__dot"></span>
+              Vence em 5 dias
+            </div>
+
+            <p class="boleto-card__label">Valor da mensalidade</p>
+           <strong class="boleto-card__value">R$ 246,43</strong>
+
+          <dl class="boleto-card__details">
+            <div>
+              <dt>Fatura</dt>
+              <dd>#1993849</dd>
+            </div>
+            <div>
+              <dt>Vencimento</dt>
+              <dd>30 mai 2026</dd>
+            </div>
+          </dl>
+
+          <a class="boleto-card__action" href="pages/financeiro/centralBoleto.html">
+            Ver boleto <i class="bi bi-arrow-right"></i>
+          </a>
+           </div>
+        </div>
+      </div>
+
+      
   </main>
 </div>
 

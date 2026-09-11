@@ -1,13 +1,27 @@
 /**
- * Componentes reutilizáveis entre páginas.
- * <nav-bar></nav-bar>            -> navbar em pílula, fixa no topo do shell
- * <theme-toggle></theme-toggle>  -> alterna claro/escuro (usado dentro da nav-bar)
+ * Componentes compartilhados do Alunonet.
+ *
+ * As URLs são calculadas a partir deste próprio arquivo. Assim elas funcionam
+ * tanto ao abrir o protótipo localmente quanto quando ele estiver em uma
+ * subpasta do servidor, inclusive nas páginas dentro de /pages.
  */
 
-class NavBar extends HTMLElement{
-  // cada item pode ter "subs": as sub-abas que aparecem no popup ao clicar.
-  // hrefs ainda como placeholder ("#") até essas sub-páginas existirem.
+const COMPONENTS_URL = document.currentScript?.src || window.location.href;
+const APP_ROOT_URL = new URL('../../', COMPONENTS_URL);
+const route = (path) => new URL(path, APP_ROOT_URL).href;
+
+const ROUTES = Object.freeze({
+  home: APP_ROOT_URL.href,
+  centralAcademica: route('pages/academico/centralAcademico.html'),
+  boletos: route('pages/financeiro/centralBoleto.html'),
+  chamados: route('pages/suporte/chamado.html'),
+  repositorio: route('pages/materiais/repositorioAluno.html'),
+  avaliacao: route('pages/avalieNos/avaliacaoFaculdade.html'),
+});
+
+class NavBar extends HTMLElement {
   static ITEMS = [
+<<<<<<< HEAD
     { label: 'Acadêmico',  icon: 'bi-mortarboard',
       subs: [{ label: 'Central Acadêmica', href: '/centralAcademico.html' }, { label: 'Horário de Aulas', href: '#' }, { label: 'Calendário de Provas', href: '#' }, { label: 'Notas e Faltas', href: '#' }, 
         { label: 'Graficos de Desempenho', href: '#' }, { label: 'Consultar Dados Cadastrais', href: '#' }, { label: 'Confirmação de Matrícula', href: '#' }, { label: 'Documentação Integralização Curricular', href: '#' }, 
@@ -26,59 +40,65 @@ class NavBar extends HTMLElement{
     { label: 'Carreiras',  icon: 'bi-rocket-takeoff', href: '#' },
     { label: 'Suporte',    icon: 'bi-headset', accent: true,
       subs: [{ label: 'Chamados', href: '#' }, { label: 'Fila de atendimento (secretaria)', href: '#' }] },
+=======
+    {
+      label: 'Acadêmico', icon: 'bi-mortarboard',
+      subs: [
+        { label: 'Central Acadêmica', href: ROUTES.centralAcademica },
+      ],
+    },
+    {
+      label: 'Financeiro', icon: 'bi-currency-dollar',
+      subs: [
+        { label: 'Central de Boletos', href: ROUTES.boletos },
+      ],
+    },
+    { label: 'Protocolos', icon: 'bi-graph-up-arrow', unavailable: true },
+    {
+      label: 'Avalie-nos', icon: 'bi-pencil-square',
+      subs: [
+        { label: 'Avaliação da Faculdade', href: ROUTES.avaliacao },
+      ],
+    },
+    {
+      label: 'Materiais', icon: 'bi-book-half',
+      subs: [
+        { label: 'Repositório do Aluno', href: ROUTES.repositorio },
+      ],
+    },
+    { label: 'Avisos', icon: 'bi-envelope', unavailable: true },
+    { label: 'Biblioteca', icon: 'bi-bookshelf', unavailable: true },
+    { label: 'Eventos', icon: 'bi-calendar-event', unavailable: true },
+    { label: 'Moodle', icon: 'bi-easel2', unavailable: true },
+    { label: 'Carreiras', icon: 'bi-rocket-takeoff', unavailable: true },
+    {
+      label: 'Suporte', icon: 'bi-headset', accent: true,
+      subs: [
+        { label: 'Chamados', href: ROUTES.chamados },
+      ],
+    },
+>>>>>>> dd313dd (grid-mesh logo e rotas melhorados)
   ];
 
-  connectedCallback(){
+  connectedCallback() {
     this.classList.add('navbar-top', 'bg-body-tertiary', 'border',
       'd-flex', 'align-items-center', 'flex-shrink-0');
 
-    const items = NavBar.ITEMS.map((item, i) => {
-      const menuId = `nav-drop-${i}`;
-      const hasSubs = Array.isArray(item.subs) && item.subs.length > 0;
-
-      // sem "subs" -> link direto, sem seta e sem popup
-      if (!hasSubs){
-        return `
-          <li class="nav-item">
-            <a href="${item.href || '#'}" class="navbar-top__link${item.active ? ' is-active' : ''}${item.accent ? ' navbar-top__link--accent' : ''}" title="${item.label}">
-              <i class="bi ${item.icon}"></i>
-              <span class="navbar-top__link-label">${item.label}</span>
-            </a>
-          </li>
-        `;
-      }
-
-      // com "subs" -> dropdown com seta e popup
-      const subs = item.subs.map(sub => `
-        <li><a class="dropdown-item" href="${sub.href}">${sub.label}</a></li>
-      `).join('');
-
-      return `
-        <li class="nav-item dropdown">
-          <a href="#" id="${menuId}" class="navbar-top__link dropdown-toggle${item.active ? ' is-active' : ''}${item.accent ? ' navbar-top__link--accent' : ''}"
-             role="button" data-bs-toggle="dropdown" aria-expanded="false" title="${item.label}">
-            <i class="bi ${item.icon}"></i>
-            <span class="navbar-top__link-label">${item.label}</span>
-            <i class="bi bi-chevron-right navbar-top__chevron"></i>
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="${menuId}">
-            ${subs}
-          </ul>
-        </li>
-      `;
-    }).join('');
+    const items = NavBar.ITEMS.map((item, index) => this.renderItem(item, index)).join('');
 
     this.innerHTML = `
-      <div class="navbar-top__slot navbar-top__slot--logo rounded-pill" title="logo">
-        <span class="navbar-top__slot-label">logo</span>
-      </div>
+      <a class="navbar-top__slot navbar-top__slot--logo rounded-pill"
+          href="${ROUTES.home}" aria-label="Página inicial">
+        <img class="brand-logo brand-logo--dark-theme"
+          src="${route('assets/img/UnifioLogoBranco.png')}"
+          alt="Alunonet">
 
-      <ul class="navbar-top__nav nav flex-row flex-nowrap">
-        ${items}
-      </ul>
-
+        <img class="brand-logo brand-logo--light-theme"
+          src="${route('assets/img/UnifioLogoAzul.png')}"
+          alt="Alunonet">
+      </a>
+      <ul class="navbar-top__nav nav flex-row flex-nowrap">${items}</ul>
       <div class="navbar-top__actions">
-
         <theme-toggle></theme-toggle>
         <div class="navbar-top__slot navbar-top__slot--profile rounded-circle" title="perfil / avatar">
           <span class="navbar-top__slot-label">perfil</span>
@@ -86,89 +106,125 @@ class NavBar extends HTMLElement{
       </div>
     `;
 
-    // inicializa cada dropdown na mão, com strategy:'fixed' — assim o popup
-    // escapa do overflow (scroll horizontal) da lista de navegação e não fica cortado/invisível.
-    if (typeof bootstrap !== 'undefined'){
-      // estado compartilhado entre todos os itens: só um popup ativo por vez.
-      // ao trocar de item direto (hover em B antes do timer de A terminar),
-      // o anterior fecha na hora — o delay só vale pra quando sai pra fora de tudo.
-      let activeInstance = null;
-      let closeTimer = null;
+    this.initializeDropdowns();
+  }
 
-      this.querySelectorAll('.nav-item.dropdown').forEach(li => {
-        const toggleEl = li.querySelector('.dropdown-toggle');
-        const menuEl = li.querySelector('.dropdown-menu');
-        const instance = bootstrap.Dropdown.getOrCreateInstance(toggleEl, { popperConfig: { strategy: 'fixed' } });
+  renderItem(item, index) {
+    const hasSubs = Array.isArray(item.subs) && item.subs.length > 0;
+    // A navegação mantém a mesma aparência em todas as páginas; nenhuma rota
+    // recebe classe "is-active", pois ela faz o item parecer desaparecer no tema atual.
+    const classes = `navbar-top__link${item.accent ? ' navbar-top__link--accent' : ''}`;
 
-        // só revela o popup depois de 2 frames de renderização — garante que o
-        // Popper já terminou de posicionar antes de qualquer coisa ficar visível,
-        // eliminando o "pisca no canto superior esquerdo antes de pular pro lugar".
-        toggleEl.addEventListener('show.bs.dropdown', () => {
-          menuEl.classList.remove('is-positioned');
-          requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-              menuEl.classList.add('is-positioned');
-            });
-          });
-        });
-        toggleEl.addEventListener('hide.bs.dropdown', () => {
-          menuEl.classList.remove('is-positioned');
-        });
+    if (hasSubs) {
+      const menuId = `nav-drop-${index}`;
+      const subItems = item.subs.map((sub) => `
+        <li><a class="dropdown-item" href="${sub.href}">${sub.label}</a></li>
+      `).join('');
 
-        // abre/fecha por hover (mouse), sem abandonar o clique (touch/teclado).
-        li.addEventListener('mouseenter', () => {
-          clearTimeout(closeTimer);
-
-          // trocando de item: fecha o popup anterior na hora, sem esperar o
-          // delay — é isso que evitava os dois ficarem visíveis ao mesmo tempo.
-          if (activeInstance && activeInstance !== instance){
-            activeInstance.hide();
-          }
-
-          instance.show();
-          activeInstance = instance;
-        });
-
-        li.addEventListener('mouseleave', () => {
-          // o delay só entra em ação aqui: saindo pra fora de tudo (não pra
-          // outro item), dá tempo do mouse atravessar o vão até o popup.
-          closeTimer = setTimeout(() => {
-            instance.hide();
-            if (activeInstance === instance) activeInstance = null;
-          }, 220);
-        });
-      });
-    } else {
-      console.error('nav-bar: bootstrap.bundle.min.js não carregou — verifique a conexão com o CDN ou bloqueadores de anúncio/rede.');
+      // O botão abre o menu; somente os links dentro dele fazem navegação.
+      // Isto elimina o uso de href="#" e a necessidade de clicar duas vezes.
+      return `
+        <li class="nav-item dropdown">
+          <button id="${menuId}" class="${classes} dropdown-toggle border-0 bg-transparent"
+            type="button" data-bs-toggle="dropdown" aria-expanded="false" title="${item.label}">
+            <i class="bi ${item.icon}"></i>
+            <span class="navbar-top__link-label">${item.label}</span>
+            <i class="bi bi-chevron-right navbar-top__chevron"></i>
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="${menuId}">${subItems}</ul>
+        </li>
+      `;
     }
+
+    if (item.unavailable || !item.href) {
+      return `
+        <li class="nav-item">
+          <span class="${classes} opacity-50" aria-disabled="true" title="${item.label} — em breve">
+            <i class="bi ${item.icon}"></i><span class="navbar-top__link-label">${item.label}</span>
+          </span>
+        </li>
+      `;
+    }
+
+    return `
+      <li class="nav-item">
+        <a href="${item.href}" class="${classes}" title="${item.label}">
+          <i class="bi ${item.icon}"></i><span class="navbar-top__link-label">${item.label}</span>
+        </a>
+      </li>
+    `;
+  }
+
+  initializeDropdowns() {
+    if (typeof bootstrap === 'undefined') {
+      console.error('nav-bar: Bootstrap não foi carregado.');
+      return;
+    }
+
+    let activeInstance = null;
+    let closeTimer = null;
+
+    this.querySelectorAll('.nav-item.dropdown').forEach((item) => {
+      const toggle = item.querySelector('.dropdown-toggle');
+      const menu = item.querySelector('.dropdown-menu');
+      const instance = bootstrap.Dropdown.getOrCreateInstance(toggle, {
+        popperConfig: { strategy: 'fixed' },
+      });
+
+      toggle.addEventListener('show.bs.dropdown', () => {
+        menu.classList.remove('is-positioned');
+        requestAnimationFrame(() => requestAnimationFrame(() => menu.classList.add('is-positioned')));
+      });
+      toggle.addEventListener('hide.bs.dropdown', () => menu.classList.remove('is-positioned'));
+
+      item.addEventListener('mouseenter', () => {
+        clearTimeout(closeTimer);
+        if (activeInstance && activeInstance !== instance) activeInstance.hide();
+        instance.show();
+        activeInstance = instance;
+      });
+
+      item.addEventListener('mouseleave', () => {
+        closeTimer = setTimeout(() => {
+          instance.hide();
+          if (activeInstance === instance) activeInstance = null;
+        }, 220);
+      });
+    });
   }
 }
+
 customElements.define('nav-bar', NavBar);
 
-class ThemeToggle extends HTMLElement{
-  connectedCallback(){
+class ThemeToggle extends HTMLElement {
+  connectedCallback() {
     this.classList.add('icon-btn', 'theme-toggle');
     this.setAttribute('role', 'button');
     this.setAttribute('tabindex', '0');
     this.setAttribute('aria-label', 'Alternar tema claro/escuro');
 
-    this.innerHTML = `
-      <i class="bi bi-sun-fill icon-sun"></i>
-      <i class="bi bi-moon-stars-fill icon-moon"></i>
-    `;
+    const savedTheme = localStorage.getItem('alunonet-theme');
+    if (savedTheme === 'light' || savedTheme === 'dark') {
+      document.documentElement.setAttribute('data-bs-theme', savedTheme);
+    }
+
+    this.innerHTML = '<i class="bi bi-sun-fill icon-sun"></i><i class="bi bi-moon-stars-fill icon-moon"></i>';
 
     const toggle = () => {
       const html = document.documentElement;
-      html.setAttribute('data-bs-theme', html.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark');
+      const theme = html.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-bs-theme', theme);
+      localStorage.setItem('alunonet-theme', theme);
     };
 
     this.addEventListener('click', toggle);
-    this.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ' '){
-        e.preventDefault();
+    this.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
         toggle();
       }
     });
   }
 }
+
 customElements.define('theme-toggle', ThemeToggle);
