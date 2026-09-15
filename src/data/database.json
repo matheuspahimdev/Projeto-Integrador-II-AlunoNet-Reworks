@@ -1,0 +1,231 @@
+[
+    {
+        "database": "remake_unifio_db",
+        "tables": {
+            "users": {
+                "columns": [
+                    "id",
+                    "course_id",
+                    "class_id",
+                    "registration_number",
+                    "name",
+                    "social_name",
+                    "document",
+                    "birth_date",
+                    "phone",
+                    "address",
+                    "email",
+                    "password",
+                    "role",
+                    "is_active",
+                    "created_at",
+                    "updated_at"
+                ],
+                "data": []
+            },
+            "courses": {
+                "columns": [
+                    "id",
+                    "code",
+                    "name",
+                    "description",
+                    "degree_level",
+                    "duration_semesters",
+                    "workload_hours",
+                    "is_active",
+                    "created_at",
+                    "updated_at"
+                ],
+                "data": []
+            },
+            "disciplines": {
+                "columns": [
+                    "id",
+                    "course_id",
+                    "code",
+                    "name",
+                    "description",
+                    "semester",
+                    "workload_hours",
+                    "prerequisite_id",
+                    "is_active",
+                    "created_at",
+                    "updated_at"
+                ],
+                "data": []
+            },
+            "classes": {
+                "columns": [
+                    "id",
+                    "course_id",
+                    "name",
+                    "academic_year",
+                    "semester",
+                    "shift",
+                    "room",
+                    "capacity",
+                    "status",
+                    "created_at",
+                    "updated_at"
+                ],
+                "data": []
+            },
+            "enrollments": {
+                "columns": [
+                    "id",
+                    "user_id",
+                    "course_id",
+                    "class_id",
+                    "entry_date",
+                    "completion_date",
+                    "status",
+                    "created_at",
+                    "updated_at"
+                ],
+                "data": []
+            },
+            "class_enrollments": {
+                "columns": [
+                    "id",
+                    "class_id",
+                    "user_id",
+                    "enrolled_at",
+                    "status",
+                    "created_at",
+                    "updated_at"
+                ],
+                "data": []
+            },
+            "discipline_classes": {
+                "columns": [
+                    "id",
+                    "discipline_id",
+                    "class_id",
+                    "teacher_id",
+                    "schedule",
+                    "created_at",
+                    "updated_at"
+                ],
+                "data": []
+            },
+            "frequencies": {
+                "columns": [
+                    "id",
+                    "user_id",
+                    "discipline_id",
+                    "class_id",
+                    "date",
+                    "status",
+                    "justification",
+                    "created_at",
+                    "updated_at"
+                ],
+                "data": []
+            },
+            "exams": {
+                "columns": [
+                    "id",
+                    "user_id",
+                    "discipline_id",
+                    "class_id",
+                    "name",
+                    "description",
+                    "score",
+                    "max_score",
+                    "date",
+                    "status",
+                    "created_at",
+                    "updated_at"
+                ],
+                "data": []
+            },
+            "finance": {
+                "columns": [
+                    "id",
+                    "user_id",
+                    "type_payment",
+                    "value",
+                    "description",
+                    "reference_month",
+                    "due_date",
+                    "payment_date",
+                    "discount_value",
+                    "fine_value",
+                    "interest_value",
+                    "status",
+                    "payment_method",
+                    "transaction_code",
+                    "invoice_url",
+                    "year",
+                    "name_course",
+                    "notes",
+                    "created_at",
+                    "updated_at"
+                ],
+                "data": []
+            },
+            "scholarships": {
+                "columns": [
+                    "id",
+                    "user_id",
+                    "name",
+                    "percentage",
+                    "start_date",
+                    "end_date",
+                    "status",
+                    "document_url",
+                    "created_at",
+                    "updated_at"
+                ],
+                "data": []
+            },
+            "requirements": {
+                "columns": [
+                    "id",
+                    "user_id",
+                    "type",
+                    "subject",
+                    "description",
+                    "status",
+                    "protocol_number",
+                    "requested_at",
+                    "answered_at",
+                    "answer",
+                    "created_at",
+                    "updated_at"
+                ],
+                "data": []
+            },
+            "loans": {
+                "columns": [
+                    "id",
+                    "user_id",
+                    "item_name",
+                    "item_code",
+                    "description",
+                    "loan_date",
+                    "expected_return_date",
+                    "returned_at",
+                    "status",
+                    "fine_value",
+                    "created_at",
+                    "updated_at"
+                ],
+                "data": []
+            },
+            "notifications": {
+                "columns": [
+                    "id",
+                    "user_id",
+                    "title",
+                    "message",
+                    "type",
+                    "read_at",
+                    "created_at",
+                    "updated_at"
+                ],
+                "data": []
+            }
+        }
+    }
+]
