@@ -9,118 +9,35 @@
 <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-
 <div class="app-shell">
-
-  <nav-bar></nav-bar>
+  <nav-bar id="main-navigation"></nav-bar>
+  <div class="sidebar-backdrop" data-sidebar-backdrop></div>
 
   <main class="page-content">
+    <portal-header></portal-header>
 
     <section class="hero-header">
-      <h1 class="display-6">Bons estudos, aluno!</h1>
-      <div class="hero-header__stats">
-        métricas do aluno — a definir<br>
-        (ex.: média geral, frequência, pendências, próxima aula)
-      </div>
+      <p class="hero-header__eyebrow">Visão geral</p>
+      <h1>Olá, Victor! <span aria-hidden="true">👋</span></h1>
+      <p>Este é o resumo da sua vida acadêmica de hoje.</p>
     </section>
 
-    <!-- 2 boxes gigantes, esquerda e direita, esticando até o fim da tela
-         (sem precisar rolar) — cada uma com g-col-2, numa única linha que
-         ocupa 100% do espaço vertical restante. -->
-    <div class="grid-mesh">
-    <div class="g-box bg-body-secondary border rounded-4 g-col-3 g-row-2">
-    <div class="box-content">
-    <div class="box-content box-content--schedule">
-      <h2 class="box-content__title">Horário de aulas</h2>
-
-      <div class="class-schedule">
-        <table class="class-schedule__table">
-          <thead>
-            <tr>
-              <th scope="col" class="class-schedule__time-header">Horário</th>
-              <th scope="col">Seg</th>
-              <th scope="col">Ter</th>
-              <th scope="col">Qua</th>
-              <th scope="col">Qui</th>
-              <th scope="col">Sex</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            <tr>
-              <th scope="row">07:40<br>09:20</th>
-              <td class="schedule-cell schedule-cell--green">Políticas Públicas<br><small>Sala 1</small></td>
-              <td class="schedule-cell schedule-cell--blue">Seminário<br><small>Sala 1</small></td>
-              <td class="schedule-cell schedule-cell--soft-blue">Matemática<br><small>Sala 2</small></td>
-              <td class="schedule-cell schedule-cell--orange">Inglês<br><small>Sala 1</small></td>
-              <td class="schedule-cell schedule-cell--purple">Tendências<br><small>Sala 1</small></td>
-            </tr>
-
-            <tr>
-              <th scope="row">09:30<br>11:10</th>
-              <td class="schedule-cell schedule-cell--green">Políticas Públicas<br><small>Sala 1</small></td>
-              <td class="schedule-cell schedule-cell--pink">Empreendedorismo<br><small>Sala 1</small></td>
-              <td class="schedule-cell schedule-cell--soft-blue">Matemática<br><small>Sala 2</small></td>
-              <td class="schedule-cell schedule-cell--peach">LPT<br><small>Sala 1</small></td>
-              <td class="schedule-cell">Laboratório I<br><small>Sala 1</small></td>
-            </tr>
-
-            <tr>
-              <th scope="row">13:20<br>15:00</th>
-              <td class="schedule-cell">—</td>
-              <td class="schedule-cell">—</td>
-              <td class="schedule-cell">—</td>
-              <td class="schedule-cell">—</td>
-              <td class="schedule-cell">—</td>
-            </tr>
-
-            <tr>
-              <th scope="row">15:10<br>16:50</th>
-              <td class="schedule-cell">—</td>
-              <td class="schedule-cell">—</td>
-              <td class="schedule-cell">—</td>
-              <td class="schedule-cell">—</td>
-              <td class="schedule-cell">—</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-      </div>
-    </div>
-
-    <div class="g-box bg-body-secondary border rounded-4 g-col-1 g-row-2">
-        <div class="box-content boleto-card">
-          <h2 class="box-content__title">Boleto a vencer</h2>
-
-          <div class="boleto-card__body">
-            <div class="boleto-card__status">
-              <span class="boleto-card__dot"></span>
-              Vence em 5 dias
-            </div>
-
-            <p class="boleto-card__label">Valor da mensalidade</p>
-           <strong class="boleto-card__value">R$ 246,43</strong>
-
-          <dl class="boleto-card__details">
-            <div>
-              <dt>Fatura</dt>
-              <dd>#1993849</dd>
-            </div>
-            <div>
-              <dt>Vencimento</dt>
-              <dd>30 mai 2026</dd>
-            </div>
-          </dl>
-
-          <a class="boleto-card__action" href="pages/financeiro/centralBoleto.html">
-            Ver boleto <i class="bi bi-arrow-right"></i>
-          </a>
-           </div>
+    <div class="grid-mesh grid-mesh--static dashboard-grid">
+      <article class="g-box g-col-2 dashboard-card dashboard-card--notice">
+        <div class="box-content">
+          <span class="dashboard-card__icon"><i class="bi bi-exclamation-triangle-fill"></i></span>
+          <h2 class="box-content__title">Prazo importante</h2>
+          <div class="box-content__body"><h3>Alteração de Grade</h3><p>O prazo para realizar ajustes na sua grade curricular encerra no dia <strong>19 de setembro</strong>.</p><a class="btn btn-warning dashboard-card__action" href="pages/academico/centralAcademico.html">Ajustar minha grade</a></div>
         </div>
-      </div>
-
-      
+      </article>
+      <article class="g-box g-col-1 dashboard-card">
+        <div class="box-content"><span class="dashboard-card__icon"><i class="bi bi-calendar2-week"></i></span><h2 class="box-content__title">Aulas de hoje</h2><div class="box-content__body"><h3>Projeto Integrador II</h3><p>Quarta-feira<br><i class="bi bi-geo-alt"></i> Sala 112 · Prédio 1<br><i class="bi bi-clock"></i> 19:15 às 22:50</p><a class="btn btn-primary dashboard-card__action" href="pages/academico/centralAcademico.html">Ver horário</a></div></div>
+      </article>
+      <article class="g-box g-col-1 dashboard-card">
+        <div class="box-content"><span class="dashboard-card__icon"><i class="bi bi-briefcase-fill"></i></span><h2 class="box-content__title">Oportunidades</h2><div class="box-content__body"><h3>Unifio Carreiras</h3><p>Cadastre seu currículo no portal e acompanhe novas oportunidades.</p><a class="btn btn-outline-primary dashboard-card__action" href="#">Acessar portal</a></div></div>
+      </article>
+    </div>
+    <section class="quick-access" aria-labelledby="quick-access-title"><h2 id="quick-access-title">Acesso rápido</h2><div class="grid-mesh grid-mesh--static quick-access__grid"><a class="g-box g-col-1 quick-access__item" href="pages/financeiro/centralBoleto.html"><i class="bi bi-upc-scan"></i><span>Boleto mensalidade</span></a><a class="g-box g-col-1 quick-access__item" href="#"><i class="bi bi-file-earmark-text"></i><span>Atestado de matrícula</span></a><a class="g-box g-col-1 quick-access__item" href="#"><i class="bi bi-arrow-repeat"></i><span>Atividades complementares</span></a><a class="g-box g-col-1 quick-access__item" href="#"><i class="bi bi-person-vcard"></i><span>Carteirinha digital</span></a></div></section>
   </main>
 </div>
 

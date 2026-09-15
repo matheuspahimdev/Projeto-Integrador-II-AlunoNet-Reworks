@@ -21,6 +21,7 @@ const ROUTES = Object.freeze({
 
 class NavBar extends HTMLElement {
   static ITEMS = [
+    { label: 'Início', icon: 'bi-house-door-fill', href: ROUTES.home },
     {
       label: 'Acadêmico', icon: 'bi-mortarboard',
       subs: [
@@ -60,14 +61,17 @@ class NavBar extends HTMLElement {
   ];
 
   connectedCallback() {
-    this.classList.add('navbar-top', 'bg-body-tertiary', 'border',
-      'd-flex', 'align-items-center', 'flex-shrink-0');
+    if (this.dataset.ready) return;
+    this.dataset.ready = 'true';
+    this.classList.add('sidebar-nav');
+    if (!document.querySelector('[data-sidebar-backdrop]')) {
+      document.body.insertAdjacentHTML('afterbegin', '<div class="sidebar-backdrop" data-sidebar-backdrop></div>');
+    }
 
     const items = NavBar.ITEMS.map((item, index) => this.renderItem(item, index)).join('');
 
     this.innerHTML = `
-      <a class="navbar-top__slot navbar-top__slot--logo rounded-pill"
-          href="${ROUTES.home}" aria-label="Página inicial">
+      <a class="sidebar-nav__brand" href="${ROUTES.home}" aria-label="Página inicial do Alunonet">
         <img class="brand-logo brand-logo--dark-theme"
           src="${route('assets/img/UnifioLogoBranco.png')}"
           alt="Alunonet">
@@ -76,104 +80,133 @@ class NavBar extends HTMLElement {
           src="${route('assets/img/UnifioLogoAzul.png')}"
           alt="Alunonet">
       </a>
-      <ul class="navbar-top__nav nav flex-row flex-nowrap">${items}</ul>
-      <div class="navbar-top__actions">
-        <theme-toggle></theme-toggle>
-        <div class="navbar-top__slot navbar-top__slot--profile rounded-circle" title="perfil / avatar">
-          <span class="navbar-top__slot-label">perfil</span>
-        </div>
+      <nav class="sidebar-nav__content" aria-label="Navegação principal">
+        <ul class="sidebar-nav__list">${items}</ul>
+      </nav>
+      <div class="sidebar-nav__footer">
+        <button class="sidebar-nav__exit" type="button" aria-disabled="true" title="O encerramento de sessão será conectado quando houver autenticação">
+          <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
+          <span>Sair</span>
+        </button>
       </div>
     `;
 
-    this.initializeDropdowns();
+    this.querySelectorAll('.sidebar-nav__item--expandable > button').forEach((button) => {
+      button.addEventListener('click', () => {
+        const item = button.closest('.sidebar-nav__item');
+        const willOpen = !item.classList.contains('is-open');
+        item.classList.toggle('is-open', willOpen);
+        button.setAttribute('aria-expanded', String(willOpen));
+      });
+    });
+
+    this.querySelectorAll('a').forEach((link) => link.addEventListener('click', closeMenu));
   }
 
   renderItem(item, index) {
     const hasSubs = Array.isArray(item.subs) && item.subs.length > 0;
-    // A navegação mantém a mesma aparência em todas as páginas; nenhuma rota
-    // recebe classe "is-active", pois ela faz o item parecer desaparecer no tema atual.
-    const classes = `navbar-top__link${item.accent ? ' navbar-top__link--accent' : ''}`;
+    const isHome = window.location.pathname.endsWith('/') || window.location.pathname.endsWith('/index.html');
+    const isActive = (item.label === 'Início' && isHome)
+      || item.subs?.some((sub) => new URL(sub.href).pathname === window.location.pathname);
+    const classes = `sidebar-nav__link${item.accent ? ' sidebar-nav__link--accent' : ''}${isActive ? ' is-active' : ''}`;
 
     if (hasSubs) {
-      const menuId = `nav-drop-${index}`;
+      const menuId = `nav-submenu-${index}`;
       const subItems = item.subs.map((sub) => `
-        <li><a class="dropdown-item" href="${sub.href}">${sub.label}</a></li>
+        <li><a class="sidebar-nav__sublink" href="${sub.href}">${sub.label}</a></li>
       `).join('');
-
-      // O botão abre o menu; somente os links dentro dele fazem navegação.
-      // Isto elimina o uso de href="#" e a necessidade de clicar duas vezes.
       return `
-        <li class="nav-item dropdown">
-          <button id="${menuId}" class="${classes} dropdown-toggle border-0 bg-transparent"
-            type="button" data-bs-toggle="dropdown" aria-expanded="false" title="${item.label}">
+        <li class="sidebar-nav__item sidebar-nav__item--expandable${isActive ? ' is-open' : ''}">
+          <button class="${classes}" type="button" aria-expanded="${isActive ? 'true' : 'false'}" aria-controls="${menuId}">
             <i class="bi ${item.icon}"></i>
-            <span class="navbar-top__link-label">${item.label}</span>
-            <i class="bi bi-chevron-right navbar-top__chevron"></i>
+            <span>${item.label}</span>
+            <i class="bi bi-chevron-down sidebar-nav__chevron" aria-hidden="true"></i>
           </button>
-          <ul class="dropdown-menu" aria-labelledby="${menuId}">${subItems}</ul>
+          <ul id="${menuId}" class="sidebar-nav__submenu">${subItems}</ul>
         </li>
       `;
     }
 
     if (item.unavailable || !item.href) {
       return `
-        <li class="nav-item">
+        <li class="sidebar-nav__item">
           <span class="${classes} opacity-50" aria-disabled="true" title="${item.label} — em breve">
-            <i class="bi ${item.icon}"></i><span class="navbar-top__link-label">${item.label}</span>
+            <i class="bi ${item.icon}"></i><span>${item.label}</span>
           </span>
         </li>
       `;
     }
 
     return `
-      <li class="nav-item">
+        <li class="sidebar-nav__item">
         <a href="${item.href}" class="${classes}" title="${item.label}">
-          <i class="bi ${item.icon}"></i><span class="navbar-top__link-label">${item.label}</span>
+          <i class="bi ${item.icon}"></i><span>${item.label}</span>
         </a>
       </li>
     `;
   }
+}
 
-  initializeDropdowns() {
-    if (typeof bootstrap === 'undefined') {
-      console.error('nav-bar: Bootstrap não foi carregado.');
-      return;
-    }
+// O controle fica delegado ao documento: funciona mesmo quando a navbar e o
+// botão do topo são criados em momentos diferentes durante o carregamento.
+const closeMenu = () => {
+  document.body.classList.remove('sidebar-is-open');
+  document.querySelector('[data-sidebar-toggle]')?.setAttribute('aria-expanded', 'false');
+};
 
-    let activeInstance = null;
-    let closeTimer = null;
+customElements.define('nav-bar', NavBar);
 
-    this.querySelectorAll('.nav-item.dropdown').forEach((item) => {
-      const toggle = item.querySelector('.dropdown-toggle');
-      const menu = item.querySelector('.dropdown-menu');
-      const instance = bootstrap.Dropdown.getOrCreateInstance(toggle, {
-        popperConfig: { strategy: 'fixed' },
-      });
+document.addEventListener('click', (event) => {
+  const trigger = event.target.closest('[data-sidebar-toggle]');
+  if (trigger) {
+    const isOpen = document.body.classList.toggle('sidebar-is-open');
+    trigger.setAttribute('aria-expanded', String(isOpen));
+    return;
+  }
 
-      toggle.addEventListener('show.bs.dropdown', () => {
-        menu.classList.remove('is-positioned');
-        requestAnimationFrame(() => requestAnimationFrame(() => menu.classList.add('is-positioned')));
-      });
-      toggle.addEventListener('hide.bs.dropdown', () => menu.classList.remove('is-positioned'));
+  if (event.target.closest('[data-sidebar-backdrop]')) closeMenu();
+});
 
-      item.addEventListener('mouseenter', () => {
-        clearTimeout(closeTimer);
-        if (activeInstance && activeInstance !== instance) activeInstance.hide();
-        instance.show();
-        activeInstance = instance;
-      });
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') closeMenu();
+});
 
-      item.addEventListener('mouseleave', () => {
-        closeTimer = setTimeout(() => {
-          instance.hide();
-          if (activeInstance === instance) activeInstance = null;
-        }, 220);
-      });
-    });
+class PortalHeader extends HTMLElement {
+  // Inclua novos cursos aqui. Quando houver integração com dados reais,
+  // esta lista poderá ser preenchida pela API mantendo o mesmo formato.
+  static COURSES = [
+    { label: '2026/2 · Eng. de Software', selected: true },
+    { label: '2026/2 · Análise e Desenvolvimento de Sistemas' },
+    { label: '2026/2 · Administração' },
+  ];
+
+  connectedCallback() {
+    if (this.dataset.ready) return;
+    this.dataset.ready = 'true';
+    this.classList.add('portal-topbar');
+    const courses = PortalHeader.COURSES.map((course) => `
+      <option${course.selected ? ' selected' : ''}>${course.label}</option>
+    `).join('');
+    this.innerHTML = `
+      <button class="portal-topbar__menu btn" type="button" data-sidebar-toggle
+        aria-controls="main-navigation" aria-expanded="false" aria-label="Abrir menu de navegação">
+        <i class="bi bi-list" aria-hidden="true"></i>
+      </button>
+      <span class="portal-topbar__title">Portal do Aluno</span>
+      <div class="portal-topbar__profile">
+        <theme-toggle></theme-toggle>
+        <label class="portal-topbar__course-label" for="course-selector">Curso atual</label>
+        <select id="course-selector" class="portal-topbar__course" aria-label="Selecionar curso atual">
+          ${courses}
+        </select>
+        <span class="portal-topbar__profile-text"><strong>Victor H. Oliveira</strong><small>RA: 274769</small></span>
+        <span class="portal-topbar__avatar" aria-label="Perfil de Victor H. Oliveira">VO</span>
+      </div>
+    `;
   }
 }
 
-customElements.define('nav-bar', NavBar);
+customElements.define('portal-header', PortalHeader);
 
 class ThemeToggle extends HTMLElement {
   connectedCallback() {
