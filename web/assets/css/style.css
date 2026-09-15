@@ -56,182 +56,56 @@ html, body{ min-height: 100%; margin: 0; }
 body{ background: var(--bs-body-bg); color: var(--bs-body-color); transition: background .2s ease, color .2s ease; }
 
 /* ===================== APP SHELL ===================== */
-/* página rola normalmente; a navbar é quem fica fixa (sticky) */
+/* sidebar fixa à esquerda (.sidebar-nav, position:fixed) + conteúdo com
+   padding-left equivalente à largura dela; a página rola normalmente. */
 .app-shell{
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  padding-left: 238px;
 }
 
 .page-content{
-  padding: 24px;
+  padding: 0 32px 40px;
   max-width: 1400px;
   width: 100%;
   margin: 0 auto;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
+  min-height: 100vh;
 }
 
-/* Conteúdo ALÉM da 1ª tela (2º grid-mesh em diante) fica FORA do
-   .app-shell de propósito — assim ele nunca compete por espaço com a
-   seção que trava na tela; é só conteúdo normal, empurra a página e
-   deixa ela rolar, sem nenhuma mágica de flex envolvida. */
-.page-content-extra{
-  padding: 0 24px 24px;
-  max-width: 1400px;
-  width: 100%;
-  margin: 0 auto;
-}
+/* ===== NAVEGAÇÃO LATERAL ===== */
+.brand-logo{ max-width: 116px; max-height: 32px; object-fit: contain; }
+.brand-logo--light-theme{ display: none; }
+html[data-bs-theme="light"] .brand-logo--dark-theme{ display: none; }
+html[data-bs-theme="light"] .brand-logo--light-theme{ display: block; }
 
-/* ===== NAVBAR (topo) — fixa, formato pílula ===== */
-.navbar-top{
-  position: sticky;
-  top: 0;
-  z-index: 1030;
-  width: 100%;
-  padding: 8px 16px;
-  gap: 10px;
-  border-radius: 999px;
-  margin: 16px auto 0;
-  max-width: calc(1400px + 32px);
+.sidebar-nav{
+  position: fixed; inset: 0 auto 0 0; z-index: 1040;
+  width: 238px; padding: 24px 12px 16px;
+  display: flex; flex-direction: column;
+  background: var(--bs-secondary-bg); border-right: 1px solid var(--bs-border-color);
 }
-
-.navbar-top__slot{
-  border: 1px dashed var(--bs-border-color);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--bs-secondary-color);
-  background: color-mix(in srgb, var(--bs-emphasis-color) 4%, transparent);
-  flex-shrink: 0;
+.sidebar-nav__brand{ display: flex; align-items: center; min-height: 40px; padding: 0 12px 20px; border-bottom: 1px solid var(--bs-border-color); }
+.sidebar-nav__content{ overflow-y: auto; padding: 18px 0; }
+.sidebar-nav__list, .sidebar-nav__submenu{ list-style: none; margin: 0; padding: 0; }
+.sidebar-nav__item + .sidebar-nav__item{ margin-top: 3px; }
+.sidebar-nav__link{
+  width: 100%; min-height: 42px; padding: 10px 12px; border: 0; border-radius: 10px;
+  display: flex; align-items: center; gap: 12px; background: transparent; color: var(--bs-secondary-color);
+  font: inherit; font-size: .88rem; font-weight: 600; text-align: left; text-decoration: none;
+  transition: color .16s ease, background .16s ease;
 }
-.navbar-top__slot-label{
-  font-size: 8px;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-.navbar-top__slot--logo{ height: 42px; padding: 0 18px; }
-.navbar-top__slot--profile{ width: 38px; height: 38px; }
-
-/* ===== itens de navegação — ícone pequeno + texto ao lado, em pílula ===== */
-.navbar-top__nav{
-  list-style: none;
-  margin: 0;
-  padding: 0 4px;
-  display: flex;
-  flex-direction: row;
-  gap: 2px;
-  flex: 1 1 auto;
-  min-width: 0;
-  overflow-x: auto;
-  overflow-y: hidden;
-}
-.navbar-top__nav::-webkit-scrollbar{ height: 3px; }
-.navbar-top__nav::-webkit-scrollbar-thumb{ background: var(--bs-border-color); border-radius: 4px; }
-
-.navbar-top__link{
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 6px;
-  padding: 7px 11px;
-  border-radius: 999px;
-  color: var(--bs-secondary-color);
-  text-decoration: none;
-  white-space: nowrap;
-  flex-shrink: 0;
-  font-size: 11px;
-  font-weight: 500;
-  transition: background .15s ease, color .15s ease;
-}
-.navbar-top__link:hover{
-  background: var(--bs-secondary-bg);
-  color: var(--bs-body-color);
-}
-.navbar-top__link i{ font-size: 14px; line-height: 1; }
-.navbar-top__link-label{ line-height: 1; }
-
-.navbar-top__link.is-active{
-  background: var(--bs-emphasis-color);
-  color: var(--bs-body-bg);
-}
-
-.navbar-top__link--accent{ color: var(--brand-orange); }
-.navbar-top__link--accent:hover{
-  background: color-mix(in srgb, var(--brand-orange) 16%, transparent);
-  color: var(--brand-orange);
-}
-
-/* seta indicando que o item expande — gira quando abre (hover ou clique) */
-.navbar-top__chevron{
-  font-size: 8px !important;
-  margin-left: 1px;
-  opacity: .55;
-  transition: transform .18s ease, opacity .18s ease;
-}
-.navbar-top__link:hover .navbar-top__chevron,
-.navbar-top__link[aria-expanded="true"] .navbar-top__chevron{
-  opacity: 1;
-  transform: rotate(90deg);
-}
-
-/* ===== popup das sub-abas (Bootstrap Dropdown) ===== */
-.navbar-top__link.dropdown-toggle::after{ display: none; } /* sem a setinha padrão, ícone já basta */
-
-.navbar-top__nav .dropdown-menu{
-  margin-top: .6rem !important;
-  min-width: 190px;
-  padding: 6px;
-  border-radius: 14px;
-  border-color: var(--bs-border-color);
-  box-shadow: 0 12px 30px rgba(0,0,0,.18);
-  /* fica invisível até o JS confirmar que o Popper já posicionou.
-     IMPORTANTE: nunca animar `transform` aqui — é a mesma propriedade que
-     o Popper usa (translate) pra posicionar o popup; animar as duas juntas
-     faz uma sobrescrever a outra e o popup "esquece" onde deveria ficar. */
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity .12s ease;
-}
-.navbar-top__nav .dropdown-item{
-  border-radius: 9px;
-  padding: 8px 12px;
-  font-size: 13px;
-  opacity: 0;
-  transform: translateY(-4px);
-}
-
-/* revela o popup (só opacidade — posição fica 100% a cargo do Popper) */
-.navbar-top__nav .dropdown-menu.show.is-positioned{
-  opacity: 1;
-  pointer-events: auto;
-}
-
-/* a animação de "pop" mora nos itens internos, não no container —
-   assim nunca conflita com o transform de posicionamento do Popper */
-.navbar-top__nav .dropdown-menu.show.is-positioned .dropdown-item{
-  animation: navItemPop .18s ease-out forwards;
-}
-.navbar-top__nav .dropdown-menu li:nth-child(1) .dropdown-item{ animation-delay: 0ms; }
-.navbar-top__nav .dropdown-menu li:nth-child(2) .dropdown-item{ animation-delay: 25ms; }
-.navbar-top__nav .dropdown-menu li:nth-child(3) .dropdown-item{ animation-delay: 50ms; }
-.navbar-top__nav .dropdown-menu li:nth-child(4) .dropdown-item{ animation-delay: 75ms; }
-@keyframes navItemPop{
-  from{ opacity: 0; transform: translateY(-4px); }
-  to{ opacity: 1; transform: translateY(0); }
-}
-
-/* ===== ações à direita (config / notificações / tema / perfil) ===== */
-.navbar-top__actions{
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
-  margin-left: 4px;
-}
+.sidebar-nav__link:hover, .sidebar-nav__link:focus-visible{ background: var(--bs-tertiary-bg); color: var(--bs-body-color); outline: none; }
+.sidebar-nav__link.is-active{ background: var(--brand-blue); color: #fff; }
+.sidebar-nav__link--accent{ color: var(--brand-orange); }
+.sidebar-nav__link i:first-child{ width: 18px; font-size: 1rem; text-align: center; }
+.sidebar-nav__chevron{ margin-left: auto; font-size: .7rem; transition: transform .18s ease; }
+.sidebar-nav__submenu{ max-height: 0; overflow: hidden; transition: max-height .22s ease, padding .22s ease; }
+.sidebar-nav__item.is-open .sidebar-nav__submenu{ max-height: 320px; padding: 3px 0 5px; }
+.sidebar-nav__item.is-open .sidebar-nav__chevron{ transform: rotate(180deg); }
+.sidebar-nav__sublink{ display: block; padding: 8px 12px 8px 42px; color: var(--bs-secondary-color); font-size: .79rem; text-decoration: none; }
+.sidebar-nav__sublink:hover, .sidebar-nav__sublink:focus-visible{ color: var(--bs-emphasis-color); text-decoration: underline; }
+.sidebar-nav__footer{ margin-top: auto; padding: 14px 0 0; border-top: 1px solid var(--bs-border-color); }
+.sidebar-nav__exit{ width: 100%; min-height: 42px; padding: 10px 12px; display: flex; align-items: center; gap: 12px; border: 1px solid color-mix(in srgb, #dc3545 28%, transparent); border-radius: 10px; background: color-mix(in srgb, #dc3545 8%, transparent); color: #dc3545; font: inherit; font-size: .88rem; font-weight: 700; text-align: left; box-shadow: 0 4px 14px color-mix(in srgb, #dc3545 14%, transparent); transition: background .16s ease, box-shadow .16s ease, transform .16s ease; }
+.sidebar-nav__exit:hover{ background: #dc3545; color: #fff; box-shadow: 0 6px 18px color-mix(in srgb, #dc3545 32%, transparent); transform: translateY(-1px); }
 
 .icon-btn{
   width: 38px;
@@ -255,8 +129,21 @@ html[data-bs-theme="light"] .theme-toggle .icon-sun{ display: inline-block; }
 html[data-bs-theme="light"] .theme-toggle .icon-moon{ display: none; }
 
 /* ===================== CABEÇALHO DE BOAS-VINDAS / CABEÇALHO PAGINAS ===================== */
-.hero-header{ padding: 28px 4px 6px; flex-shrink: 0; }
-.hero-header h1{ font-weight: 600; }
+.portal-topbar{ height: 64px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--bs-border-color); margin-bottom: 34px; }
+.portal-topbar__menu{ display: none; color: var(--bs-body-color); font-size: 1.45rem; line-height: 1; }
+.portal-topbar__title{ font-size: 1rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.portal-topbar__profile{ display: flex; align-items: center; gap: 10px; }
+.portal-topbar__profile .theme-toggle{ width: 34px; height: 34px; }
+.portal-topbar__course-label{ position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+.portal-topbar__course{ max-width: 245px; height: 34px; padding: 0 30px 0 10px; border: 1px solid var(--bs-border-color); border-radius: 8px; background-color: var(--bs-tertiary-bg); color: var(--bs-secondary-color); font: inherit; font-size: .72rem; font-weight: 600; cursor: pointer; }
+.portal-topbar__course:focus-visible{ outline: 2px solid var(--brand-blue); outline-offset: 2px; }
+.portal-topbar__profile-text{ display: grid; text-align: right; font-size: .76rem; line-height: 1.2; }
+.portal-topbar__profile-text small{ color: var(--bs-secondary-color); }
+.portal-topbar__avatar{ width: 35px; height: 35px; border-radius: 50%; display: grid; place-items: center; background: var(--brand-blue); color: #fff; font-size: .72rem; font-weight: 700; }
+.hero-header{ padding: 0 0 24px; }
+.hero-header__eyebrow{ margin: 0 0 4px; color: var(--brand-orange); font-size: .7rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+.hero-header h1{ margin: 0; font-size: clamp(1.65rem, 3vw, 2.15rem); font-weight: 700; }
+.hero-header > p:last-child{ margin: 7px 0 0; color: var(--bs-secondary-color); }
 .hero-header-pages{ padding: 5px 4px 6px; flex-shrink: 0; }
 .hero-header-pages h1{ font-weight: 600;
                        font-size: 20px; }
@@ -278,25 +165,26 @@ html[data-bs-theme="light"] .theme-toggle .icon-moon{ display: none; }
 }
 
 /* ===================== GRID PERSONALIZADO (mesh) ===================== */
-/* Malha de 4 colunas. Dentro do .app-shell (1ª tela), as linhas usam 1fr:
-   ocupa exatamente o espaço vertical que sobrar — sem piso mínimo, pra
-   nunca forçar scroll nem amassar o hero-header acima dela. */
+/* Malha de 4 colunas. .grid-mesh (sem --static) ainda existe pra casos que
+   precisem esticar dentro de um container flex; hoje todo grid-mesh do
+   projeto usa --static (ver abaixo), que é o padrão recomendado. */
 .grid-mesh{
   flex: 1;
   min-height: 0;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   grid-auto-rows: 1fr;
+  grid-auto-flow: row; /* ordem do HTML: esquerda → direita → baixo */
   gap: 1rem;
   padding: 4px 4px 24px;
 }
 
-/* Qualquer grid-mesh FORA do .app-shell (dentro de .page-content-extra):
-   altura NATURAL, nunca encolhe — é a página quem rola pra mostrar o
-   resto, em vez de espremer as boxes. */
+/* .grid-mesh--static: altura NATURAL por linha (mínimo 250px), nunca
+   encolhe — é a página quem rola pra mostrar o resto, em vez de espremer
+   as boxes. É o modo padrão de todo grid-mesh no projeto atualmente. */
 .grid-mesh--static{
   flex: none;
-  grid-auto-rows: minmax(220px, auto);
+  grid-auto-rows: minmax(250px, auto);
 }
 
 .g-box{ overflow: auto; }
@@ -307,31 +195,235 @@ html[data-bs-theme="light"] .theme-toggle .icon-moon{ display: none; }
 .g-col-3{ grid-column: span 3; }
 .g-col-4{ grid-column: span 4; }
 
-/* span vertical (linhas) */
+/* spans verticais */
 .g-row-1{ grid-row: span 1; }
 .g-row-2{ grid-row: span 2; }
 .g-row-3{ grid-row: span 3; }
+.g-row-4{ grid-row: span 4; }
+
+/* conteudo das boxes */
+.box-content{
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: inherit;
+  padding: 2.75rem 1.25rem 1.25rem;
+  display: grid;
+  place-items: center;
+  text-align: center;
+}
+
+.box-content__title{
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  margin: 0;
+  color: var(--bs-secondary-color);
+  font-size: .75rem;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.box-content__body{
+  width: 100%;
+}
+
+/* Cards da página inicial */
+.dashboard-grid{ grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 0; gap: 20px; }
+.dashboard-card{ min-height: 254px; background: var(--bs-secondary-bg); border: 1px solid var(--bs-border-color); border-radius: var(--radius); box-shadow: 0 6px 18px rgba(13, 27, 52, .05); }
+.dashboard-card--notice{ border-top: 4px solid var(--brand-orange); background: color-mix(in srgb, var(--brand-orange) 5%, var(--bs-secondary-bg)); }
+.dashboard-card .box-content{ align-items: start; padding: 3.8rem 1.35rem 1.25rem; text-align: left; }
+.dashboard-card__icon{ position: absolute; top: 1rem; right: 1rem; width: 36px; height: 36px; display: grid; place-items: center; border-radius: 10px; color: var(--brand-blue); background: color-mix(in srgb, var(--brand-blue) 10%, transparent); }
+.dashboard-card--notice .dashboard-card__icon{ color: var(--brand-orange); background: color-mix(in srgb, var(--brand-orange) 12%, transparent); }
+.dashboard-card h3{ margin: 0 0 8px; font-size: .92rem; font-weight: 700; }
+.dashboard-card p{ margin: 0; color: var(--bs-secondary-color); font-size: .8rem; line-height: 1.55; }
+.dashboard-card__action{ width: 100%; margin-top: 20px; font-size: .77rem; font-weight: 700; }
+.quick-access{ margin-top: 34px; }
+.quick-access h2{ margin: 0 0 14px; font-size: 1rem; font-weight: 700; }
+.quick-access__grid{ grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 0; gap: 14px; grid-auto-rows: minmax(90px, auto); }
+.quick-access__item{ min-height: 90px; display: grid; place-content: center; gap: 9px; padding: 12px; border: 1px solid var(--bs-border-color); border-radius: 12px; background: var(--bs-secondary-bg); color: var(--bs-body-color); text-align: center; text-decoration: none; font-size: .75rem; font-weight: 600; transition: transform .16s ease, border-color .16s ease; }
+.quick-access__item:hover{ transform: translateY(-2px); color: var(--brand-blue); border-color: var(--brand-blue); }
+.quick-access__item i{ font-size: 1.35rem; color: var(--brand-blue); }
+
+/* horario aula */
+
+.box-content--schedule{
+  display: block;
+  padding-top: 2.7rem;
+}
+
+.class-schedule{
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+}
+
+.class-schedule__table{
+  width: 100%;
+  min-width: 760px;
+  height: 100%;
+  border-collapse: separate;
+  border-spacing: 4px;
+  table-layout: fixed;
+  font-size: clamp(.65rem, 1vw, .9rem);
+}
+
+.class-schedule__table th,
+.schedule-cell{
+  border: 1px solid var(--bs-border-color);
+  border-radius: 8px;
+  text-align: center;
+  vertical-align: middle;
+  padding: .45rem;
+}
+
+.class-schedule__table thead th{
+  background: var(--bs-tertiary-bg);
+  color: var(--bs-secondary-color);
+  font-weight: 700;
+}
+
+.class-schedule__time-header,
+.class-schedule__table tbody th{
+  width: 72px;
+}
+
+.class-schedule__table tbody th{
+  background: var(--bs-secondary-bg);
+  color: var(--bs-secondary-color);
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.schedule-cell{
+  background: var(--bs-secondary-bg);
+  color: var(--bs-body-color);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.schedule-cell small{
+  display: block;
+  margin-top: .25rem;
+  color: inherit;
+  opacity: .8;
+  font-weight: 400;
+}
+
+.schedule-cell--green{ background: #80c99a; color: #10281a; }
+.schedule-cell--blue{ background: #4d91d0; color: #fff; }
+.schedule-cell--soft-blue{ background: #b8cde8; color: #182638; }
+.schedule-cell--orange{ background: #c95d10; color: #fff; }
+.schedule-cell--purple{ background: #c65ac7; color: #241126; }
+.schedule-cell--pink{ background: #d8acd8; color: #352036; }
+.schedule-cell--peach{ background: #e8b08d; color: #392114; }
+
+/* boleto */
+.boleto-card{
+  padding: 2.7rem 1rem 1rem;
+}
+
+.boleto-card__body{
+  width: 100%;
+  max-width: 220px;
+}
+
+.boleto-card__status{
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  margin-bottom: .8rem;
+  color: var(--bs-secondary-color);
+  font-size: .72rem;
+  font-weight: 600;
+}
+
+.boleto-card__dot{
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #f0a83a;
+  box-shadow: 0 0 0 3px color-mix(in srgb, #f0a83a 18%, transparent);
+}
+
+.boleto-card__label{
+  margin: 0;
+  color: var(--bs-secondary-color);
+  font-size: .72rem;
+}
+
+.boleto-card__value{
+  display: block;
+  margin: .1rem 0 1rem;
+  color: var(--bs-body-color);
+  font-size: clamp(1.35rem, 2.2vw, 1.8rem);
+  line-height: 1;
+}
+
+.boleto-card__details{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .65rem;
+  margin: 0 0 1rem;
+}
+
+.boleto-card__details div{
+  min-width: 0;
+}
+
+.boleto-card__details dt{
+  margin-bottom: .15rem;
+  color: var(--bs-secondary-color);
+  font-size: .63rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.boleto-card__details dd{
+  margin: 0;
+  color: var(--bs-body-color);
+  font-size: .75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.boleto-card__action{
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  color: var(--bs-primary);
+  font-size: .75rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.boleto-card__action:hover{
+  color: var(--brand-orange);
+}
 
 /* ===================== RESPONSIVO ===================== */
-@media (max-width: 860px){
-  .navbar-top{ border-radius: var(--radius); margin-top: 8px; }
-  .navbar-top__slot-label{ display: none; }
-  .navbar-top__slot--logo{ padding: 0; width: 42px; }
-  .navbar-top__link-label{ display: none; }
-  .navbar-top__chevron{ display: none; }
-  .navbar-top__link{ padding: 8px; }
+@media (max-width: 980px){
+  .dashboard-grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dashboard-grid > .g-col-2{ grid-column: span 2; }
+  .quick-access__grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 
-  .page-content{ padding: 12px; }
-  .hero-header{ padding: 18px 2px 2px; }
-
-  /* mesh vira coluna única; todo span colapsa pra leitura linear */
-  .grid-mesh{
-    grid-template-columns: 1fr;
-    grid-auto-rows: auto;
-  }
-  .grid-mesh > *{
-    grid-column: 1 / -1 !important;
-    grid-row: auto !important;
-    min-height: 160px;
-  }
+@media (max-width: 760px){
+  .app-shell{ padding-left: 0; }
+  .page-content{ padding: 0 16px 32px; }
+  .portal-topbar{ height: 58px; margin-bottom: 26px; }
+  .portal-topbar__menu{ display: inline-flex; align-items: center; justify-content: center; padding: 4px 8px 4px 0; }
+  .portal-topbar__profile-text{ display: none; }
+  .portal-topbar__course{ max-width: min(190px, 42vw); }
+  .sidebar-nav{ width: min(288px, calc(100vw - 54px)); transform: translateX(-105%); transition: transform .22s ease; box-shadow: 10px 0 30px rgba(0,0,0,.2); }
+  .sidebar-is-open .sidebar-nav{ transform: translateX(0); }
+  .sidebar-backdrop{ position: fixed; inset: 0; z-index: 1035; background: rgba(0,0,0,.42); opacity: 0; pointer-events: none; transition: opacity .22s ease; }
+  .sidebar-is-open .sidebar-backdrop{ opacity: 1; pointer-events: auto; }
+  .hero-header{ padding-bottom: 20px; }
+  .dashboard-grid, .quick-access__grid{ grid-template-columns: 1fr; }
+  .dashboard-grid > .g-col-2, .dashboard-grid > *, .quick-access__grid > *{ grid-column: 1 / -1; grid-row: auto; }
+  .dashboard-card{ min-height: 230px; }
+  .grid-mesh--static{ grid-auto-rows: minmax(0, auto); }
+  .quick-access{ margin-top: 28px; }
 }
