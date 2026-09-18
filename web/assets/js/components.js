@@ -13,7 +13,7 @@ const route = (path) => new URL(path, APP_ROOT_URL).href;
 const ROUTES = Object.freeze({
   home: APP_ROOT_URL.href,
   centralAcademica: route('pages/academico/centralAcademico.html'),
-  boletos: route('pages/financeiro/centralBoleto.html'),
+  boletos: route('pages/financeiro/centralBoletos.html'),
   chamados: route('pages/suporte/chamado.html'),
   repositorio: route('pages/materiais/repositorioAluno.html'),
   avaliacao: route('pages/avalieNos/avaliacaoFaculdade.html'),
@@ -26,6 +26,7 @@ class NavBar extends HTMLElement {
       label: 'Acadêmico', icon: 'bi-mortarboard',
       subs: [
         { label: 'Central Acadêmica', href: ROUTES.centralAcademica },
+        { label: 'Horas de Aula', href: ROUTES.centralAcademica },
       ],
     },
     {
@@ -122,7 +123,9 @@ class NavBar extends HTMLElement {
             <span>${item.label}</span>
             <i class="bi bi-chevron-down sidebar-nav__chevron" aria-hidden="true"></i>
           </button>
-          <ul id="${menuId}" class="sidebar-nav__submenu">${subItems}</ul>
+          <div id="${menuId}" class="sidebar-nav__submenu">
+            <ul class="sidebar-nav__submenu-list">${subItems}</ul>
+          </div>
         </li>
       `;
     }
