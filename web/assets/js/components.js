@@ -13,7 +13,19 @@ const route = (path) => new URL(path, APP_ROOT_URL).href;
 const ROUTES = Object.freeze({
   home: APP_ROOT_URL.href,
   centralAcademica: route('pages/academico/centralAcademico.html'),
-  boletos: route('pages/financeiro/centralBoletos.html'),
+  horarioAulas: route('pages/academico/horarioAulas.html'),
+  calendarioProvas: route('pages/academico/calendarioProvas.html'),
+  notas: route('pages/academico/notas.html'),
+  faltas: route('pages/academico/faltas.html'),
+  desempenho: route('pages/academico/desempenho.html'),
+  dadosCadastrais: route('pages/academico/dadosCadastrais.html'),
+  confirmacaoMatricula: route('pages/academico/confirmacaoMatricula.html'),
+  dic: route('pages/academico/dic.html'),
+  atualizacaoDados: route('pages/academico/atualizacaoDadosCadastrais.html'),
+  atividadesComplementares: route('pages/academico/atividadesComplementares.html'),
+  planoEnsino: route('pages/academico/planoEnsino.html'),
+  carteirinhaDigital: route('pages/academico/carteirinhaDigital.html'),
+  boletos: route('pages/financeiro/centralBoleto.html'),
   chamados: route('pages/suporte/chamado.html'),
   repositorio: route('pages/materiais/repositorioAluno.html'),
   avaliacao: route('pages/avalieNos/avaliacaoFaculdade.html'),
@@ -26,7 +38,18 @@ class NavBar extends HTMLElement {
       label: 'Acadêmico', icon: 'bi-mortarboard',
       subs: [
         { label: 'Central Acadêmica', href: ROUTES.centralAcademica },
-        { label: 'Horas de Aula', href: ROUTES.centralAcademica },
+        { label: 'Horário de Aulas', href: ROUTES.horarioAulas },
+        { label: 'Calendário de Provas', href: ROUTES.calendarioProvas },
+        { label: 'Notas', href: ROUTES.notas },
+        { label: 'Faltas', href: ROUTES.faltas },
+        { label: 'Gráficos de Desempenho', href: ROUTES.desempenho },
+        { label: 'Dados Cadastrais', href: ROUTES.dadosCadastrais },
+        { label: 'Confirmação de Matrícula', href: ROUTES.confirmacaoMatricula },
+        { label: 'DIC', href: ROUTES.dic },
+        { label: 'Atualização de Dados Cadastrais', href: ROUTES.atualizacaoDados },
+        { label: 'Atividades Complementares', href: ROUTES.atividadesComplementares },
+        { label: 'Plano de Ensino', href: ROUTES.planoEnsino },
+        { label: 'Carteirinha Digital', href: ROUTES.carteirinhaDigital },
       ],
     },
     {
@@ -123,9 +146,7 @@ class NavBar extends HTMLElement {
             <span>${item.label}</span>
             <i class="bi bi-chevron-down sidebar-nav__chevron" aria-hidden="true"></i>
           </button>
-          <div id="${menuId}" class="sidebar-nav__submenu">
-            <ul class="sidebar-nav__submenu-list">${subItems}</ul>
-          </div>
+          <ul id="${menuId}" class="sidebar-nav__submenu">${subItems}</ul>
         </li>
       `;
     }
