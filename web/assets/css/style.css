@@ -1,12 +1,14 @@
 :root{
   --radius: 18px;
 
-  /* ===== Paleta de marca (Unifio) ===== */
+    /* ===== Paleta de marca (Unifio) ===== */
   --brand-blue: #1B468E;
   --brand-blue-bright: #2f5fb0; /* versão mais clara do azul, pra contrastar no fundo escuro */
   --brand-orange: #D98B3E;
+  --brand-green: #1f8a5f; /* status positivo (pago, em dia) */
   --brand-offwhite: #f5f9ff;
   --brand-ink: #22242A;
+
 }
 
 /* Tema escuro: fundo em azul-marinho quase preto (sombra do azul da marca),
@@ -129,7 +131,7 @@ html[data-bs-theme="light"] .theme-toggle .icon-sun{ display: inline-block; }
 html[data-bs-theme="light"] .theme-toggle .icon-moon{ display: none; }
 
 /* ===================== CABEÇALHO DE BOAS-VINDAS / CABEÇALHO PAGINAS ===================== */
-.portal-topbar{ height: 64px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--bs-border-color); margin-bottom: 34px; }
+.portal-topbar{ height: 64px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--bs-border-color); margin-bottom: 34px;position: sticky; top: 0; z-index: 1030; background: var(--bs-body-bg); }
 .portal-topbar__menu{ display: none; color: var(--bs-body-color); font-size: 1.45rem; line-height: 1; }
 .portal-topbar__title{ font-size: 1rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 .portal-topbar__profile{ display: flex; align-items: center; gap: 10px; }
@@ -323,12 +325,12 @@ html[data-bs-theme="light"] .theme-toggle .icon-moon{ display: none; }
 .boleto-card{
   padding: 2.7rem 1rem 1rem;
 }
-
+ 
 .boleto-card__body{
   width: 100%;
   max-width: 220px;
 }
-
+ 
 .boleto-card__status{
   display: flex;
   align-items: center;
@@ -338,7 +340,7 @@ html[data-bs-theme="light"] .theme-toggle .icon-moon{ display: none; }
   font-size: .72rem;
   font-weight: 600;
 }
-
+ 
 .boleto-card__dot{
   width: 8px;
   height: 8px;
@@ -346,13 +348,13 @@ html[data-bs-theme="light"] .theme-toggle .icon-moon{ display: none; }
   background: #f0a83a;
   box-shadow: 0 0 0 3px color-mix(in srgb, #f0a83a 18%, transparent);
 }
-
+ 
 .boleto-card__label{
   margin: 0;
   color: var(--bs-secondary-color);
   font-size: .72rem;
 }
-
+ 
 .boleto-card__value{
   display: block;
   margin: .1rem 0 1rem;
@@ -360,18 +362,18 @@ html[data-bs-theme="light"] .theme-toggle .icon-moon{ display: none; }
   font-size: clamp(1.35rem, 2.2vw, 1.8rem);
   line-height: 1;
 }
-
+ 
 .boleto-card__details{
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: .65rem;
   margin: 0 0 1rem;
 }
-
+ 
 .boleto-card__details div{
   min-width: 0;
 }
-
+ 
 .boleto-card__details dt{
   margin-bottom: .15rem;
   color: var(--bs-secondary-color);
@@ -379,7 +381,7 @@ html[data-bs-theme="light"] .theme-toggle .icon-moon{ display: none; }
   font-weight: 500;
   text-transform: uppercase;
 }
-
+ 
 .boleto-card__details dd{
   margin: 0;
   color: var(--bs-body-color);
@@ -387,7 +389,7 @@ html[data-bs-theme="light"] .theme-toggle .icon-moon{ display: none; }
   font-weight: 600;
   white-space: nowrap;
 }
-
+ 
 .boleto-card__action{
   display: inline-flex;
   align-items: center;
@@ -397,18 +399,86 @@ html[data-bs-theme="light"] .theme-toggle .icon-moon{ display: none; }
   font-weight: 700;
   text-decoration: none;
 }
-
+ 
 .boleto-card__action:hover{
   color: var(--brand-orange);
 }
-
+ 
 /* ===================== RESPONSIVO ===================== */
 @media (max-width: 980px){
   .dashboard-grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .dashboard-grid > .g-col-2{ grid-column: span 2; }
   .quick-access__grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
-
+ 
+/* ===================== EXTRATO FINANCEIRO ===================== */
+.finance-summary-card{ display: flex; align-items: center; gap: 18px; padding: 26px; box-shadow: 0 2px 10px rgba(15,35,80,.05); }
+.finance-summary-card__icon{
+  flex-shrink: 0;
+  width: 60px;
+  height: 60px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  font-size: 1.6rem;
+  color: var(--brand-blue);
+  background: color-mix(in srgb, var(--brand-blue) 10%, transparent);
+}
+.finance-summary-card__icon--success{
+  color: var(--brand-green);
+  background: color-mix(in srgb, var(--brand-green) 14%, transparent);
+}
+.finance-summary-card__label{
+  margin: 0 0 6px;
+  font-size: .74rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--bs-secondary-color);
+}
+.finance-summary-card__value{ margin: 0; font-size: 1.5rem; font-weight: 700; line-height: 1.2; }
+.finance-summary-card__value small{ font-size: .78rem; font-weight: 500; color: var(--bs-secondary-color); }
+.finance-summary-card__value--success{ color: var(--brand-green); }
+ 
+.finance-filter-card{
+  padding: 20px 24px;
+  margin: 20px 0;
+  box-shadow: 0 2px 10px rgba(15,35,80,.05);
+}
+.finance-filter-bar{ display: flex; flex-wrap: wrap; gap: 12px; margin: 0; }
+.finance-filter-bar .form-select{ min-width: 240px; width: auto; }
+.finance-filter-bar .btn{ padding-left: 20px; padding-right: 20px; }
+ 
+.finance-table-card{ padding: 8px 24px 20px; box-shadow: 0 2px 10px rgba(15,35,80,.05); }
+ 
+.finance-ledger{ width: 100%; margin: 0; }
+.finance-ledger thead th{
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--bs-secondary-color);
+  border-bottom-color: var(--bs-border-color);
+  white-space: nowrap;
+  padding: 16px 12px;
+}
+.finance-ledger td{ vertical-align: middle; border-color: var(--bs-border-color); padding: 20px 12px; }
+.finance-ledger__desc strong{ display: block; color: var(--brand-blue); font-size: 1.02rem; font-weight: 700; }
+.finance-ledger__desc small{ color: var(--bs-secondary-color); }
+ 
+.status-pago{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  border-radius: 999px;
+  font-size: .75rem;
+  font-weight: 700;
+  color: var(--brand-green);
+  background: color-mix(in srgb, var(--brand-green) 14%, transparent);
+  white-space: nowrap;
+}
+ 
 @media (max-width: 760px){
   .app-shell{ padding-left: 0; }
   .page-content{ padding: 0 16px 32px; }
@@ -426,6 +496,8 @@ html[data-bs-theme="light"] .theme-toggle .icon-moon{ display: none; }
   .dashboard-card{ min-height: 230px; }
   .grid-mesh--static{ grid-auto-rows: minmax(0, auto); }
   .quick-access{ margin-top: 28px; }
+  .finance-summary-card{ padding: 16px; }
+  .g-box:has(.finance-ledger){ overflow-x: auto; }
 }
 
 /* refinamentos da grade real de horários da Central Acadêmica */
