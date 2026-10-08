@@ -30,6 +30,28 @@ class UserRepository
         return $record === null ? null : $this->toEntity($record);
     }
 
+    public function findByRegistration(string $registrationNumber): ?Users
+    {
+        foreach ($this->all() as $user) {
+            if ($user->getRegistrationNumber() === $registrationNumber) {
+                return $user;
+            }
+        }
+
+        return null;
+    }
+
+    public function authenticate(string $registrationNumber, string $password): ?Users
+    {
+        $user = $this->findByRegistration($registrationNumber);
+
+        if ($user === null || !$user->isActive() || !password_verify($password, $user->getPassword())) {
+            return null;
+        }
+
+        return $user;
+    }
+
     public function create(array $formData): Users
     {
         $now = date('c');
@@ -109,7 +131,15 @@ class UserRepository
 
     private function password(array $data): string
     {
-        return (string) ($data['password'] ?? '');
+        $password = (string) ($data['password'] ?? '');
+
+        if ($password === '') {
+            return '';
+        }
+
+        return password_get_info($password)['algo'] !== 0
+            ? $password
+            : password_hash($password, PASSWORD_DEFAULT);
     }
 
     private function nullableInt(mixed $value): ?int

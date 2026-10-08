@@ -1,0 +1,63 @@
+<?php
+include_once 'lib/title.php';
+include_once 'components/layout.php';
+setTitle('Página Inicial');
+renderHead(getTitle(), 'dark', '');
+?>
+
+<body>
+  <div class="app-shell">
+    <nav-bar id="main-navigation"></nav-bar>
+    <div class="sidebar-backdrop" data-sidebar-backdrop></div>
+
+    <main class="page-content">
+      <portal-header></portal-header>
+
+      <section class="hero-header">
+        <p class="hero-header__eyebrow">Visão geral</p>
+        <h1>Olá, Victor! <span aria-hidden="true">👋</span></h1>
+        <p>Este é o resumo da sua vida acadêmica de hoje.</p>
+      </section>
+
+      <div class="grid-mesh grid-mesh--static dashboard-grid">
+        <article class="g-box g-col-2 dashboard-card dashboard-card--notice">
+          <div class="box-content">
+            <span class="dashboard-card__icon"><i class="bi bi-exclamation-triangle-fill"></i></span>
+            <h2 class="box-content__title">Prazo importante</h2>
+            <div class="box-content__body">
+              <h3>Alteração de Grade</h3>
+              <p>O prazo para realizar ajustes na sua grade curricular encerra no dia <strong>19 de setembro</strong>.</p><a class="btn btn-warning dashboard-card__action" href="pages/academico/centralAcademico.php">Ajustar minha grade</a>
+            </div>
+          </div>
+        </article>
+        <article class="g-box g-col-1 dashboard-card">
+          <div class="box-content"><span class="dashboard-card__icon"><i class="bi bi-calendar2-week"></i></span>
+            <h2 class="box-content__title">Aulas de hoje</h2>
+            <div class="box-content__body">
+              <h3>Projeto Integrador II</h3>
+              <p>Quarta-feira<br><i class="bi bi-geo-alt"></i> Sala 112 · Prédio 1<br><i class="bi bi-clock"></i> 19:15 às 22:50</p><a class="btn btn-primary dashboard-card__action" href="pages/academico/horarioAulas.php">Ver horário</a>
+            </div>
+          </div>
+        </article>
+        <article class="g-box g-col-1 dashboard-card">
+          <div class="box-content"><span class="dashboard-card__icon"><i class="bi bi-briefcase-fill"></i></span>
+            <h2 class="box-content__title">Oportunidades</h2>
+            <div class="box-content__body">
+              <h3>Unifio Carreiras</h3>
+              <p>Cadastre seu currículo no portal e acompanhe novas oportunidades.</p><a class="btn btn-outline-primary dashboard-card__action" href="#">Acessar portal</a>
+            </div>
+          </div>
+        </article>
+      </div>
+      <section class="quick-access" aria-labelledby="quick-access-title">
+        <h2 id="quick-access-title">Acesso rápido</h2>
+        <div class="grid-mesh grid-mesh--static quick-access__grid"><a class="g-box g-col-1 quick-access__item" href="pages/financeiro/centralBoleto.php"><i class="bi bi-upc-scan"></i><span>Boleto mensalidade</span></a><a class="g-box g-col-1 quick-access__item" href="#"><i class="bi bi-file-earmark-text"></i><span>Atestado de matrícula</span></a><a class="g-box g-col-1 quick-access__item" href="#"><i class="bi bi-arrow-repeat"></i><span>Atividades complementares</span></a><a class="g-box g-col-1 quick-access__item" href="pages/academico/carteirinhaDigital.php"><i class="bi bi-person-vcard"></i><span>Carteirinha digital</span></a></div>
+      </section>
+    </main>
+  </div>
+
+  <?php renderScripts(''); ?>
+
+</body>
+
+</html>

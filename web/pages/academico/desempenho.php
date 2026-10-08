@@ -1,13 +1,7 @@
-<!DOCTYPE html>
-<html lang="pt-BR" data-bs-theme="dark">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gráficos de Desempenho</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-  <link rel="stylesheet" href="../../assets/css/style.css">
-</head>
+<?php
+require_once '../../components/layout.php';
+renderHead('Gráficos de Desempenho', 'dark', '../../', false);
+?>
 <body>
 <div class="app-shell">
   <nav-bar id="main-navigation"></nav-bar>
@@ -18,7 +12,7 @@
         <h1 class="display-6">Gráficos de Desempenho</h1>
         <p class="text-secondary mb-0">Central Acadêmica • Engenharia de Software • 2026/2</p>
       </div>
-      <a class="btn btn-outline-primary" href="centralAcademico.html"><i class="bi bi-arrow-left me-1"></i>Central Acadêmica</a>
+      <a class="btn btn-outline-primary" href="centralAcademico.php"><i class="bi bi-arrow-left me-1"></i>Central Acadêmica</a>
     </section>
     <div class="academic-page-grid "><section class="academic-panel academic-panel--wide">
       <div class="academic-panel__head"><div class="academic-panel__icon"><i class="bi bi-bar-chart"></i></div><div><h2>Média por disciplina</h2></div></div>
@@ -29,7 +23,6 @@
     </section></div>
   </main>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="../../assets/js/components.js" defer></script>
+<?php renderScripts(); ?>
 </body>
 </html>

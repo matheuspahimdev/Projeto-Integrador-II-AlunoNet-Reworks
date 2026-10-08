@@ -28,6 +28,13 @@ class UsersController
         return $user === null ? null : $this->toArray($user);
     }
 
+    public function authenticate(string $registrationNumber, string $password): ?array
+    {
+        $user = $this->repository->authenticate($registrationNumber, $password);
+
+        return $user === null ? null : $this->toArray($user);
+    }
+
     public function store(array $formData): array
     {
         return $this->toArray($this->repository->create($formData));
@@ -94,7 +101,6 @@ class UsersController
             'phone' => $user->getPhone(),
             'address' => $user->getAddress(),
             'email' => $user->getEmail(),
-            'password' => $user->getPassword(),
             'role' => $user->getRole()->value,
             'is_active' => $user->isActive(),
             'created_at' => $user->getCreatedAt(),

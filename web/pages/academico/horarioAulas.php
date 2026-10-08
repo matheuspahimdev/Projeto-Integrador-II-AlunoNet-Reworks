@@ -1,13 +1,7 @@
-<!DOCTYPE html>
-<html lang="pt-BR" data-bs-theme="dark">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Horário de Aulas</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-  <link rel="stylesheet" href="../../assets/css/style.css">
-</head>
+<?php
+require_once '../../components/layout.php';
+renderHead('Horário de Aulas', 'dark', '../../', false);
+?>
 <body>
 <div class="app-shell">
   <nav-bar id="main-navigation"></nav-bar>
@@ -18,7 +12,7 @@
         <h1 class="display-6">Horário de Aulas</h1>
         <p class="text-secondary mb-0">Engenharia de Software • 2026/2 • Período Noturno</p>
       </div>
-      <a class="btn btn-outline-primary" href="centralAcademico.html"><i class="bi bi-arrow-left me-1"></i>Voltar para Central Acadêmica</a>
+      <a class="btn btn-outline-primary" href="centralAcademico.php"><i class="bi bi-arrow-left me-1"></i>Voltar para Central Acadêmica</a>
     </section>
     <div class="grid-mesh grid-mesh--static">
       <!-- Horário de aulas -->
@@ -217,7 +211,6 @@
     </div>
   </main>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="../../assets/js/components.js" defer></script>
+<?php renderScripts(); ?>
 </body>
 </html>
