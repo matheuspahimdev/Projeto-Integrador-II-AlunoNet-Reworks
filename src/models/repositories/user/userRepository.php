@@ -2,63 +2,40 @@
 
 declare(strict_types=1);
 
-require_once dirname(__DIR__, 3) . '/core/JsonDatabase.php';
-require_once dirname(__DIR__, 3) . '/models/enums/users/role.php';
-require_once dirname(__DIR__, 3) . '/models/entities/users/users.php';
+require_once dirname(__DIR__) . '/EntityRepository.php';
+require_once dirname(__DIR__, 2) . '/enums/users/role.php';
+require_once dirname(__DIR__, 2) . '/entities/users/users.php';
 
-class UserRepository
+class UserRepository extends EntityRepository
 {
-    private JsonDatabase $database;
-
-    public function __construct(?JsonDatabase $database = null)
+    protected function table(): string
     {
-        $this->database = $database ?? new JsonDatabase();
+        return 'users';
     }
 
-    public function all(): array
+    public function findByRegistration(string $registrationNumber): ?Users
     {
-        return array_map(
-            fn (array $record): Users => $this->toEntity($record),
-            $this->database->all('users')
-        );
+        foreach ($this->all() as $user) {
+            if ($user->getRegistrationNumber() === $registrationNumber) {
+                return $user;
+            }
+        }
+
+        return null;
     }
 
-    public function find(int|string $id): ?Users
+    public function authenticate(string $registrationNumber, string $password): ?Users
     {
-        $record = $this->database->find('users', $id);
+        $user = $this->findByRegistration($registrationNumber);
 
-        return $record === null ? null : $this->toEntity($record);
-    }
-
-    public function create(array $formData): Users
-    {
-        $now = date('c');
-        $record = $this->toRecord($formData, $now, $now);
-        $record = $this->database->insert('users', $record);
-
-        return $this->toEntity($record);
-    }
-
-    public function update(int|string $id, array $formData): ?Users
-    {
-        $current = $this->database->find('users', $id);
-
-        if ($current === null) {
+        if ($user === null || !$user->isActive() || !password_verify($password, $user->getPassword())) {
             return null;
         }
 
-        $record = $this->toRecord(array_merge($current, $formData), $current['created_at'], date('c'));
-        $record = $this->database->update('users', $id, $record);
-
-        return $record === null ? null : $this->toEntity($record);
+        return $user;
     }
 
-    public function delete(int|string $id): bool
-    {
-        return $this->database->delete('users', $id);
-    }
-
-    private function toRecord(array $data, string $createdAt, string $updatedAt): array
+    protected function toRecord(array $data, string $createdAt, string $updatedAt): array
     {
         return [
             'id' => $data['id'] ?? null,
@@ -74,13 +51,13 @@ class UserRepository
             'email' => (string) ($data['email'] ?? ''),
             'password' => $this->password($data),
             'role' => $this->role($data['role'] ?? Role::STUDENT)->value,
-            'is_active' => filter_var($data['is_active'] ?? true, FILTER_VALIDATE_BOOLEAN),
+            'is_active' => $this->boolean($data['is_active'] ?? true, true),
             'created_at' => $createdAt,
             'updated_at' => $updatedAt,
         ];
     }
 
-    private function toEntity(array $record): Users
+    protected function toEntity(array $record): Users
     {
         return new Users(
             $record['id'] ?? null,
@@ -109,11 +86,14 @@ class UserRepository
 
     private function password(array $data): string
     {
-        return (string) ($data['password'] ?? '');
-    }
+        $password = (string) ($data['password'] ?? '');
 
-    private function nullableInt(mixed $value): ?int
-    {
-        return $value === null || $value === '' ? null : (int) $value;
+        if ($password === '') {
+            return '';
+        }
+
+        return password_get_info($password)['algoName'] !== 'unknown'
+            ? $password
+            : password_hash($password, PASSWORD_DEFAULT);
     }
 }

@@ -66,4 +66,9 @@ class Frequencies
     {
         return $this->status;
     }
+
+    public function getJustification(): ?string
+    {
+        return $this->justification;
+    }
 }
