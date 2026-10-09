@@ -36,3 +36,13 @@ Dessa forma, a proposta busca proporcionar uma plataforma mais acessível, organ
 - Visual Studio Code
 - Figma
 - Miro 
+
+## Modo atual de navegação
+
+Nesta etapa do projeto, o portal funciona como um protótipo navegável. O acesso é
+direto pela página inicial (`web/index.php`) e todas as páginas podem ser abertas
+manualmente pelo menu lateral, sem tela de login, sessões PHP ou banco de dados.
+
+Os dados exibidos nas páginas são estáticos e representam o funcionamento
+proposto do portal. A autenticação e a persistência poderão ser implementadas
+posteriormente, quando fizerem parte do escopo do projeto.

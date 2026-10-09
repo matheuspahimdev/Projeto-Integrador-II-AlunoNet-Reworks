@@ -2,80 +2,162 @@
 
 ## Introdução
 
-O portal do aluno da UNIFIO (Centro Universitário das Faculdades Integradas de Ourinhos) será desenvolvido com uma arquitetura MVC organizada em camadas. Essa escolha separa a apresentação, o processamento das requisições, as regras de acesso aos dados e a representação das informações do sistema.
+O AlunoNet está sendo recriado como um protótipo navegável do portal do aluno da
+UNIFIO (Centro Universitário das Faculdades Integradas de Ourinhos). Nesta etapa,
+o objetivo principal é representar a interface, a organização das informações e o
+fluxo de navegação usando PHP nativo e Bootstrap.
 
-A arquitetura foi definida para permitir a reconstrução gradual do portal, mantendo o projeto simples, compreensível e adequado ao escopo acadêmico. Cada parte do sistema possui uma responsabilidade específica, facilitando a manutenção, os testes e a evolução das funcionalidades.
+O escopo atual não possui banco de dados, autenticação ou controle de sessão. O
+acesso é direto e manual: o usuário abre a página inicial e navega pelas opções
+disponíveis no menu lateral.
 
-## Arquitetura escolhida
+## Arquitetura implementada
 
-O projeto utiliza as seguintes camadas:
+Atualmente, o projeto está concentrado na pasta `web` e possui uma estrutura
+orientada à apresentação:
 
-- **Frontend:** concentra as páginas, componentes visuais, formulários e arquivos públicos acessados pelo navegador.
-- **Rotas e configuração:** centralizam os caminhos do projeto e registram os controllers disponíveis.
-- **Controllers:** recebem as requisições do frontend, acionam os repositories e retornam respostas para o navegador.
-- **Repositories:** executam as operações básicas de leitura, criação, atualização e exclusão dos dados.
-- **Entities:** representam os objetos do domínio, como usuários, cursos, disciplinas e matrículas.
-- **Enums:** padronizam valores fixos do sistema, como perfis, status e tipos de registros.
-- **Persistência:** utiliza o arquivo `database.json` como simulador de banco de dados durante o desenvolvimento.
+- **Páginas PHP:** exibem as telas do portal e seus dados estáticos.
+- **Componentes compartilhados:** concentram o cabeçalho HTML, os estilos
+  externos e os scripts comuns às páginas.
+- **JavaScript:** cria o menu lateral e os componentes reutilizáveis do portal,
+  além de calcular as rotas relativas para permitir o uso em subpastas.
+- **CSS:** define o tema visual, o layout responsivo e os estilos específicos
+  das páginas.
+- **Imagens:** armazenam as marcas e demais recursos visuais utilizados pela
+  interface.
 
-Essa divisão estabelece um fluxo claro:
+As páginas não dependem de controllers, repositories, entidades ou serviços
+externos para serem exibidas.
+
+## Estrutura atual
+
+```text
+web/
+├── index.php                    # Página inicial do portal
+├── components/
+│   └── layout.php               # Cabeçalho e scripts compartilhados
+├── assets/
+│   ├── css/style.css            # Estilos da aplicação
+│   ├── js/components.js         # Menu e componentes JavaScript
+│   └── img/                     # Imagens e logotipos
+├── lib/
+│   └── title.php                # Auxiliar para títulos das páginas
+└── pages/                       # Páginas organizadas por módulo
+    ├── academico/
+    ├── avalieNos/
+    ├── financeiro/
+    ├── materiais/
+    └── suporte/
+```
+
+## Fluxo de navegação
+
+O fluxo atual é simples e não possui processamento de login ou persistência:
 
 ```text
 Navegador
-    -> Frontend e formulário
+    -> web/index.php
+    -> Menu lateral em components.js
+    -> Página PHP do módulo
+    -> HTML renderizado no navegador
+```
+
+Cada página inclui `components/layout.php`, chama `renderHead()` para montar o
+cabeçalho e `renderScripts()` para carregar o Bootstrap e os componentes
+JavaScript. Os caminhos dos assets são ajustados pelo parâmetro `$assetRoot`.
+
+O arquivo `web/assets/js/components.js` calcula as URLs com base na localização
+do próprio script. Dessa forma, os links funcionam tanto no diretório raiz do
+servidor quanto quando o projeto é executado dentro de uma subpasta.
+
+## Layout compartilhado
+
+O arquivo `web/components/layout.php` fornece duas funções:
+
+- `renderHead()`: gera a estrutura inicial do documento, define o título,
+  carrega Bootstrap, Bootstrap Icons, o CSS principal e aplica o tema salvo no
+  `localStorage`.
+- `renderScripts()`: carrega o JavaScript do Bootstrap e,
+  opcionalmente, `assets/js/components.js`.
+
+O layout não inicia sessões, não valida usuários e não injeta dados de
+autenticação no navegador.
+
+## Navegação e componentes
+
+O menu lateral é criado pelo componente `NavBar` em
+`web/assets/js/components.js`. Os itens são organizados por módulos, como:
+
+- Acadêmico;
+- Financeiro;
+- Avalie-nos;
+- Materiais;
+- Suporte.
+
+Funcionalidades ainda não implementadas são apresentadas visualmente como
+indisponíveis. Como não existe autenticação nesta fase, o menu não possui a
+opção de logout.
+
+O tema claro/escuro é uma preferência local do navegador, armazenada em
+`localStorage` com a chave `alunonet-theme`. Essa preferência não representa uma
+sessão de usuário e não é enviada ao servidor.
+
+## Dados e persistência
+
+Os conteúdos exibidos atualmente são estáticos e estão definidos nas próprias
+páginas PHP. Não há:
+
+- banco de dados;
+- arquivo `database.json` em uso;
+- controllers ou repositories ativos;
+- cadastro ou consulta de usuários;
+- login, logout ou sessões PHP.
+
+Formulários e botões existentes representam a experiência planejada do portal,
+mas ainda não estão conectados a uma camada de persistência.
+
+## Arquitetura planejada
+
+Quando o escopo exigir dados dinâmicos, a aplicação poderá evoluir para uma
+arquitetura em camadas sem alterar a organização visual das páginas. Uma
+possível evolução é:
+
+```text
+Navegador
+    -> Página ou formulário
     -> Rota
     -> Controller
     -> Repository
-    -> JsonDatabase
-    -> database.json
+    -> Persistência
 ```
 
-## Frontend
+Nessa etapa futura poderão ser adicionados:
 
-O frontend está localizado na pasta `web`. Ele contém as páginas, componentes, recursos visuais e as ações utilizados pelos formulários.
+- autenticação e controle de sessão;
+- controllers para cada módulo;
+- entidades e repositories;
+- persistência em banco de dados;
+- validação e processamento dos formulários.
 
-Os formulários enviam os dados para os arquivos de processamento dentro de `web/lib`. Esses arquivos não concentram regras de negócio. Sua responsabilidade é carregar a configuração das rotas e encaminhar a requisição para o controller correspondente.
+Esses recursos não fazem parte da implementação atual e só devem ser
+introduzidos quando forem definidos como requisito do projeto.
 
-Essa organização mantém a interface independente da implementação interna do backend. Portanto, uma página pode enviar dados sem precisar conhecer como eles são armazenados.
+## Critérios da decisão atual
 
-## Backend
+O protótipo sem autenticação e sem banco de dados foi adotado porque:
 
-O backend está localizado na pasta `src` e segue a separação de responsabilidades abaixo.
-
-### Controllers
-
-Os controllers são responsáveis por interpretar as requisições do navegador e selecionar a operação adequada. O `UsersController`, por exemplo, oferece operações para listar, consultar, cadastrar, atualizar e excluir usuários.
-
-### Repositories
-
-Os repositories fazem a comunicação com a camada de persistência. O `UserRepository` converte os dados recebidos do formulário em registros compatíveis com o `database.json` e converte os registros encontrados em entidades `Users`.
-
-### Entities
-
-As entidades representam os dados principais do portal. Elas são criadas por construtores e disponibilizam getters para leitura dos seus valores. A alteração dos dados é realizada pelo repository, que grava um novo estado no arquivo de persistência.
-
-### Enums
-
-Os enums definem valores permitidos para campos que possuem opções limitadas. Essa abordagem evita a utilização de textos diferentes para representar o mesmo estado e mantém os dados padronizados.
-
-### Persistência simulada
-
-O arquivo `src/data/database.json` representa temporariamente o banco de dados do sistema. A classe `JsonDatabase`, localizada em `src/core`, concentra as operações de leitura e escrita do arquivo.
-
-Essa solução atende ao objetivo atual de simular o funcionamento completo do portal por meio de formulários, sem exigir a configuração de um banco de dados externo. Em uma etapa futura, a camada `JsonDatabase` poderá ser substituída por uma conexão com banco de dados real sem alterar a responsabilidade dos controllers e das páginas.
-
-## Critérios da decisão
-
-A arquitetura foi escolhida pelos seguintes motivos:
-
-1. **Organização:** cada camada possui uma função definida.
-2. **Simplicidade:** o projeto utiliza PHP nativo e não depende de um framework neste momento.
-3. **Evolução:** novas entidades, controllers e repositories podem ser adicionados seguindo o mesmo padrão.
-4. **Manutenção:** alterações na persistência não precisam modificar as páginas do frontend.
-5. **Adequação ao projeto:** a estrutura atende à proposta de reconstruir as funcionalidades do portal do aluno de forma gradual.
+1. mantém o foco na interface e na usabilidade;
+2. permite navegar pelas funcionalidades sem configurar infraestrutura;
+3. reduz a complexidade durante a fase de demonstração;
+4. facilita a validação visual das páginas e dos componentes;
+5. mantém aberta a integração futura com uma API ou banco de dados.
 
 ## Conclusão
 
-A arquitetura MVC em camadas está definida como padrão estrutural do projeto. O frontend recebe os dados do usuário, as rotas encaminham as requisições, os controllers coordenam as operações, os repositories acessam a persistência e as entidades representam os dados do domínio.
+A arquitetura atual é uma aplicação PHP de apresentação, com páginas estáticas,
+componentes compartilhados, Bootstrap e JavaScript para a navegação. O portal
+pode ser acessado diretamente por `web/index.php`, sem login e sem sessões.
 
-Com essa definição, o portal possui uma base organizada para implementar os módulos acadêmico, financeiro, de empréstimos, notificações, requisitos e usuários. A utilização do `database.json` atende à fase atual de desenvolvimento e mantém aberta a substituição futura por um banco de dados definitivo.
+A separação em camadas MVC permanece como possibilidade de evolução, mas não
+deve ser considerada parte do funcionamento atual enquanto não houver
+persistência ou regras de negócio implementadas.

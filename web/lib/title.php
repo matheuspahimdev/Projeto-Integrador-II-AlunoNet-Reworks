@@ -2,7 +2,7 @@
 
 global $title;
 
-function setTitle($newTitle) {
+function setTitle(string $newTitle) {
     global $title;
     $title = $newTitle;
 }

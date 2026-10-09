@@ -1,10 +1,8 @@
 <?php
 
 if (!function_exists('renderHead')) {
-    function renderHead(string $pageTitle, string $theme = 'dark', string $assetRoot = '../../', bool $loginFont = false, bool $requiresAuthentication = true): void
+    function renderHead(string $pageTitle, string $theme = 'dark', string $assetRoot = '../../', bool $loginFont = false): void
     {
-        require_once dirname(__DIR__) . '/lib/auth.php';
-        $authenticatedUser = $requiresAuthentication ? requireAuthenticatedUser() : null;
         $safeTitle = htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8');
         $safeTheme = htmlspecialchars($theme, ENT_QUOTES, 'UTF-8');
         $safeAssetRoot = htmlspecialchars($assetRoot, ENT_QUOTES, 'UTF-8');
@@ -23,7 +21,6 @@ if (!function_exists('renderHead')) {
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
   <link rel="stylesheet" href="<?= $safeAssetRoot ?>assets/css/style.css">
-<?php if ($requiresAuthentication): ?>
     <script>
         (() => {
             const savedTheme = localStorage.getItem('alunonet-theme');
@@ -33,10 +30,6 @@ if (!function_exists('renderHead')) {
             document.documentElement.setAttribute('data-app-loading', 'true');
         })();
     </script>
-<?php endif; ?>
-<?php if ($authenticatedUser !== null): ?>
-    <script>window.ALUNONET_USER = <?= json_encode($authenticatedUser, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;</script>
-<?php endif; ?>
 </head>
         <?php
     }

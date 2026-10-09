@@ -49,7 +49,6 @@ const ROUTES = Object.freeze({
   chamados: route('pages/suporte/chamado.php'),
   repositorio: route('pages/materiais/repositorioAluno.php'),
   avaliacao: route('pages/avalieNos/avaliacaoFaculdade.php'),
-  logout: route('lib/users/logout.php'),
 });
 
 class NavBar extends HTMLElement {
@@ -128,12 +127,6 @@ class NavBar extends HTMLElement {
       <nav class="sidebar-nav__content" aria-label="Navegação principal">
         <ul class="sidebar-nav__list">${items}</ul>
       </nav>
-      <div class="sidebar-nav__footer">
-        <a class="sidebar-nav__exit" href="${ROUTES.logout}" title="Encerrar sessão">
-          <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
-          <span>Sair</span>
-        </a>
-      </div>
     `;
 
     this.querySelectorAll('.sidebar-nav__item--expandable > button').forEach((button) => {
