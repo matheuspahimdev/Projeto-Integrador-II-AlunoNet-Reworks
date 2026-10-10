@@ -1,26 +1,69 @@
 <?php
 require_once '../../components/layout.php';
 renderHead('DIC — Documentação Integralização Curricular', 'dark', '../../', false);
+
+$componentes = [
+    ['name' => 'Disciplinas obrigatórias', 'completed' => 1680, 'total' => 2520, 'percentage' => 67],
+    ['name' => 'Atividades complementares', 'completed' => 80, 'total' => 160, 'percentage' => 50],
+    ['name' => 'Projeto Integrador', 'completed' => 120, 'total' => 200, 'percentage' => 60],
+    ['name' => 'Disciplinas optativas', 'completed' => 40, 'total' => 200, 'percentage' => 20],
+];
+
+$completedHours = array_sum(array_column($componentes, 'completed'));
+$totalHours = array_sum(array_column($componentes, 'total'));
+$progress = (int) round(($completedHours / $totalHours) * 100);
 ?>
+
 <body>
 <div class="app-shell">
   <nav-bar id="main-navigation"></nav-bar>
   <main class="page-content">
     <portal-header></portal-header>
-    <section class="hero-header-pages">
-      <div>
-        <h1 class="display-6">DIC — Documentação Integralização Curricular</h1>
-        <p class="text-secondary mb-0">Central Acadêmica • Engenharia de Software • 2026/2</p>
-      </div>
-      <a class="btn btn-outline-primary" href="centralAcademico.php"><i class="bi bi-arrow-left me-1"></i>Central Acadêmica</a>
+
+    <?php require_once '../../components/cabecalhoAcademico.php'; renderHeaderAcademic('DIC — Documentação Integralização Curricular'); ?>
+
+    <section class="academic-page-grid">
+      <section class="academic-panel academic-panel--wide">
+        <div class="academic-panel__head">
+          <div class="academic-panel__icon"><i class="bi bi-diagram-3"></i></div>
+          <div>
+            <h2>Integralização curricular</h2>
+            <p class="academic-panel__subtitle">Acompanhe o avanço das atividades necessárias para concluir o curso.</p>
+          </div>
+        </div>
+        <div class="academic-panel__body">
+          <div class="progress-summary">
+            <div class="d-flex justify-content-between mb-2"><strong>Progresso do curso</strong><span><?= $progress ?>%</span></div>
+            <div class="progress" role="progressbar" aria-label="Integralização curricular" aria-valuenow="<?= $progress ?>" aria-valuemin="0" aria-valuemax="100">
+              <div class="progress-bar" style="width:<?= $progress ?>%"><?= $progress ?>%</div>
+            </div>
+          </div>
+          <div class="metric-grid mt-4">
+            <div><span>Carga concluída</span><strong><?= number_format($completedHours, 0, ',', '.') ?>h</strong></div>
+            <div><span>Carga total</span><strong><?= number_format($totalHours, 0, ',', '.') ?>h</strong></div>
+            <div><span>Carga restante</span><strong><?= number_format($totalHours - $completedHours, 0, ',', '.') ?>h</strong></div>
+          </div>
+          <div class="notice-box mt-3"><i class="bi bi-info-circle"></i><span>O percentual considera disciplinas, atividades complementares, projeto integrador e optativas.</span></div>
+        </div>
+      </section>
+
+      <section class="academic-panel">
+        <div class="academic-panel__head">
+          <div class="academic-panel__icon"><i class="bi bi-list-check"></i></div>
+          <div><h2>Componentes curriculares</h2><p class="academic-panel__subtitle">Carga concluída em cada grupo.</p></div>
+        </div>
+        <div class="academic-panel__body">
+          <ul class="clean-list">
+            <?php foreach ($componentes as $component): ?>
+              <li>
+                <span><strong><?= htmlspecialchars($component['name'], ENT_QUOTES, 'UTF-8') ?></strong><small><?= $component['completed'] ?>h de <?= $component['total'] ?>h</small></span>
+                <strong><?= $component['percentage'] ?>%</strong>
+              </li>
+            <?php endforeach; ?>
+          </ul>
+        </div>
+      </section>
     </section>
-    <div class="academic-page-grid "><section class="academic-panel academic-panel--wide">
-      <div class="academic-panel__head"><div class="academic-panel__icon"><i class="bi bi-diagram-3"></i></div><div><h2>Integralização curricular</h2></div></div>
-      <div class="academic-panel__body"><div class="progress-summary"><div class="d-flex justify-content-between mb-2"><strong>Progresso do curso</strong><span>62%</span></div><div class="progress" role="progressbar" aria-label="Integralização curricular" aria-valuenow="62" aria-valuemin="0" aria-valuemax="100"><div class="progress-bar" style="width:62%">62%</div></div></div><div class="metric-grid mt-4"><div><span>Carga concluída</span><strong>1.920h</strong></div><div><span>Carga total</span><strong>3.080h</strong></div><div><span>Semestres concluídos</span><strong>1</strong></div></div></div>
-    </section><section class="academic-panel ">
-      <div class="academic-panel__head"><div class="academic-panel__icon"><i class="bi bi-list-check"></i></div><div><h2>Componentes curriculares</h2></div></div>
-      <div class="academic-panel__body"><ul class="clean-list"><li><span>Disciplinas obrigatórias</span><strong>1.680h / 2.520h</strong></li><li><span>Atividades complementares</span><strong>80h / 160h</strong></li><li><span>Projeto Integrador</span><strong>120h / 200h</strong></li><li><span>Optativas</span><strong>40h / 200h</strong></li></ul></div>
-    </section></div>
   </main>
 </div>
 <?php renderScripts(); ?>
