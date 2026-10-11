@@ -7,28 +7,48 @@
  */
 
 const COMPONENTS_URL = document.currentScript?.src || window.location.href;
-const APP_ROOT_URL = new URL('../../', COMPONENTS_URL);
+const APP_ROOT_URL = new URL('../../index.php', COMPONENTS_URL);
 const route = (path) => new URL(path, APP_ROOT_URL).href;
+const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (character) => ({
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#039;',
+}[character]));
+
+const savedTheme = localStorage.getItem('alunonet-theme');
+const initialTheme = savedTheme === 'light' || savedTheme === 'dark'
+  ? savedTheme
+  : document.documentElement.getAttribute('data-bs-theme') || 'light';
+document.documentElement.setAttribute('data-bs-theme', initialTheme);
+
+const finishAppLoading = () => {
+  requestAnimationFrame(() => {
+    document.documentElement.removeAttribute('data-app-loading');
+    document.dispatchEvent(new CustomEvent('alunonet:ready'));
+  });
+};
 
 const ROUTES = Object.freeze({
   home: APP_ROOT_URL.href,
-  centralAcademica: route('pages/academico/centralAcademico.html'),
-  horarioAulas: route('pages/academico/horarioAulas.html'),
-  calendarioProvas: route('pages/academico/calendarioProvas.html'),
-  notas: route('pages/academico/notas.html'),
-  faltas: route('pages/academico/faltas.html'),
-  desempenho: route('pages/academico/desempenho.html'),
-  dadosCadastrais: route('pages/academico/dadosCadastrais.html'),
-  confirmacaoMatricula: route('pages/academico/confirmacaoMatricula.html'),
-  dic: route('pages/academico/dic.html'),
-  atualizacaoDados: route('pages/academico/atualizacaoDadosCadastrais.html'),
-  atividadesComplementares: route('pages/academico/atividadesComplementares.html'),
-  planoEnsino: route('pages/academico/planoEnsino.html'),
-  carteirinhaDigital: route('pages/academico/carteirinhaDigital.html'),
-  boletos: route('pages/financeiro/centralBoleto.html'),
-  chamados: route('pages/suporte/chamado.html'),
-  repositorio: route('pages/materiais/repositorioAluno.html'),
-  avaliacao: route('pages/avalieNos/avaliacaoFaculdade.html'),
+  centralAcademica: route('pages/academico/centralAcademico.php'),
+  horarioAulas: route('pages/academico/horarioAulas.php'),
+  calendarioProvas: route('pages/academico/calendarioProvas.php'),
+  notas: route('pages/academico/notas.php'),
+  faltas: route('pages/academico/faltas.php'),
+  desempenho: route('pages/academico/desempenho.php'),
+  dadosCadastrais: route('pages/academico/dadosCadastrais.php'),
+  confirmacaoMatricula: route('pages/academico/confirmacaoMatricula.php'),
+  dic: route('pages/academico/dic.php'),
+  atualizacaoDados: route('pages/academico/atualizacaoDadosCadastrais.php'),
+  atividadesComplementares: route('pages/academico/atividadesComplementares.php'),
+  planoEnsino: route('pages/academico/planoEnsino.php'),
+  carteirinhaDigital: route('pages/academico/carteirinhaDigital.php'),
+  boletos: route('pages/financeiro/centralBoleto.php'),
+  chamados: route('pages/suporte/chamado.php'),
+  repositorio: route('pages/materiais/repositorioAluno.php'),
+  avaliacao: route('pages/avalieNos/avaliacaoFaculdade.php'),
 });
 
 class NavBar extends HTMLElement {
@@ -107,12 +127,6 @@ class NavBar extends HTMLElement {
       <nav class="sidebar-nav__content" aria-label="Navegação principal">
         <ul class="sidebar-nav__list">${items}</ul>
       </nav>
-      <div class="sidebar-nav__footer">
-        <button class="sidebar-nav__exit" type="button" aria-disabled="true" title="O encerramento de sessão será conectado quando houver autenticação">
-          <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
-          <span>Sair</span>
-        </button>
-      </div>
     `;
 
     this.querySelectorAll('.sidebar-nav__item--expandable > button').forEach((button) => {
@@ -129,7 +143,7 @@ class NavBar extends HTMLElement {
 
   renderItem(item, index) {
     const hasSubs = Array.isArray(item.subs) && item.subs.length > 0;
-    const isHome = window.location.pathname.endsWith('/') || window.location.pathname.endsWith('/index.html');
+    const isHome = window.location.pathname.endsWith('/') || window.location.pathname.endsWith('/index.php');
     const isActive = (item.label === 'Início' && isHome)
       || item.subs?.some((sub) => new URL(sub.href).pathname === window.location.pathname);
     const classes = `sidebar-nav__link${item.accent ? ' sidebar-nav__link--accent' : ''}${isActive ? ' is-active' : ''}`;
@@ -208,6 +222,11 @@ class PortalHeader extends HTMLElement {
     if (this.dataset.ready) return;
     this.dataset.ready = 'true';
     this.classList.add('portal-topbar');
+    const user = window.ALUNONET_USER || {};
+    const rawProfileName = user.social_name || user.name || 'Aluno';
+    const profileName = escapeHtml(rawProfileName);
+    const registration = escapeHtml(user.registration_number || '');
+    const initials = rawProfileName.split(/\s+/).filter(Boolean).map((part) => part[0]).join('').slice(0, 2).toUpperCase();
     const courses = PortalHeader.COURSES.map((course) => `
       <option${course.selected ? ' selected' : ''}>${course.label}</option>
     `).join('');
@@ -223,8 +242,8 @@ class PortalHeader extends HTMLElement {
         <select id="course-selector" class="portal-topbar__course" aria-label="Selecionar curso atual">
           ${courses}
         </select>
-        <span class="portal-topbar__profile-text"><strong>Victor H. Oliveira</strong><small>RA: 274769</small></span>
-        <span class="portal-topbar__avatar" aria-label="Perfil de Victor H. Oliveira">VO</span>
+        <span class="portal-topbar__profile-text"><strong>${profileName}</strong><small>RA: ${registration}</small></span>
+        <span class="portal-topbar__avatar" aria-label="Perfil de ${profileName}">${initials}</span>
       </div>
     `;
   }
@@ -239,18 +258,15 @@ class ThemeToggle extends HTMLElement {
     this.setAttribute('tabindex', '0');
     this.setAttribute('aria-label', 'Alternar tema claro/escuro');
 
-    const savedTheme = localStorage.getItem('alunonet-theme');
-    if (savedTheme === 'light' || savedTheme === 'dark') {
-      document.documentElement.setAttribute('data-bs-theme', savedTheme);
-    }
-
     this.innerHTML = '<i class="bi bi-sun-fill icon-sun"></i><i class="bi bi-moon-stars-fill icon-moon"></i>';
 
     const toggle = () => {
-      const html = document.documentElement;
-      const theme = html.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark';
-      html.setAttribute('data-bs-theme', theme);
-      localStorage.setItem('alunonet-theme', theme);
+      localStorage.setItem('alunonet-theme', document.documentElement.getAttribute('data-bs-theme') === 'light' ? 'dark' : 'light');
+      const savedTheme = localStorage.getItem('alunonet-theme');
+      const theme = savedTheme === 'light' || savedTheme === 'dark'
+        ? savedTheme
+        : document.documentElement.getAttribute('data-bs-theme') || 'light';
+      document.documentElement.setAttribute('data-bs-theme', theme);
     };
 
     this.addEventListener('click', toggle);
@@ -264,3 +280,5 @@ class ThemeToggle extends HTMLElement {
 }
 
 customElements.define('theme-toggle', ThemeToggle);
+
+finishAppLoading();
