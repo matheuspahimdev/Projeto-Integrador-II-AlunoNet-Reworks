@@ -1,36 +1,43 @@
 <?php
-include_once 'components/layout.php';
-renderHead('Página Inicial', 'dark', '');
+require_once __DIR__ . '/components/layout.php';
+
+$todayClass = firstClassOn(SIMULATED_TODAY);
+$nextExam = upcomingExams()[0];
 
 $dashboardCards = [
     [
         'class' => 'dashboard-card--notice',
+        'columns' => 2,
         'icon' => 'bi-exclamation-triangle-fill',
         'eyebrow' => 'Atenção',
         'title' => 'Alteração de Grade',
-        'description' => 'O prazo para realizar ajustes na sua grade curricular termina em 19 de setembro.',
+        'description' => 'O prazo para realizar ajustes na sua grade curricular termina em 16 de outubro.',
         'action' => 'Ajustar minha grade',
         'url' => 'pages/academico/centralAcademico.php',
         'button_class' => 'btn-warning',
     ],
     [
         'class' => 'dashboard-card--today',
+        'columns' => 1,
         'icon' => 'bi-calendar2-week',
-        'eyebrow' => 'Hoje • Quarta-feira',
-        'title' => 'Projeto Integrador II',
-        'description' => 'Sala 112 · Prédio 1<br><strong>19:15 às 22:50</strong>',
+        'eyebrow' => 'Hoje • ' . weekdayName(SIMULATED_TODAY),
+        'title' => $todayClass['discipline']['name'] ?? 'Sem aulas hoje',
+        'description' => $todayClass === null
+            ? 'Aproveite para revisar os conteúdos da semana.'
+            : $todayClass['discipline']['room'] . ' • ' . $todayClass['start'] . ' às ' . $todayClass['end'],
         'action' => 'Ver horário completo',
         'url' => 'pages/academico/horarioAulas.php',
         'button_class' => 'btn-primary',
     ],
     [
         'class' => 'dashboard-card--career',
+        'columns' => 1,
         'icon' => 'bi-briefcase-fill',
         'eyebrow' => 'Oportunidades',
         'title' => 'Unifio Carreiras',
         'description' => 'Cadastre seu currículo e acompanhe novas oportunidades profissionais.',
-        'action' => 'Acessar portal',
-        'url' => '#',
+        'action' => 'Disponível em breve',
+        'url' => null,
         'button_class' => 'btn-outline-primary',
     ],
 ];
@@ -41,32 +48,25 @@ $quickAccess = [
     ['icon' => 'bi-trophy', 'label' => 'Atividades complementares', 'url' => 'pages/academico/atividadesComplementares.php'],
     ['icon' => 'bi-person-vcard', 'label' => 'Carteirinha digital', 'url' => 'pages/academico/carteirinhaDigital.php'],
 ];
+
+renderPageStart('Página Inicial', '');
 ?>
-
-<body>
-  <div class="app-shell">
-    <nav-bar id="main-navigation"></nav-bar>
-    <div class="sidebar-backdrop" data-sidebar-backdrop></div>
-
-    <main class="page-content">
-      <portal-header></portal-header>
-
       <section class="dashboard-hero">
         <div class="dashboard-hero__content">
           <span class="dashboard-hero__eyebrow"><i class="bi bi-grid-1x2-fill"></i> Visão geral</span>
-          <h1>Olá, Victor! <span aria-hidden="true">👋</span></h1>
+          <h1>Olá, <?= e(studentFirstName()) ?>! <span aria-hidden="true">👋</span></h1>
           <p>Tenha uma visão rápida da sua rotina acadêmica e acesse o que precisa hoje.</p>
         </div>
         <div class="dashboard-hero__status">
           <span class="status-dot"></span>
-          <div><strong>Matrícula ativa</strong><small>Engenharia de Software · 2026/2</small></div>
+          <div><strong>Matrícula ativa</strong><small><?= e(STUDENT['course']) ?> · <?= e(STUDENT['term']) ?></small></div>
         </div>
       </section>
 
       <section class="dashboard-overview" aria-label="Resumo acadêmico">
-        <div><i class="bi bi-calendar3"></i><span>Próxima avaliação<strong>14 out</strong></span></div>
-        <div><i class="bi bi-award"></i><span>Média geral<strong>8,5</strong></span></div>
-        <div><i class="bi bi-check2-circle"></i><span>Frequência média<strong>92%</strong></span></div>
+        <div><i class="bi bi-calendar3"></i><span>Próxima avaliação<strong><?= e(mb_strtolower(formatShortDate($nextExam['date']))) ?></strong></span></div>
+        <div><i class="bi bi-award"></i><span>Média geral<strong><?= e(formatGrade(overallAverage())) ?></strong></span></div>
+        <div><i class="bi bi-check2-circle"></i><span>Frequência média<strong><?= overallAttendance() ?>%</strong></span></div>
         <a href="pages/academico/calendarioProvas.php"><span>Ver calendário<strong>acadêmico</strong></span><i class="bi bi-arrow-up-right"></i></a>
       </section>
 
@@ -77,14 +77,18 @@ $quickAccess = [
         </div>
         <div class="grid-mesh grid-mesh--static dashboard-grid">
           <?php foreach ($dashboardCards as $card): ?>
-            <article class="g-box g-col-<?= $card['class'] === 'dashboard-card--notice' ? '2' : '1' ?> dashboard-card <?= $card['class'] ?>">
+            <article class="g-box g-col-<?= $card['columns'] ?> dashboard-card <?= e($card['class']) ?>">
               <div class="box-content">
-                <span class="dashboard-card__icon"><i class="bi <?= htmlspecialchars($card['icon'], ENT_QUOTES, 'UTF-8') ?>"></i></span>
-                <span class="dashboard-card__eyebrow"><?= htmlspecialchars($card['eyebrow'], ENT_QUOTES, 'UTF-8') ?></span>
+                <span class="dashboard-card__icon"><i class="bi <?= e($card['icon']) ?>"></i></span>
+                <span class="dashboard-card__eyebrow"><?= e($card['eyebrow']) ?></span>
                 <div class="box-content__body">
-                  <h3><?= htmlspecialchars($card['title'], ENT_QUOTES, 'UTF-8') ?></h3>
-                  <p><?= htmlspecialchars($card['description'], ENT_QUOTES, 'UTF-8') ?></p>
-                  <a class="btn <?= htmlspecialchars($card['button_class'], ENT_QUOTES, 'UTF-8') ?> dashboard-card__action" href="<?= htmlspecialchars($card['url'], ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($card['action'], ENT_QUOTES, 'UTF-8') ?><i class="bi bi-arrow-up-right"></i></a>
+                  <h3><?= e($card['title']) ?></h3>
+                  <p><?= e($card['description']) ?></p>
+                  <?php if ($card['url'] === null): ?>
+                    <span class="btn <?= e($card['button_class']) ?> dashboard-card__action disabled" aria-disabled="true"><?= e($card['action']) ?></span>
+                  <?php else: ?>
+                    <a class="btn <?= e($card['button_class']) ?> dashboard-card__action" href="<?= e($card['url']) ?>"><?= e($card['action']) ?><i class="bi bi-arrow-up-right"></i></a>
+                  <?php endif; ?>
                 </div>
               </div>
             </article>
@@ -98,17 +102,12 @@ $quickAccess = [
         </div>
         <div class="grid-mesh grid-mesh--static quick-access__grid">
           <?php foreach ($quickAccess as $access): ?>
-            <a class="g-box g-col-1 quick-access__item" href="<?= htmlspecialchars($access['url'], ENT_QUOTES, 'UTF-8') ?>">
-              <i class="bi <?= htmlspecialchars($access['icon'], ENT_QUOTES, 'UTF-8') ?>"></i>
-              <span><?= htmlspecialchars($access['label'], ENT_QUOTES, 'UTF-8') ?></span>
+            <a class="g-box g-col-1 quick-access__item" href="<?= e($access['url']) ?>">
+              <i class="bi <?= e($access['icon']) ?>"></i>
+              <span><?= e($access['label']) ?></span>
               <i class="bi bi-arrow-up-right quick-access__arrow"></i>
             </a>
           <?php endforeach; ?>
         </div>
       </section>
-    </main>
-  </div>
-
-  <?php renderScripts(''); ?>
-</body>
-</html>
+<?php renderPageEnd(''); ?>

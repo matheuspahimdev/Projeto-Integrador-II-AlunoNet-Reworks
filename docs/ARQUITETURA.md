@@ -35,13 +35,15 @@ externos para serem exibidas.
 web/
 ├── index.php                    # Página inicial do portal
 ├── components/
-│   └── layout.php               # Cabeçalho e scripts compartilhados
+│   ├── layout.php               # Estrutura da página, e() e scripts
+│   └── cabecalho.php            # Cabeçalhos e estado "Em construção"
 ├── assets/
 │   ├── css/style.css            # Estilos da aplicação
 │   ├── js/components.js         # Menu e componentes JavaScript
 │   └── img/                     # Imagens e logotipos
 ├── lib/
-│   └── title.php                # Auxiliar para títulos das páginas
+│   ├── dados.php                # Dados simulados do aluno e do semestre
+│   └── academico.php            # Cálculos e formatações derivados dos dados
 └── pages/                       # Páginas organizadas por módulo
     ├── academico/
     ├── avalieNos/
@@ -62,9 +64,9 @@ Navegador
     -> HTML renderizado no navegador
 ```
 
-Cada página inclui `components/layout.php`, chama `renderHead()` para montar o
-cabeçalho e `renderScripts()` para carregar o Bootstrap e os componentes
-JavaScript. Os caminhos dos assets são ajustados pelo parâmetro `$assetRoot`.
+Cada página inclui `components/layout.php`, chama `renderPageStart()` para abrir
+o documento e `renderPageEnd()` para fechá-lo e carregar os scripts. Os caminhos
+dos assets são ajustados pelo parâmetro `$assetRoot`.
 
 O arquivo `web/assets/js/components.js` calcula as URLs com base na localização
 do próprio script. Dessa forma, os links funcionam tanto no diretório raiz do
@@ -72,13 +74,17 @@ servidor quanto quando o projeto é executado dentro de uma subpasta.
 
 ## Layout compartilhado
 
-O arquivo `web/components/layout.php` fornece duas funções:
+O arquivo `web/components/layout.php` fornece:
 
-- `renderHead()`: gera a estrutura inicial do documento, define o título,
-  carrega Bootstrap, Bootstrap Icons, o CSS principal e aplica o tema salvo no
-  `localStorage`.
-- `renderScripts()`: carrega o JavaScript do Bootstrap e,
-  opcionalmente, `assets/js/components.js`.
+- `renderPageStart()`: gera o `<head>` (Bootstrap, Bootstrap Icons, CSS
+  principal e tema salvo no `localStorage`), o menu lateral e o cabeçalho do
+  portal com os dados do aluno.
+- `renderPageEnd()`: fecha a estrutura da página e carrega o JavaScript do
+  Bootstrap e `assets/js/components.js`.
+- `e()`: escapa valores antes de exibi-los no HTML.
+
+O arquivo `web/components/cabecalho.php` fornece `renderPageHeader()`,
+`renderAcademicHeader()` e `renderUnderConstruction()`.
 
 O layout não inicia sessões, não valida usuários e não injeta dados de
 autenticação no navegador.
@@ -104,8 +110,12 @@ sessão de usuário e não é enviada ao servidor.
 
 ## Dados e persistência
 
-Os conteúdos exibidos atualmente são estáticos e estão definidos nas próprias
-páginas PHP. Não há:
+Os conteúdos exibidos são estáticos. Os dados compartilhados entre páginas
+(aluno, disciplinas, horários, avaliações e atividades complementares) ficam em
+`web/lib/dados.php`, e os valores derivados (médias, frequências, situações e
+próxima avaliação) são calculados em `web/lib/academico.php`. A data usada como
+"hoje" na simulação é a constante `SIMULATED_TODAY`. Dados usados por uma única
+página continuam definidos nela. Não há:
 
 - banco de dados;
 - arquivo `database.json` em uso;

@@ -1,14 +1,9 @@
-/**
- * Componentes compartilhados do Alunonet.
- *
- * As URLs são calculadas a partir deste próprio arquivo. Assim elas funcionam
- * tanto ao abrir o protótipo localmente quanto quando ele estiver em uma
- * subpasta do servidor, inclusive nas páginas dentro de /pages.
- */
-
 const COMPONENTS_URL = document.currentScript?.src || window.location.href;
 const APP_ROOT_URL = new URL('../../index.php', COMPONENTS_URL);
+const THEME_STORAGE_KEY = 'alunonet-theme';
+
 const route = (path) => new URL(path, APP_ROOT_URL).href;
+
 const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (character) => ({
   '&': '&amp;',
   '<': '&lt;',
@@ -17,17 +12,17 @@ const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (character) => (
   "'": '&#039;',
 }[character]));
 
-const savedTheme = localStorage.getItem('alunonet-theme');
-const initialTheme = savedTheme === 'light' || savedTheme === 'dark'
-  ? savedTheme
-  : document.documentElement.getAttribute('data-bs-theme') || 'light';
-document.documentElement.setAttribute('data-bs-theme', initialTheme);
+const saveTheme = (theme) => {
+  try {
+    localStorage.setItem(THEME_STORAGE_KEY, theme);
+  } catch {
+    return;
+  }
+};
 
-const finishAppLoading = () => {
-  requestAnimationFrame(() => {
-    document.documentElement.removeAttribute('data-app-loading');
-    document.dispatchEvent(new CustomEvent('alunonet:ready'));
-  });
+const closeMenu = () => {
+  document.body.classList.remove('sidebar-is-open');
+  document.querySelector('[data-sidebar-toggle]')?.setAttribute('aria-expanded', 'false');
 };
 
 const ROUTES = Object.freeze({
@@ -108,21 +103,13 @@ class NavBar extends HTMLElement {
     if (this.dataset.ready) return;
     this.dataset.ready = 'true';
     this.classList.add('sidebar-nav');
-    if (!document.querySelector('[data-sidebar-backdrop]')) {
-      document.body.insertAdjacentHTML('afterbegin', '<div class="sidebar-backdrop" data-sidebar-backdrop></div>');
-    }
 
     const items = NavBar.ITEMS.map((item, index) => this.renderItem(item, index)).join('');
 
     this.innerHTML = `
       <a class="sidebar-nav__brand" href="${ROUTES.home}" aria-label="Página inicial do Alunonet">
-        <img class="brand-logo brand-logo--dark-theme"
-          src="${route('assets/img/UnifioLogoBranco.png')}"
-          alt="Alunonet">
-
-        <img class="brand-logo brand-logo--light-theme"
-          src="${route('assets/img/UnifioLogoAzul.png')}"
-          alt="Alunonet">
+        <img class="brand-logo brand-logo--dark-theme" src="${route('assets/img/UnifioLogoBranco.png')}" alt="Alunonet">
+        <img class="brand-logo brand-logo--light-theme" src="${route('assets/img/UnifioLogoAzul.png')}" alt="Alunonet">
       </a>
       <nav class="sidebar-nav__content" aria-label="Navegação principal">
         <ul class="sidebar-nav__list">${items}</ul>
@@ -141,21 +128,25 @@ class NavBar extends HTMLElement {
     this.querySelectorAll('a').forEach((link) => link.addEventListener('click', closeMenu));
   }
 
+  isActive(item) {
+    const { pathname } = window.location;
+    const isHome = pathname.endsWith('/') || pathname.endsWith('/index.php');
+    return (item.href === ROUTES.home && isHome)
+      || Boolean(item.subs?.some((sub) => new URL(sub.href).pathname === pathname));
+  }
+
   renderItem(item, index) {
-    const hasSubs = Array.isArray(item.subs) && item.subs.length > 0;
-    const isHome = window.location.pathname.endsWith('/') || window.location.pathname.endsWith('/index.php');
-    const isActive = (item.label === 'Início' && isHome)
-      || item.subs?.some((sub) => new URL(sub.href).pathname === window.location.pathname);
+    const isActive = this.isActive(item);
     const classes = `sidebar-nav__link${item.accent ? ' sidebar-nav__link--accent' : ''}${isActive ? ' is-active' : ''}`;
 
-    if (hasSubs) {
+    if (item.subs?.length) {
       const menuId = `nav-submenu-${index}`;
       const subItems = item.subs.map((sub) => `
         <li><a class="sidebar-nav__sublink" href="${sub.href}">${sub.label}</a></li>
       `).join('');
       return `
         <li class="sidebar-nav__item sidebar-nav__item--expandable${isActive ? ' is-open' : ''}">
-          <button class="${classes}" type="button" aria-expanded="${isActive ? 'true' : 'false'}" aria-controls="${menuId}">
+          <button class="${classes}" type="button" aria-expanded="${isActive}" aria-controls="${menuId}">
             <i class="bi ${item.icon}"></i>
             <span>${item.label}</span>
             <i class="bi bi-chevron-down sidebar-nav__chevron" aria-hidden="true"></i>
@@ -165,7 +156,7 @@ class NavBar extends HTMLElement {
       `;
     }
 
-    if (item.unavailable || !item.href) {
+    if (item.unavailable) {
       return `
         <li class="sidebar-nav__item">
           <span class="${classes} opacity-50" aria-disabled="true" title="${item.label} — em breve">
@@ -176,7 +167,7 @@ class NavBar extends HTMLElement {
     }
 
     return `
-        <li class="sidebar-nav__item">
+      <li class="sidebar-nav__item">
         <a href="${item.href}" class="${classes}" title="${item.label}">
           <i class="bi ${item.icon}"></i><span>${item.label}</span>
         </a>
@@ -185,14 +176,70 @@ class NavBar extends HTMLElement {
   }
 }
 
-// O controle fica delegado ao documento: funciona mesmo quando a navbar e o
-// botão do topo são criados em momentos diferentes durante o carregamento.
-const closeMenu = () => {
-  document.body.classList.remove('sidebar-is-open');
-  document.querySelector('[data-sidebar-toggle]')?.setAttribute('aria-expanded', 'false');
-};
+class PortalHeader extends HTMLElement {
+  static COURSES = [
+    { label: '2026/2 · Eng. de Software', selected: true },
+    { label: '2026/2 · Análise e Desenvolvimento de Sistemas' },
+    { label: '2026/2 · Administração' },
+  ];
 
-customElements.define('nav-bar', NavBar);
+  connectedCallback() {
+    if (this.dataset.ready) return;
+    this.dataset.ready = 'true';
+    this.classList.add('portal-topbar');
+
+    const name = escapeHtml(this.dataset.name || 'Aluno');
+    const registration = escapeHtml(this.dataset.registration || '');
+    const initials = escapeHtml(this.dataset.initials || '');
+    const courses = PortalHeader.COURSES.map((course) => `
+      <option${course.selected ? ' selected' : ''}>${course.label}</option>
+    `).join('');
+
+    this.innerHTML = `
+      <button class="portal-topbar__menu btn" type="button" data-sidebar-toggle
+        aria-controls="main-navigation" aria-expanded="false" aria-label="Abrir menu de navegação">
+        <i class="bi bi-list" aria-hidden="true"></i>
+      </button>
+      <span class="portal-topbar__title">Portal do Aluno</span>
+      <div class="portal-topbar__profile">
+        <theme-toggle></theme-toggle>
+        <label class="portal-topbar__course-label" for="course-selector">Curso atual</label>
+        <select id="course-selector" class="portal-topbar__course" aria-label="Selecionar curso atual">
+          ${courses}
+        </select>
+        <span class="portal-topbar__profile-text"><strong>${name}</strong><small>RA: ${registration}</small></span>
+        <span class="portal-topbar__avatar" aria-label="Perfil de ${name}">${initials}</span>
+      </div>
+    `;
+  }
+}
+
+class ThemeToggle extends HTMLElement {
+  connectedCallback() {
+    if (this.dataset.ready) return;
+    this.dataset.ready = 'true';
+    this.classList.add('icon-btn', 'theme-toggle');
+    this.setAttribute('role', 'button');
+    this.setAttribute('tabindex', '0');
+    this.setAttribute('aria-label', 'Alternar tema claro/escuro');
+    this.innerHTML = '<i class="bi bi-sun-fill icon-sun"></i><i class="bi bi-moon-stars-fill icon-moon"></i>';
+
+    this.addEventListener('click', () => this.toggleTheme());
+    this.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        this.toggleTheme();
+      }
+    });
+  }
+
+  toggleTheme() {
+    const root = document.documentElement;
+    const nextTheme = root.getAttribute('data-bs-theme') === 'light' ? 'dark' : 'light';
+    root.setAttribute('data-bs-theme', nextTheme);
+    saveTheme(nextTheme);
+  }
+}
 
 document.addEventListener('click', (event) => {
   const trigger = event.target.closest('[data-sidebar-toggle]');
@@ -209,76 +256,8 @@ document.addEventListener('keydown', (event) => {
   if (event.key === 'Escape') closeMenu();
 });
 
-class PortalHeader extends HTMLElement {
-  // Inclua novos cursos aqui. Quando houver integração com dados reais,
-  // esta lista poderá ser preenchida pela API mantendo o mesmo formato.
-  static COURSES = [
-    { label: '2026/2 · Eng. de Software', selected: true },
-    { label: '2026/2 · Análise e Desenvolvimento de Sistemas' },
-    { label: '2026/2 · Administração' },
-  ];
-
-  connectedCallback() {
-    if (this.dataset.ready) return;
-    this.dataset.ready = 'true';
-    this.classList.add('portal-topbar');
-    const user = window.ALUNONET_USER || {};
-    const rawProfileName = user.social_name || user.name || 'Aluno';
-    const profileName = escapeHtml(rawProfileName);
-    const registration = escapeHtml(user.registration_number || '');
-    const initials = rawProfileName.split(/\s+/).filter(Boolean).map((part) => part[0]).join('').slice(0, 2).toUpperCase();
-    const courses = PortalHeader.COURSES.map((course) => `
-      <option${course.selected ? ' selected' : ''}>${course.label}</option>
-    `).join('');
-    this.innerHTML = `
-      <button class="portal-topbar__menu btn" type="button" data-sidebar-toggle
-        aria-controls="main-navigation" aria-expanded="false" aria-label="Abrir menu de navegação">
-        <i class="bi bi-list" aria-hidden="true"></i>
-      </button>
-      <span class="portal-topbar__title">Portal do Aluno</span>
-      <div class="portal-topbar__profile">
-        <theme-toggle></theme-toggle>
-        <label class="portal-topbar__course-label" for="course-selector">Curso atual</label>
-        <select id="course-selector" class="portal-topbar__course" aria-label="Selecionar curso atual">
-          ${courses}
-        </select>
-        <span class="portal-topbar__profile-text"><strong>${profileName}</strong><small>RA: ${registration}</small></span>
-        <span class="portal-topbar__avatar" aria-label="Perfil de ${profileName}">${initials}</span>
-      </div>
-    `;
-  }
-}
-
+customElements.define('nav-bar', NavBar);
 customElements.define('portal-header', PortalHeader);
-
-class ThemeToggle extends HTMLElement {
-  connectedCallback() {
-    this.classList.add('icon-btn', 'theme-toggle');
-    this.setAttribute('role', 'button');
-    this.setAttribute('tabindex', '0');
-    this.setAttribute('aria-label', 'Alternar tema claro/escuro');
-
-    this.innerHTML = '<i class="bi bi-sun-fill icon-sun"></i><i class="bi bi-moon-stars-fill icon-moon"></i>';
-
-    const toggle = () => {
-      localStorage.setItem('alunonet-theme', document.documentElement.getAttribute('data-bs-theme') === 'light' ? 'dark' : 'light');
-      const savedTheme = localStorage.getItem('alunonet-theme');
-      const theme = savedTheme === 'light' || savedTheme === 'dark'
-        ? savedTheme
-        : document.documentElement.getAttribute('data-bs-theme') || 'light';
-      document.documentElement.setAttribute('data-bs-theme', theme);
-    };
-
-    this.addEventListener('click', toggle);
-    this.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        toggle();
-      }
-    });
-  }
-}
-
 customElements.define('theme-toggle', ThemeToggle);
 
-finishAppLoading();
+requestAnimationFrame(() => document.documentElement.removeAttribute('data-app-loading'));
