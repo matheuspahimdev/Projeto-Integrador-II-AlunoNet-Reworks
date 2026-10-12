@@ -25,16 +25,16 @@ $averageAttendance = (int) round(($totalAttended / $totalClasses) * 100);
 
     <?php require_once '../../components/cabecalhoAcademico.php'; renderHeaderAcademic('Faltas'); ?>
 
-    <section class="academic-page-grid">
-      <section class="academic-panel academic-panel--wide">
-        <div class="academic-panel__head">
-          <div class="academic-panel__icon"><i class="bi bi-calendar2-x"></i></div>
+    <section class="grid-mesh grid-mesh--static grid-mesh--academic">
+      <section class="g-box g-col-3 grid-card">
+        <div class="grid-card__head">
+          <div class="grid-card__icon"><i class="bi bi-calendar2-x"></i></div>
           <div>
             <h2>Frequência por disciplina</h2>
-            <p class="academic-panel__subtitle">Consulte presenças, faltas registradas e o percentual de frequência.</p>
+            <p class="grid-card__subtitle">Consulte presenças, faltas registradas e o percentual de frequência.</p>
           </div>
         </div>
-        <div class="academic-panel__body">
+        <div class="grid-card__body">
           <div class="table-responsive">
             <table class="table table-hover align-middle academic-table">
               <thead><tr><th>Disciplina</th><th>Presenças</th><th>Faltas</th><th>Frequência</th><th>Situação</th></tr></thead>
@@ -54,12 +54,12 @@ $averageAttendance = (int) round(($totalAttended / $totalClasses) * 100);
         </div>
       </section>
 
-      <section class="academic-panel">
-        <div class="academic-panel__head">
-          <div class="academic-panel__icon"><i class="bi bi-check-circle"></i></div>
-          <div><h2>Acompanhamento</h2><p class="academic-panel__subtitle">Resumo da sua frequência no semestre.</p></div>
+      <section class="g-box g-col-1 grid-card">
+        <div class="grid-card__head">
+          <div class="grid-card__icon"><i class="bi bi-check-circle"></i></div>
+          <div><h2>Acompanhamento</h2><p class="grid-card__subtitle">Resumo da sua frequência no semestre.</p></div>
         </div>
-        <div class="academic-panel__body">
+        <div class="grid-card__body">
           <div class="metric-grid">
             <div><span>Frequência média</span><strong><?= $averageAttendance ?>%</strong></div>
             <div><span>Presenças</span><strong><?= $totalAttended ?></strong></div>

@@ -28,16 +28,16 @@ $contatos = [
 
     <?php require_once '../../components/cabecalhoAcademico.php'; renderHeaderAcademic('Consultar Dados Cadastrais'); ?>
 
-    <section class="academic-page-grid">
-      <section class="academic-panel academic-panel--wide">
-        <div class="academic-panel__head">
-          <div class="academic-panel__icon"><i class="bi bi-person-vcard"></i></div>
+    <section class="grid-mesh grid-mesh--static grid-mesh--academic">
+      <section class="g-box g-col-3 grid-card">
+        <div class="grid-card__head">
+          <div class="grid-card__icon"><i class="bi bi-person-vcard"></i></div>
           <div>
             <h2>Dados do aluno</h2>
-            <p class="academic-panel__subtitle">Informações acadêmicas registradas no portal.</p>
+            <p class="grid-card__subtitle">Informações acadêmicas registradas no portal.</p>
           </div>
         </div>
-        <div class="academic-panel__body">
+        <div class="grid-card__body">
           <dl class="data-grid">
             <?php foreach ($dadosAcademicos as $item): ?>
               <div>
@@ -55,12 +55,12 @@ $contatos = [
         </div>
       </section>
 
-      <section class="academic-panel">
-        <div class="academic-panel__head">
-          <div class="academic-panel__icon"><i class="bi bi-person-lines-fill"></i></div>
-          <div><h2>Contato e atualização</h2><p class="academic-panel__subtitle">Dados usados para comunicação acadêmica.</p></div>
+      <section class="g-box g-col-1 grid-card">
+        <div class="grid-card__head">
+          <div class="grid-card__icon"><i class="bi bi-person-lines-fill"></i></div>
+          <div><h2>Contato e atualização</h2><p class="grid-card__subtitle">Dados usados para comunicação acadêmica.</p></div>
         </div>
-        <div class="academic-panel__body">
+        <div class="grid-card__body">
           <dl class="data-grid data-grid--single">
             <?php foreach ($contatos as $item): ?>
               <div><dt><?= htmlspecialchars($item['label'], ENT_QUOTES, 'UTF-8') ?></dt><dd><?= htmlspecialchars($item['value'], ENT_QUOTES, 'UTF-8') ?></dd></div>

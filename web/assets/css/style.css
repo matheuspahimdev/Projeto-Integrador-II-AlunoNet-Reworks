@@ -250,7 +250,7 @@ html[data-bs-theme="light"] .brand-logo--light-theme {
 }
 
 .sidebar-nav__item.is-open .sidebar-nav__submenu {
-  max-height: 320px;
+  max-height: var(--submenu-height, 320px);
   padding: 3px 0 5px;
 }
 
@@ -313,10 +313,14 @@ html[data-bs-theme="light"] .theme-toggle .icon-moon {
 
 /* Cabeçalho do portal */
 .portal-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 1020;                      
   height: 64px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  background: var(--bs-body-bg);      
   border-bottom: 1px solid var(--bs-border-color);
   margin-bottom: 1.15rem;
 }
@@ -441,6 +445,10 @@ html[data-bs-theme="light"] .theme-toggle .icon-moon {
 
 .g-col-2 {
   grid-column: span 2;
+}
+
+.g-col-3 {
+  grid-column: span 3;
 }
 
 .g-col-4 {
@@ -1184,26 +1192,20 @@ html[data-bs-theme="light"] .theme-toggle .icon-moon {
   color: var(--brand-blue);
 }
 
-.academic-page-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-  padding: 0 4px 24px
+.grid-mesh--academic {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-auto-rows: minmax(220px, auto);
 }
 
-.academic-panel {
+.grid-card {
   border: 1px solid var(--bs-border-color);
   border-radius: 16px;
   background: var(--bs-secondary-bg);
   overflow: hidden;
-  min-width: 0
+  min-width: 0;
 }
 
-.academic-panel--wide {
-  grid-column: span 2
-}
-
-.academic-panel__head {
+.grid-card__head {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -1211,19 +1213,19 @@ html[data-bs-theme="light"] .theme-toggle .icon-moon {
   border-bottom: 1px solid var(--bs-border-color)
 }
 
-.academic-panel__head h2 {
+.grid-card__head h2 {
   font-size: .88rem;
   margin: 0;
   font-weight: 750
 }
 
-.academic-panel__subtitle {
+.grid-card__subtitle {
   margin: 4px 0 0;
   color: var(--bs-secondary-color);
   font-size: .68rem;
 }
 
-.academic-panel__icon {
+.grid-card__icon {
   width: 38px;
   height: 38px;
   display: grid;
@@ -1233,7 +1235,7 @@ html[data-bs-theme="light"] .theme-toggle .icon-moon {
   color: var(--brand-blue)
 }
 
-.academic-panel__body {
+.grid-card__body {
   padding: 20px
 }
 
@@ -1391,7 +1393,7 @@ html[data-bs-theme="light"] .theme-toggle .icon-moon {
 }
 
 .progress-summary .progress,
-.academic-panel .progress {
+.grid-card .progress {
   height: 12px;
   background: var(--bs-tertiary-bg)
 }
@@ -1717,11 +1719,11 @@ html[data-bs-theme="light"] .theme-toggle .icon-moon {
     grid-template-columns: repeat(2, minmax(0, 1fr))
   }
 
-  .academic-page-grid {
+  .grid-mesh--academic {
     grid-template-columns: repeat(2, minmax(0, 1fr))
   }
 
-  .academic-panel--wide {
+  .grid-mesh--academic .g-col-3 {
     grid-column: span 2
   }
 }
@@ -1774,7 +1776,7 @@ html[data-bs-theme="light"] .theme-toggle .icon-moon {
   }
 
   .academic-links-grid,
-  .academic-page-grid {
+  .grid-mesh--academic {
     grid-template-columns: 1fr
   }
 
@@ -1794,8 +1796,8 @@ html[data-bs-theme="light"] .theme-toggle .icon-moon {
     font-size: 1rem;
   }
 
-  .academic-panel--wide {
-    grid-column: span 1
+  .grid-mesh--academic > * {
+    grid-column: 1 / -1
   }
 
   .metric-grid,
@@ -1838,5 +1840,111 @@ html[data-bs-theme="light"] .theme-toggle .icon-moon {
   .academic-calendar-item__title .badge {
     display: inline-block;
     margin-top: 8px;
+  }
+}
+
+/* ===================== REQUERIMENTOS ===================== */
+.grid-mesh--auto {
+  grid-auto-rows: auto;
+}
+
+.section-title {
+  margin: 4px 4px 12px;
+  font-size: .92rem;
+  font-weight: 700;
+  color: var(--bs-secondary-color);
+}
+
+.info-banner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 4px 22px;
+  padding: 14px 18px;
+  border: 1px solid var(--bs-border-color);
+  border-left: 4px solid var(--brand-blue);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--brand-blue) 7%, var(--bs-secondary-bg));
+}
+
+.info-banner__icon {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--brand-blue) 14%, transparent);
+  color: var(--brand-blue);
+  font-size: 1.05rem;
+}
+
+.info-banner strong {
+  display: block;
+  font-size: .84rem;
+}
+
+.info-banner span {
+  display: block;
+  color: var(--bs-secondary-color);
+  font-size: .76rem;
+  line-height: 1.5;
+}
+
+.request-card {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.request-card__icon {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 11px;
+  background: color-mix(in srgb, var(--brand-blue) 10%, transparent);
+  color: var(--brand-blue);
+  font-size: 1.2rem;
+}
+
+.request-card h3 {
+  margin: 16px 0 6px;
+  font-size: .95rem;
+  font-weight: 700;
+}
+
+.request-card p {
+  margin: 0 0 20px;
+  color: var(--bs-secondary-color);
+  font-size: .76rem;
+  line-height: 1.5;
+}
+
+.request-card .btn {
+  margin-top: auto;
+}
+
+.btn-accent {
+  --bs-btn-color: var(--brand-ink);
+  --bs-btn-bg: var(--brand-orange);
+  --bs-btn-border-color: var(--brand-orange);
+  --bs-btn-hover-color: var(--brand-ink);
+  --bs-btn-hover-bg: color-mix(in srgb, var(--brand-orange) 88%, #fff);
+  --bs-btn-hover-border-color: color-mix(in srgb, var(--brand-orange) 88%, #fff);
+  --bs-btn-active-color: var(--brand-ink);
+  --bs-btn-active-bg: color-mix(in srgb, var(--brand-orange) 80%, #000);
+  --bs-btn-active-border-color: color-mix(in srgb, var(--brand-orange) 80%, #000);
+  --bs-btn-focus-shadow-rgb: 217, 139, 62;
+  font-weight: 600;
+}
+
+.academic-form .form-select {
+  font-size: .78rem;
+}
+
+@media (max-width: 980px) {
+  .grid-mesh--academic .g-col-4 {
+    grid-column: 1 / -1;
   }
 }

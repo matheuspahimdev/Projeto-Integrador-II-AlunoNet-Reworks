@@ -25,13 +25,13 @@ $progress = (int) round(($completedHours / $requiredHours) * 100);
 
     <?php require_once '../../components/cabecalhoAcademico.php'; renderHeaderAcademic('Atividades Complementares'); ?>
 
-    <section class="academic-page-grid">
-      <section class="academic-panel">
-        <div class="academic-panel__head">
-          <div class="academic-panel__icon"><i class="bi bi-trophy"></i></div>
-          <div><h2>Carga horária</h2><p class="academic-panel__subtitle">Acompanhe o cumprimento das horas exigidas.</p></div>
+    <section class="grid-mesh grid-mesh--static grid-mesh--academic">
+      <section class="g-box g-col-1 grid-card">
+        <div class="grid-card__head">
+          <div class="grid-card__icon"><i class="bi bi-trophy"></i></div>
+          <div><h2>Carga horária</h2><p class="grid-card__subtitle">Acompanhe o cumprimento das horas exigidas.</p></div>
         </div>
-        <div class="academic-panel__body">
+        <div class="grid-card__body">
           <div class="metric-grid">
             <div><span>Horas cumpridas</span><strong><?= $completedHours ?>h</strong></div>
             <div><span>Horas exigidas</span><strong><?= $requiredHours ?>h</strong></div>
@@ -42,12 +42,12 @@ $progress = (int) round(($completedHours / $requiredHours) * 100);
         </div>
       </section>
 
-      <section class="academic-panel academic-panel--wide">
-        <div class="academic-panel__head">
-          <div class="academic-panel__icon"><i class="bi bi-journal-check"></i></div>
-          <div><h2>Atividades registradas</h2><p class="academic-panel__subtitle">Acompanhe o resultado da análise de cada comprovante.</p></div>
+      <section class="g-box g-col-3 grid-card">
+        <div class="grid-card__head">
+          <div class="grid-card__icon"><i class="bi bi-journal-check"></i></div>
+          <div><h2>Atividades registradas</h2><p class="grid-card__subtitle">Acompanhe o resultado da análise de cada comprovante.</p></div>
         </div>
-        <div class="academic-panel__body">
+        <div class="grid-card__body">
           <div class="academic-list">
             <?php foreach ($atividades as $atividade): ?>
               <article class="academic-list__item">
@@ -62,12 +62,12 @@ $progress = (int) round(($completedHours / $requiredHours) * 100);
         </div>
       </section>
 
-      <section class="academic-panel">
-        <div class="academic-panel__head">
-          <div class="academic-panel__icon"><i class="bi bi-cloud-arrow-up"></i></div>
-          <div><h2>Enviar comprovante</h2><p class="academic-panel__subtitle">Registre uma nova atividade acadêmica.</p></div>
+      <section class="g-box g-col-1 grid-card">
+        <div class="grid-card__head">
+          <div class="grid-card__icon"><i class="bi bi-cloud-arrow-up"></i></div>
+          <div><h2>Enviar comprovante</h2><p class="grid-card__subtitle">Registre uma nova atividade acadêmica.</p></div>
         </div>
-        <div class="academic-panel__body">
+        <div class="grid-card__body">
           <p class="text-secondary">Cadastre a atividade, informe a carga horária e envie o comprovante para análise da coordenação.</p>
           <button class="btn btn-primary w-100" type="button"><i class="bi bi-upload me-1"></i>Nova atividade</button>
           <div class="notice-box mt-3"><i class="bi bi-info-circle"></i><span>Os comprovantes devem estar legíveis e conter a data e a carga horária da atividade.</span></div>

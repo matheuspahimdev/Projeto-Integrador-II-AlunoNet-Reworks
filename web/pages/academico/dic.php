@@ -22,16 +22,16 @@ $progress = (int) round(($completedHours / $totalHours) * 100);
 
     <?php require_once '../../components/cabecalhoAcademico.php'; renderHeaderAcademic('DIC — Documentação Integralização Curricular'); ?>
 
-    <section class="academic-page-grid">
-      <section class="academic-panel academic-panel--wide">
-        <div class="academic-panel__head">
-          <div class="academic-panel__icon"><i class="bi bi-diagram-3"></i></div>
+    <section class="grid-mesh grid-mesh--static grid-mesh--academic">
+      <section class="g-box g-col-3 grid-card">
+        <div class="grid-card__head">
+          <div class="grid-card__icon"><i class="bi bi-diagram-3"></i></div>
           <div>
             <h2>Integralização curricular</h2>
-            <p class="academic-panel__subtitle">Acompanhe o avanço das atividades necessárias para concluir o curso.</p>
+            <p class="grid-card__subtitle">Acompanhe o avanço das atividades necessárias para concluir o curso.</p>
           </div>
         </div>
-        <div class="academic-panel__body">
+        <div class="grid-card__body">
           <div class="progress-summary">
             <div class="d-flex justify-content-between mb-2"><strong>Progresso do curso</strong><span><?= $progress ?>%</span></div>
             <div class="progress" role="progressbar" aria-label="Integralização curricular" aria-valuenow="<?= $progress ?>" aria-valuemin="0" aria-valuemax="100">
@@ -47,12 +47,12 @@ $progress = (int) round(($completedHours / $totalHours) * 100);
         </div>
       </section>
 
-      <section class="academic-panel">
-        <div class="academic-panel__head">
-          <div class="academic-panel__icon"><i class="bi bi-list-check"></i></div>
-          <div><h2>Componentes curriculares</h2><p class="academic-panel__subtitle">Carga concluída em cada grupo.</p></div>
+      <section class="g-box g-col-1 grid-card">
+        <div class="grid-card__head">
+          <div class="grid-card__icon"><i class="bi bi-list-check"></i></div>
+          <div><h2>Componentes curriculares</h2><p class="grid-card__subtitle">Carga concluída em cada grupo.</p></div>
         </div>
-        <div class="academic-panel__body">
+        <div class="grid-card__body">
           <ul class="clean-list">
             <?php foreach ($componentes as $component): ?>
               <li>

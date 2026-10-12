@@ -24,16 +24,16 @@ $best = max(array_column($desempenho, 'average'));
 
     <?php require_once '../../components/cabecalhoAcademico.php'; renderHeaderAcademic('Gráficos de Desempenho'); ?>
 
-    <section class="academic-page-grid">
-      <section class="academic-panel academic-panel--wide">
-        <div class="academic-panel__head">
-          <div class="academic-panel__icon"><i class="bi bi-bar-chart"></i></div>
+    <section class="grid-mesh grid-mesh--static grid-mesh--academic">
+      <section class="g-box g-col-3 grid-card">
+        <div class="grid-card__head">
+          <div class="grid-card__icon"><i class="bi bi-bar-chart"></i></div>
           <div>
             <h2>Média por disciplina</h2>
-            <p class="academic-panel__subtitle">Compare o desempenho nas disciplinas com notas lançadas.</p>
+            <p class="grid-card__subtitle">Compare o desempenho nas disciplinas com notas lançadas.</p>
           </div>
         </div>
-        <div class="academic-panel__body">
+        <div class="grid-card__body">
           <div class="bar-chart" aria-label="Gráfico de médias por disciplina">
             <?php foreach ($desempenho as $item): ?>
               <div class="bar-row">
@@ -48,12 +48,12 @@ $best = max(array_column($desempenho, 'average'));
         </div>
       </section>
 
-      <section class="academic-panel">
-        <div class="academic-panel__head">
-          <div class="academic-panel__icon"><i class="bi bi-speedometer2"></i></div>
-          <div><h2>Indicadores</h2><p class="academic-panel__subtitle">Resumo para acompanhar sua evolução.</p></div>
+      <section class="g-box g-col-1 grid-card">
+        <div class="grid-card__head">
+          <div class="grid-card__icon"><i class="bi bi-speedometer2"></i></div>
+          <div><h2>Indicadores</h2><p class="grid-card__subtitle">Resumo para acompanhar sua evolução.</p></div>
         </div>
-        <div class="academic-panel__body">
+        <div class="grid-card__body">
           <div class="metric-grid">
             <div><span>Média geral</span><strong><?= number_format($average, 1, ',', '.') ?></strong></div>
             <div><span>Frequência média</span><strong><?= round($attendance) ?>%</strong></div>

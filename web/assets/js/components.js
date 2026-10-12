@@ -49,6 +49,7 @@ const ROUTES = Object.freeze({
   chamados: route('pages/suporte/chamado.php'),
   repositorio: route('pages/materiais/repositorioAluno.php'),
   avaliacao: route('pages/avalieNos/avaliacaoFaculdade.php'),
+  entradaRequerimentos: route('pages/protocolo/entradaRequerimentos.php'),
 });
 
 class NavBar extends HTMLElement {
@@ -70,6 +71,7 @@ class NavBar extends HTMLElement {
         { label: 'Atividades Complementares', href: ROUTES.atividadesComplementares },
         { label: 'Plano de Ensino', href: ROUTES.planoEnsino },
         { label: 'Carteirinha Digital', href: ROUTES.carteirinhaDigital },
+        { label: 'Entrada de Requerimentos', href: ROUTES.entradaRequerimentos},
       ],
     },
     {
@@ -78,7 +80,11 @@ class NavBar extends HTMLElement {
         { label: 'Central de Boletos', href: ROUTES.boletos },
       ],
     },
-    { label: 'Protocolos', icon: 'bi-graph-up-arrow', unavailable: true },
+    { label: 'Protocolos', icon: 'bi-graph-up-arrow',
+      subs: [
+        { label: 'Entrada de Requerimentos', href: ROUTES.entradaRequerimentos },
+      ],
+    },
     {
       label: 'Avalie-nos', icon: 'bi-pencil-square',
       subs: [
@@ -129,6 +135,10 @@ class NavBar extends HTMLElement {
       </nav>
     `;
 
+    this.querySelectorAll('.sidebar-nav__submenu').forEach((menu) => {
+      menu.style.setProperty('--submenu-height', `${menu.scrollHeight}px`);
+    });
+
     this.querySelectorAll('.sidebar-nav__item--expandable > button').forEach((button) => {
       button.addEventListener('click', () => {
         const item = button.closest('.sidebar-nav__item');
@@ -145,7 +155,14 @@ class NavBar extends HTMLElement {
     const hasSubs = Array.isArray(item.subs) && item.subs.length > 0;
     const isHome = window.location.pathname.endsWith('/') || window.location.pathname.endsWith('/index.php');
     const isActive = (item.label === 'Início' && isHome)
-      || item.subs?.some((sub) => new URL(sub.href).pathname === window.location.pathname);
+      || item.subs?.some((sub) => {
+        if (!sub.href || sub.href === '#') return false;
+        try {
+          return new URL(sub.href, window.location.href).pathname === window.location.pathname;
+        } catch {
+          return false;
+        }
+      });
     const classes = `sidebar-nav__link${item.accent ? ' sidebar-nav__link--accent' : ''}${isActive ? ' is-active' : ''}`;
 
     if (hasSubs) {

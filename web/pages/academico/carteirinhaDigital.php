@@ -27,16 +27,16 @@ $validations = [
 
     <?php require_once '../../components/cabecalhoAcademico.php'; renderHeaderAcademic('Carteirinha Digital'); ?>
 
-    <section class="academic-page-grid">
-      <section class="academic-panel academic-panel--wide">
-        <div class="academic-panel__head">
-          <div class="academic-panel__icon"><i class="bi bi-person-badge"></i></div>
+    <section class="grid-mesh grid-mesh--static grid-mesh--academic">
+      <section class="g-box g-col-3 grid-card">
+        <div class="grid-card__head">
+          <div class="grid-card__icon"><i class="bi bi-person-badge"></i></div>
           <div>
             <h2>Identificação do aluno</h2>
-            <p class="academic-panel__subtitle">Apresente esta identificação em ambientes e serviços da instituição.</p>
+            <p class="grid-card__subtitle">Apresente esta identificação em ambientes e serviços da instituição.</p>
           </div>
         </div>
-        <div class="academic-panel__body">
+        <div class="grid-card__body">
           <div class="digital-card">
             <div class="digital-card__brand">UNIFIO</div>
             <div class="digital-card__avatar"><?= htmlspecialchars($aluno['initials'], ENT_QUOTES, 'UTF-8') ?></div>
@@ -48,12 +48,12 @@ $validations = [
         </div>
       </section>
 
-      <section class="academic-panel">
-        <div class="academic-panel__head">
-          <div class="academic-panel__icon"><i class="bi bi-qr-code"></i></div>
-          <div><h2>Validação</h2><p class="academic-panel__subtitle">Confira a situação da carteirinha.</p></div>
+      <section class="g-box g-col-1 grid-card">
+        <div class="grid-card__head">
+          <div class="grid-card__icon"><i class="bi bi-qr-code"></i></div>
+          <div><h2>Validação</h2><p class="grid-card__subtitle">Confira a situação da carteirinha.</p></div>
         </div>
-        <div class="academic-panel__body">
+        <div class="grid-card__body">
           <ul class="clean-list">
             <?php foreach ($validations as $validation): ?>
               <li><span><?= htmlspecialchars($validation['label'], ENT_QUOTES, 'UTF-8') ?></span><strong><?= htmlspecialchars($validation['value'], ENT_QUOTES, 'UTF-8') ?></strong></li>

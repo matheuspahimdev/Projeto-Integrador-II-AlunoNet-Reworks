@@ -20,16 +20,16 @@ $disciplinas = [
 
     <?php require_once '../../components/cabecalhoAcademico.php'; renderHeaderAcademic('Plano de Ensino'); ?>
 
-    <section class="academic-page-grid">
-      <section class="academic-panel academic-panel--wide">
-        <div class="academic-panel__head">
-          <div class="academic-panel__icon"><i class="bi bi-journal-richtext"></i></div>
+    <section class="grid-mesh grid-mesh--static grid-mesh--academic">
+      <section class="g-box g-col-3 grid-card">
+        <div class="grid-card__head">
+          <div class="grid-card__icon"><i class="bi bi-journal-richtext"></i></div>
           <div>
             <h2>Disciplinas do semestre</h2>
-            <p class="academic-panel__subtitle">Consulte os conteúdos e critérios previstos para cada disciplina.</p>
+            <p class="grid-card__subtitle">Consulte os conteúdos e critérios previstos para cada disciplina.</p>
           </div>
         </div>
-        <div class="academic-panel__body">
+        <div class="grid-card__body">
           <div class="academic-list">
             <?php foreach ($disciplinas as $disciplina): ?>
               <article class="academic-list__item">
@@ -44,12 +44,12 @@ $disciplinas = [
         </div>
       </section>
 
-      <section class="academic-panel">
-        <div class="academic-panel__head">
-          <div class="academic-panel__icon"><i class="bi bi-info-square"></i></div>
-          <div><h2>O que você encontra</h2><p class="academic-panel__subtitle">Informações disponíveis em cada plano.</p></div>
+      <section class="g-box g-col-1 grid-card">
+        <div class="grid-card__head">
+          <div class="grid-card__icon"><i class="bi bi-info-square"></i></div>
+          <div><h2>O que você encontra</h2><p class="grid-card__subtitle">Informações disponíveis em cada plano.</p></div>
         </div>
-        <div class="academic-panel__body">
+        <div class="grid-card__body">
           <ul class="clean-list">
             <li><span>Ementa e objetivos</span><i class="bi bi-check2 text-success"></i></li>
             <li><span>Conteúdo programático</span><i class="bi bi-check2 text-success"></i></li>

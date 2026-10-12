@@ -19,16 +19,16 @@ $campos = [
     <portal-header></portal-header>
     <?php require_once '../../components/cabecalhoAcademico.php'; renderHeaderAcademic('Atualização de Dados Cadastrais'); ?>
 
-    <section class="academic-page-grid">
-      <section class="academic-panel academic-panel--wide">
-        <div class="academic-panel__head">
-          <div class="academic-panel__icon"><i class="bi bi-pencil-square"></i></div>
+    <section class="grid-mesh grid-mesh--static grid-mesh--academic">
+      <section class="g-box g-col-3 grid-card">
+        <div class="grid-card__head">
+          <div class="grid-card__icon"><i class="bi bi-pencil-square"></i></div>
           <div>
             <h2>Atualizar informações</h2>
-            <p class="academic-panel__subtitle">Revise os dados antes de enviar uma solicitação de alteração.</p>
+            <p class="grid-card__subtitle">Revise os dados antes de enviar uma solicitação de alteração.</p>
           </div>
         </div>
-        <div class="academic-panel__body">
+        <div class="grid-card__body">
           <form class="academic-form" method="post" action="">
             <div class="row g-3">
               <?php foreach ($campos as $campo): ?>
@@ -44,12 +44,12 @@ $campos = [
         </div>
       </section>
 
-      <section class="academic-panel">
-        <div class="academic-panel__head">
-          <div class="academic-panel__icon"><i class="bi bi-exclamation-circle"></i></div>
-          <div><h2>Atenção</h2><p class="academic-panel__subtitle">Antes de salvar suas alterações.</p></div>
+      <section class="g-box g-col-1 grid-card">
+        <div class="grid-card__head">
+          <div class="grid-card__icon"><i class="bi bi-exclamation-circle"></i></div>
+          <div><h2>Atenção</h2><p class="grid-card__subtitle">Antes de salvar suas alterações.</p></div>
         </div>
-        <div class="academic-panel__body">
+        <div class="grid-card__body">
           <ul class="clean-list">
             <li><span>Confira o e-mail informado</span><i class="bi bi-check2 text-success"></i></li>
             <li><span>Mantenha o telefone atualizado</span><i class="bi bi-check2 text-success"></i></li>

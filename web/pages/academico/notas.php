@@ -24,16 +24,16 @@ $inProgress = count($disciplinas) - $approved;
 
     <?php require_once '../../components/cabecalhoAcademico.php'; renderHeaderAcademic('Notas'); ?>
 
-    <section class="academic-page-grid">
-      <section class="academic-panel academic-panel--wide">
-        <div class="academic-panel__head">
-          <div class="academic-panel__icon"><i class="bi bi-award"></i></div>
+    <section class="grid-mesh grid-mesh--static grid-mesh--academic">
+      <section class="g-box g-col-3 grid-card">
+        <div class="grid-card__head">
+          <div class="grid-card__icon"><i class="bi bi-award"></i></div>
           <div>
             <h2>Boletim do semestre</h2>
-            <p class="academic-panel__subtitle">Acompanhe as avaliações lançadas e a situação em cada disciplina.</p>
+            <p class="grid-card__subtitle">Acompanhe as avaliações lançadas e a situação em cada disciplina.</p>
           </div>
         </div>
-        <div class="academic-panel__body">
+        <div class="grid-card__body">
           <div class="table-responsive">
             <table class="table table-hover align-middle academic-table">
               <thead><tr><th>Disciplina</th><th>Nota 1</th><th>Nota 2</th><th>Média</th><th>Situação</th></tr></thead>
@@ -53,12 +53,12 @@ $inProgress = count($disciplinas) - $approved;
         </div>
       </section>
 
-      <section class="academic-panel">
-        <div class="academic-panel__head">
-          <div class="academic-panel__icon"><i class="bi bi-graph-up"></i></div>
-          <div><h2>Resumo acadêmico</h2><p class="academic-panel__subtitle">Visão geral das notas lançadas.</p></div>
+      <section class="g-box g-col-1 grid-card">
+        <div class="grid-card__head">
+          <div class="grid-card__icon"><i class="bi bi-graph-up"></i></div>
+          <div><h2>Resumo acadêmico</h2><p class="grid-card__subtitle">Visão geral das notas lançadas.</p></div>
         </div>
-        <div class="academic-panel__body">
+        <div class="grid-card__body">
           <div class="metric-grid">
             <div><span>Média geral</span><strong><?= number_format($average, 1, ',', '.') ?></strong></div>
             <div><span>Aprovadas</span><strong><?= $approved ?></strong></div>

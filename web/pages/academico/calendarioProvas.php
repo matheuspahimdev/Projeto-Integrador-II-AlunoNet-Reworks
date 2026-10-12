@@ -87,16 +87,16 @@ $proximaAvaliacao = $avaliacoes[0];
       </div>
     </section>
 
-    <div class="academic-page-grid academic-calendar-grid">
-      <section class="academic-panel academic-panel--wide">
-        <div class="academic-panel__head">
-          <div class="academic-panel__icon"><i class="bi bi-calendar2-check"></i></div>
+    <div class="grid-mesh grid-mesh--static grid-mesh--academic academic-calendar-grid">
+      <section class="g-box g-col-3 grid-card">
+        <div class="grid-card__head">
+          <div class="grid-card__icon"><i class="bi bi-calendar2-check"></i></div>
           <div>
             <h2>Próximas avaliações</h2>
-            <p class="academic-panel__subtitle">Acompanhe datas, horários e locais das avaliações do semestre.</p>
+            <p class="grid-card__subtitle">Acompanhe datas, horários e locais das avaliações do semestre.</p>
           </div>
         </div>
-        <div class="academic-panel__body">
+        <div class="grid-card__body">
           <div class="academic-calendar-list">
             <?php foreach ($avaliacoes as $avaliacao): ?>
               <article class="academic-calendar-item">
@@ -126,15 +126,15 @@ $proximaAvaliacao = $avaliacoes[0];
         </div>
       </section>
 
-      <section class="academic-panel">
-        <div class="academic-panel__head">
-          <div class="academic-panel__icon"><i class="bi bi-info-circle"></i></div>
+      <section class="g-box g-col-1 grid-card">
+        <div class="grid-card__head">
+          <div class="grid-card__icon"><i class="bi bi-info-circle"></i></div>
           <div>
             <h2>Orientações</h2>
-            <p class="academic-panel__subtitle">O que conferir antes da avaliação.</p>
+            <p class="grid-card__subtitle">O que conferir antes da avaliação.</p>
           </div>
         </div>
-        <div class="academic-panel__body">
+        <div class="grid-card__body">
           <div class="notice-box mb-3">
             <i class="bi bi-bell"></i>
             <span>Confira o ambiente da disciplina para acompanhar alterações de data, sala ou modalidade.</span>

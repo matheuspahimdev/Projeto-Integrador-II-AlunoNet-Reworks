@@ -12,7 +12,7 @@ $links = [
   ['url' => 'confirmacaoMatricula.php', 'class' => 'bi bi-patch-check', 'title' => 'Confirmação de Matrícula', 'description' => 'Consulte a situação e os dados da matrícula.'],
   ['url' => 'dic.php', 'class' => 'bi bi-diagram-3', 'title' => 'DIC', 'description' => 'Documentação e integralização curricular.'],
   ['url' => 'atualizacaoDadosCadastrais.php', 'class' => 'bi bi-pencil-square', 'title' => 'Atualização de Dados Cadastrais', 'description' => 'Atualize telefone, e-mail e endereço.'],
-  ['url' => '#atividadesComplementaresModal', 'class' => 'bi bi-trophy', 'title' => 'Atividades Complementares', 'description' => 'Acompanhe horas e atividades registradas.'],
+  ['url' => 'atividadesComplementares.php', 'class' => 'bi bi-trophy', 'title' => 'Atividades Complementares', 'description' => 'Acompanhe horas e atividades registradas.'],
   ['url' => 'planoEnsino.php', 'class' => 'bi bi-journal-richtext', 'title' => 'Plano de Ensino', 'description' => 'Consulte ementas, objetivos e critérios de avaliação.'],
   ['url' => 'carteirinhaDigital.php', 'class' => 'bi bi-person-badge', 'title' => 'Carteirinha Digital', 'description' => 'Acesse sua identificação acadêmica digital.'],
 ];

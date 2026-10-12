@@ -26,16 +26,16 @@ $etapas = [
 
     <?php require_once '../../components/cabecalhoAcademico.php'; renderHeaderAcademic('Confirmação de Matrícula'); ?>
 
-    <section class="academic-page-grid">
-      <section class="academic-panel academic-panel--wide">
-        <div class="academic-panel__head">
-          <div class="academic-panel__icon"><i class="bi bi-patch-check"></i></div>
+    <section class="grid-mesh grid-mesh--static grid-mesh--academic">
+      <section class="g-box g-col-3 grid-card">
+        <div class="grid-card__head">
+          <div class="grid-card__icon"><i class="bi bi-patch-check"></i></div>
           <div>
             <h2>Situação da matrícula</h2>
-            <p class="academic-panel__subtitle">Confira o vínculo acadêmico e as disciplinas do período.</p>
+            <p class="grid-card__subtitle">Confira o vínculo acadêmico e as disciplinas do período.</p>
           </div>
         </div>
-        <div class="academic-panel__body">
+        <div class="grid-card__body">
           <div class="status-card">
             <i class="bi bi-patch-check-fill"></i>
             <div><strong>Matrícula confirmada</strong><span>2026/2 • Engenharia de Software • 2º semestre</span></div>
@@ -49,12 +49,12 @@ $etapas = [
         </div>
       </section>
 
-      <section class="academic-panel">
-        <div class="academic-panel__head">
-          <div class="academic-panel__icon"><i class="bi bi-list-check"></i></div>
-          <div><h2>Etapas concluídas</h2><p class="academic-panel__subtitle">Histórico da confirmação no portal.</p></div>
+      <section class="g-box g-col-1 grid-card">
+        <div class="grid-card__head">
+          <div class="grid-card__icon"><i class="bi bi-list-check"></i></div>
+          <div><h2>Etapas concluídas</h2><p class="grid-card__subtitle">Histórico da confirmação no portal.</p></div>
         </div>
-        <div class="academic-panel__body">
+        <div class="grid-card__body">
           <ul class="clean-list">
             <?php foreach ($etapas as $etapa): ?>
               <li>
