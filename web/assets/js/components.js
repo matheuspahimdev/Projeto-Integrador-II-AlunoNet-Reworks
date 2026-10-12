@@ -45,11 +45,15 @@ const ROUTES = Object.freeze({
   atividadesComplementares: route('pages/academico/atividadesComplementares.php'),
   planoEnsino: route('pages/academico/planoEnsino.php'),
   carteirinhaDigital: route('pages/academico/carteirinhaDigital.php'),
-  boletos: route('pages/financeiro/centralBoleto.php'),
+  extratoFinanceiro: route('pages/financeiro/extratoFinanceiro.php'),
   chamados: route('pages/suporte/chamado.php'),
   repositorio: route('pages/materiais/repositorioAluno.php'),
-  avaliacao: route('pages/avalieNos/avaliacaoFaculdade.php'),
+  avaliacaoInstitucional: route('pages/avalieNos/avaliacaoInstitucional.php'),
   entradaRequerimentos: route('pages/protocolo/entradaRequerimentos.php'),
+  consultaRequerimentos: route('pages/protocolo/consultaRequerimentos.php'),
+  boletoOnline: route('pages/financeiro/boletoOnline.php'),
+  consultarContrato: route('pages/financeiro/consultarContrato.php'),
+  comprovanteIR: route('pages/financeiro/comprovanteIR.php'),
 });
 
 class NavBar extends HTMLElement {
@@ -71,24 +75,27 @@ class NavBar extends HTMLElement {
         { label: 'Atividades Complementares', href: ROUTES.atividadesComplementares },
         { label: 'Plano de Ensino', href: ROUTES.planoEnsino },
         { label: 'Carteirinha Digital', href: ROUTES.carteirinhaDigital },
-        { label: 'Entrada de Requerimentos', href: ROUTES.entradaRequerimentos},
       ],
     },
     {
       label: 'Financeiro', icon: 'bi-currency-dollar',
       subs: [
-        { label: 'Central de Boletos', href: ROUTES.boletos },
+        { label: 'Extrato Financeiro', href: ROUTES.extratoFinanceiro },
+        { label: 'Boleto Online', href: ROUTES.boletoOnline },
+        { label: 'Consultar Contrato', href: ROUTES.consultarContrato },
+        { label: 'Comprovante de IR', href: ROUTES.comprovanteIR },
       ],
     },
     { label: 'Protocolos', icon: 'bi-graph-up-arrow',
       subs: [
         { label: 'Entrada de Requerimentos', href: ROUTES.entradaRequerimentos },
+        { label: 'Consulta de Requerimentos', href: ROUTES.consultaRequerimentos },
       ],
     },
     {
       label: 'Avalie-nos', icon: 'bi-pencil-square',
       subs: [
-        { label: 'Avaliação da Faculdade', href: ROUTES.avaliacao },
+        { label: 'Avaliação Institucional', href: ROUTES.avaliacaoInstitucional },
       ],
     },
     {
@@ -100,8 +107,8 @@ class NavBar extends HTMLElement {
     { label: 'Avisos', icon: 'bi-envelope', unavailable: true },
     { label: 'Biblioteca', icon: 'bi-bookshelf', unavailable: true },
     { label: 'Eventos', icon: 'bi-calendar-event', unavailable: true },
-    { label: 'Moodle', icon: 'bi-easel2', unavailable: true },
-    { label: 'Carreiras', icon: 'bi-rocket-takeoff', unavailable: true },
+    { label: 'Moodle', icon: 'bi-easel2', href: 'https://conhecer.unifio.edu.br/login/index.php', target: '_blank' },
+    { label: 'Carreiras', icon: 'bi-rocket-takeoff', href: 'https://workability.worka.love', target: '_blank' },
     {
       label: 'Suporte', icon: 'bi-headset', accent: true,
       subs: [

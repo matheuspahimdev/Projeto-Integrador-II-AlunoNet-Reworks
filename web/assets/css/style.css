@@ -1948,3 +1948,742 @@ html[data-bs-theme="light"] .theme-toggle .icon-moon {
     grid-column: 1 / -1;
   }
 }
+
+/* ===================== BOLETO ONLINE ===================== */
+.info-banner--success {
+  border-left-color: var(--brand-green);
+  background: color-mix(in srgb, var(--brand-green) 8%, var(--bs-secondary-bg));
+}
+
+.info-banner--success .info-banner__icon {
+  background: var(--brand-green);
+  color: #fff;
+}
+
+.info-banner--success strong {
+  color: color-mix(in srgb, var(--brand-green) 70%, var(--bs-emphasis-color));
+}
+
+.invoice-card {
+  margin: 0 4px 24px;
+  padding: 22px 24px 22px 30px;
+  border: 2px solid var(--bs-primary);
+  border-radius: 16px;
+  background: var(--bs-secondary-bg);
+  box-shadow: inset 6px 0 0 var(--brand-orange);
+}
+
+.invoice-card__top {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--bs-border-color);
+}
+
+.invoice-card__title {
+  margin: 10px 0 4px;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.invoice-card__meta {
+  margin: 0;
+  color: var(--bs-secondary-color);
+  font-size: .76rem;
+}
+
+.invoice-card__amount {
+  text-align: right;
+}
+
+.invoice-card__amount small {
+  display: block;
+  color: var(--bs-secondary-color);
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+}
+
+.invoice-card__value {
+  display: block;
+  font-size: 1.9rem;
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+.invoice-card__due {
+  font-size: .78rem;
+  font-weight: 700;
+}
+
+.pix-qr {
+  width: 168px;
+  height: 168px;
+  margin: 0 auto 14px;
+  display: grid;
+  place-items: center;
+  border: 1px dashed var(--bs-border-color);
+  border-radius: 14px;
+  color: var(--bs-secondary-color);
+  font-size: 5.5rem;
+}
+
+@media (max-width: 760px) {
+  .invoice-card {
+    padding: 18px 16px 18px 22px;
+  }
+
+  .invoice-card__amount {
+    text-align: left;
+  }
+}
+
+/* ===================== CONSULTA DE CONTRATO ===================== */
+.contract-paper {
+  max-width: 900px;
+  margin: 8px auto 32px;
+  padding: 56px 64px;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, .14);
+  color: #000;
+  font-family: "Times New Roman", Times, serif;
+  font-size: .95rem;
+  line-height: 1.5;
+}
+
+.contract-paper h2 {
+  margin: 0 0 28px;
+  padding-bottom: 18px;
+  border-bottom: 2px solid #000;
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.contract-paper p {
+  margin: 0 0 8px;
+}
+
+.contract-section {
+  margin: 30px 0 14px;
+  font-weight: 700;
+  text-decoration: underline;
+  text-transform: uppercase;
+}
+
+.contract-line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 22px;
+  margin-bottom: 10px;
+}
+
+.contract-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 24px;
+}
+
+.contract-clauses p {
+  margin-bottom: 14px;
+  font-size: .82rem;
+  text-align: justify;
+}
+
+.contract-date {
+  margin: 22px 0;
+  text-align: right;
+}
+
+.contract-signatures {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  margin-top: 52px;
+  font-size: .72rem;
+  text-align: center;
+}
+
+.contract-signature {
+  padding-top: 4px;
+  border-top: 1px solid #000;
+}
+
+.contract-divider {
+  margin: 36px 0 20px;
+  border: 0;
+  border-top: 1px dashed #9ca3af;
+  opacity: 1;
+}
+
+@media (max-width: 760px) {
+  .contract-paper {
+    padding: 28px 20px;
+  }
+
+  .contract-cols,
+  .contract-signatures {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 14mm;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+  }
+
+  nav-bar,
+  portal-header,
+  .no-print {
+    display: none !important;
+  }
+
+  .app-shell {
+    padding-left: 0 !important;
+  }
+
+  .page-content {
+    max-width: none !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+  }
+
+  .contract-paper {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+    font-size: 10.5pt;
+  }
+
+  .contract-clauses p,
+  .contract-signatures,
+  .contract-cols,
+  .contract-line {
+    break-inside: avoid;
+  }
+
+  .contract-cols,
+  .contract-signatures {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ===================== COMPROVANTE IR ===================== */
+.print-only {
+  display: none;
+}
+
+.irpf-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.irpf-summary small {
+  display: block;
+  color: var(--bs-secondary-color);
+  font-size: .76rem;
+}
+
+.irpf-total {
+  display: block;
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.irpf-beneficiary {
+  text-align: right;
+}
+
+.irpf-beneficiary strong {
+  display: block;
+  font-size: 1rem;
+  text-transform: uppercase;
+}
+
+.academic-table tfoot th {
+  padding-top: .9rem;
+  padding-bottom: .9rem;
+  font-size: .78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+@media (max-width: 760px) {
+  .irpf-beneficiary {
+    text-align: left;
+  }
+}
+
+@media print {
+  .print-only {
+    display: block !important;
+    margin-bottom: 18px;
+  }
+
+  .print-only h1 {
+    margin: 0;
+    font-size: 16pt;
+    font-weight: 700;
+  }
+
+  .print-only p {
+    margin: 0;
+    font-size: 10pt;
+  }
+
+  .irpf-report {
+    --bs-body-color: #000;
+    --bs-body-bg: #fff;
+    --bs-emphasis-color: #000;
+    --bs-secondary-color: #4b5563;
+    --bs-secondary-bg: #fff;
+    --bs-tertiary-bg: #f3f4f6;
+    --bs-border-color: #d1d5db;
+    color: #000;
+  }
+
+  .irpf-report .grid-card {
+    box-shadow: none;
+    break-inside: avoid;
+  }
+
+  .irpf-report tr {
+    break-inside: avoid;
+  }
+}
+
+/* ===================== AVALIAÇÃO INSTITUCIONAL ===================== */
+.rating-section + .rating-section {
+  margin-top: 28px;
+  padding-top: 28px;
+  border-top: 1px solid var(--bs-border-color);
+}
+
+.rating-section__title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 10px;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.rating-section__title i {
+  color: var(--bs-primary);
+}
+
+.rating-group {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.rating-group legend {
+  float: none;
+  width: auto;
+  margin: 0 0 14px;
+  padding: 0;
+  color: var(--bs-secondary-color);
+  font-size: .84rem;
+  font-weight: 400;
+}
+
+.rating-scale {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.rating-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 18px 8px 14px;
+  border: 1px solid var(--bs-border-color);
+  border-radius: 12px;
+  background: var(--bs-tertiary-bg);
+  cursor: pointer;
+  text-align: center;
+  transition: border-color .15s ease, background-color .15s ease;
+}
+
+.rating-option .form-check-input {
+  width: 1.1rem;
+  height: 1.1rem;
+  margin: 0 0 8px;
+  cursor: pointer;
+}
+
+.rating-option strong {
+  font-size: .9rem;
+}
+
+.rating-option span {
+  color: var(--bs-secondary-color);
+  font-size: .72rem;
+}
+
+.rating-option:hover {
+  border-color: var(--bs-primary);
+}
+
+.rating-option:has(input:checked) {
+  border-color: var(--bs-primary);
+  background: color-mix(in srgb, var(--bs-primary) 10%, var(--bs-secondary-bg));
+}
+
+.rating-option:has(input:focus-visible) {
+  outline: 2px solid var(--bs-primary);
+  outline-offset: 2px;
+}
+
+.rating-group .invalid-feedback {
+  display: none;
+  margin-top: 8px;
+}
+
+.rating-group.is-invalid .invalid-feedback {
+  display: block;
+}
+
+.rating-group.is-invalid .rating-option {
+  border-color: var(--bs-danger);
+}
+
+@media (max-width: 576px) {
+  .rating-scale {
+    gap: 8px;
+  }
+
+  .rating-option {
+    padding: 12px 4px;
+  }
+
+  .rating-option span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+}
+
+/* ===================== REPOSITÓRIO DO ALUNO ===================== */
+.repo-layout {
+  display: grid;
+  grid-template-columns: 250px minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.repo-side {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 18px;
+  overflow: visible;
+}
+
+.repo-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.repo-nav__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--bs-body-color);
+  font-size: .82rem;
+  font-weight: 600;
+  text-align: left;
+}
+
+.repo-nav__item:hover {
+  background: var(--bs-tertiary-bg);
+}
+
+.repo-nav__item.active {
+  background: color-mix(in srgb, var(--bs-primary) 12%, transparent);
+  color: var(--bs-primary);
+}
+
+.repo-storage small {
+  color: var(--bs-secondary-color);
+  font-size: .72rem;
+}
+
+.repo-storage .progress {
+  height: 6px;
+  margin-bottom: 6px;
+}
+
+.repo-main {
+  min-height: 480px;
+  padding: 18px 20px 24px;
+}
+
+.repo-main.is-dragging {
+  outline: 2px dashed var(--bs-primary);
+  outline-offset: -8px;
+}
+
+.repo-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.repo-search {
+  flex: 1 1 240px;
+  width: auto;
+}
+
+.repo-sort {
+  flex: 0 0 auto;
+  width: auto;
+}
+
+.repo-crumbs {
+  margin: 16px 0 6px;
+  font-size: .86rem;
+}
+
+.repo-crumb {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--bs-primary);
+  font: inherit;
+}
+
+.repo-crumb:hover {
+  text-decoration: underline;
+}
+
+.repo-section-title {
+  margin: 18px 0 10px;
+  color: var(--bs-secondary-color);
+  font-size: .76rem;
+  font-weight: 700;
+}
+
+.repo-folders {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 12px;
+}
+
+.repo-folder,
+.repo-file {
+  border: 1px solid var(--bs-border-color);
+  border-radius: 12px;
+  transition: border-color .15s ease;
+}
+
+.repo-folder:hover,
+.repo-file:hover {
+  border-color: var(--bs-primary);
+}
+
+.repo-folder {
+  background: var(--bs-tertiary-bg);
+}
+
+.repo-folder__open {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+  padding: 12px 14px;
+  border: 0;
+  background: none;
+  color: inherit;
+  font-size: .82rem;
+  font-weight: 600;
+  text-align: left;
+}
+
+.repo-folder__open span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.repo-files {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 14px;
+}
+
+.repo-file {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bs-secondary-bg);
+}
+
+.repo-file__thumb {
+  display: grid;
+  place-items: center;
+  height: 128px;
+  border: 0;
+  border-bottom: 1px solid var(--bs-border-color);
+  background: var(--bs-tertiary-bg);
+  font-size: 3.4rem;
+}
+
+.repo-file__foot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 6px 10px 12px;
+}
+
+.repo-file__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.repo-file__name {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: .8rem;
+  font-weight: 600;
+}
+
+.repo-file__meta {
+  display: block;
+  color: var(--bs-secondary-color);
+  font-size: .7rem;
+}
+
+.repo-icon-btn {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--bs-secondary-color);
+}
+
+.repo-icon-btn:hover {
+  background: var(--bs-tertiary-bg);
+  color: var(--bs-body-color);
+}
+
+.repo-icon-btn.is-starred {
+  color: #f0b429;
+}
+
+.repo-name-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font-weight: 600;
+  text-align: left;
+}
+
+.repo-path {
+  display: block;
+  margin: 2px 0 0 30px;
+  color: var(--bs-secondary-color);
+  font-size: .68rem;
+}
+
+.repo-empty {
+  padding: 56px 16px;
+  color: var(--bs-secondary-color);
+  text-align: center;
+}
+
+.repo-empty i {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 2.6rem;
+}
+
+.repo-preview {
+  display: grid;
+  place-items: center;
+  height: 140px;
+  margin-bottom: 16px;
+  border-radius: 12px;
+  background: var(--bs-tertiary-bg);
+  font-size: 4rem;
+}
+
+.file-icon--folder { color: #f0b429; }
+.file-icon--pdf { color: #d93025; }
+.file-icon--doc { color: #1a73e8; }
+.file-icon--ppt { color: #e8710a; }
+.file-icon--xls { color: #188038; }
+.file-icon--zip { color: #8d6e63; }
+.file-icon--img { color: #a142f4; }
+.file-icon--video { color: #c2185b; }
+.file-icon--code,
+.file-icon--other { color: #6b7280; }
+
+@media (max-width: 900px) {
+  .repo-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .repo-side {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .repo-nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .repo-nav__item {
+    width: auto;
+  }
+
+  .repo-storage {
+    flex: 1 1 200px;
+  }
+}
