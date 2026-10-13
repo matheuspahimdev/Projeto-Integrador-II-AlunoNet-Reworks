@@ -46,7 +46,6 @@ const ROUTES = Object.freeze({
   planoEnsino: route('pages/academico/planoEnsino.php'),
   carteirinhaDigital: route('pages/academico/carteirinhaDigital.php'),
   extratoFinanceiro: route('pages/financeiro/extratoFinanceiro.php'),
-  chamados: route('pages/suporte/chamado.php'),
   repositorio: route('pages/materiais/repositorioAluno.php'),
   avaliacaoInstitucional: route('pages/avalieNos/avaliacaoInstitucional.php'),
   entradaRequerimentos: route('pages/protocolo/entradaRequerimentos.php'),
@@ -54,6 +53,12 @@ const ROUTES = Object.freeze({
   boletoOnline: route('pages/financeiro/boletoOnline.php'),
   consultarContrato: route('pages/financeiro/consultarContrato.php'),
   comprovanteIR: route('pages/financeiro/comprovanteIR.php'),
+  feedAvisos: route('pages/avisos/feedAvisos.php'),
+  consultaAcervo: route('pages/biblioteca/consultaAcervo.php'),
+  meusEmprestimos: route('pages/biblioteca/meusEmprestimos.php'),
+  calendarioEventos: route('pages/eventos/calendarioEventos.php'),
+  chamados: route('pages/suporte/chamados.php'),
+  meusChamados: route('pages/suporte/meusChamados.php'),
 });
 
 class NavBar extends HTMLElement {
@@ -104,15 +109,29 @@ class NavBar extends HTMLElement {
         { label: 'Repositório do Aluno', href: ROUTES.repositorio },
       ],
     },
-    { label: 'Avisos', icon: 'bi-envelope', unavailable: true },
-    { label: 'Biblioteca', icon: 'bi-bookshelf', unavailable: true },
-    { label: 'Eventos', icon: 'bi-calendar-event', unavailable: true },
+    { label: 'Avisos', icon: 'bi-envelope',
+      subs: [
+        { label: 'Feed de Avisos', href: ROUTES.feedAvisos },
+      ],
+    },
+    { label: 'Biblioteca', icon: 'bi-bookshelf',
+      subs: [
+        { label: 'Consulta ao Acervo', href: ROUTES.consultaAcervo },
+        { label: 'Meus Empréstimos', href: ROUTES.meusEmprestimos },
+      ],
+    },
+    { label: 'Eventos', icon: 'bi-calendar-event',
+      subs: [
+        { label: 'Calendário de Eventos', href: ROUTES.calendarioEventos },
+      ],
+    },
     { label: 'Moodle', icon: 'bi-easel2', href: 'https://conhecer.unifio.edu.br/login/index.php', target: '_blank' },
-    { label: 'Carreiras', icon: 'bi-rocket-takeoff', href: 'https://workability.worka.love', target: '_blank' },
+    { label: 'Carreiras', icon: 'bi-rocket-takeoff', href: 'https://workability.worka.love/#/login/unifio/matriculados', target: '_blank' },
     {
       label: 'Suporte', icon: 'bi-headset', accent: true,
       subs: [
         { label: 'Chamados', href: ROUTES.chamados },
+        { label: 'Meus Chamados', href: ROUTES.meusChamados },
       ],
     },
   ];
