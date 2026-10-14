@@ -49,6 +49,7 @@ const ROUTES = Object.freeze({
   repositorio: route('pages/materiais/repositorioAluno.php'),
   avaliacaoInstitucional: route('pages/avalieNos/avaliacaoInstitucional.php'),
   entradaRequerimentos: route('pages/protocolo/entradaRequerimentos.php'),
+  perfil: route('pages/perfil/perfil.php'),
   consultaRequerimentos: route('pages/protocolo/consultaRequerimentos.php'),
   boletoOnline: route('pages/financeiro/boletoOnline.php'),
   consultarContrato: route('pages/financeiro/consultarContrato.php'),
@@ -59,6 +60,8 @@ const ROUTES = Object.freeze({
   calendarioEventos: route('pages/eventos/calendarioEventos.php'),
   chamados: route('pages/suporte/chamados.php'),
   meusChamados: route('pages/suporte/meusChamados.php'),
+  // Quando houver autenticação real, aponte para o endpoint de logout.
+  logout: route('index.php'),
 });
 
 class NavBar extends HTMLElement {
@@ -134,6 +137,7 @@ class NavBar extends HTMLElement {
         { label: 'Meus Chamados', href: ROUTES.meusChamados },
       ],
     },
+    { label: 'Sair', icon: 'bi-box-arrow-right', href: ROUTES.logout, variant: 'danger' },
   ];
 
   connectedCallback() {
@@ -189,7 +193,7 @@ class NavBar extends HTMLElement {
           return false;
         }
       });
-    const classes = `sidebar-nav__link${item.accent ? ' sidebar-nav__link--accent' : ''}${isActive ? ' is-active' : ''}`;
+    const classes = `sidebar-nav__link${item.accent ? ' sidebar-nav__link--accent' : ''}${item.variant ? ` sidebar-nav__link--${item.variant}` : ''}${isActive ? ' is-active' : ''}`;
 
     if (hasSubs) {
       const menuId = `nav-submenu-${index}`;
@@ -286,7 +290,9 @@ class PortalHeader extends HTMLElement {
           ${courses}
         </select>
         <span class="portal-topbar__profile-text"><strong>${profileName}</strong><small>RA: ${registration}</small></span>
-        <span class="portal-topbar__avatar" aria-label="Perfil de ${profileName}">${initials}</span>
+        <a class="portal-topbar__avatar-link" href="${ROUTES.perfil}" aria-label="Abrir perfil de ${profileName}">
+          <span class="portal-topbar__avatar">${initials}</span>
+        </a>
       </div>
     `;
   }
