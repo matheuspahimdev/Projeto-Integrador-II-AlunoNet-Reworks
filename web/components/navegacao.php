@@ -14,19 +14,27 @@ function renderSidebar(string $assetRoot): void
         <?php foreach (NAVIGATION as $index => $item): ?>
           <?php hasSubmenu($item) ? renderNavigationGroup($item, $index, $assetRoot) : renderNavigationLink($item, $assetRoot); ?>
         <?php endforeach; ?>
+        <li class="sidebar-nav__item">
+          <a class="<?= navigationLinkClasses(LOGOUT_LINK, false) ?>" href="<?= e(linkUrl(LOGOUT_LINK, $assetRoot)) ?>">
+            <i class="bi <?= e(LOGOUT_LINK['icon']) ?>" aria-hidden="true"></i><span><?= e(LOGOUT_LINK['label']) ?></span>
+          </a>
+        </li>
       </ul>
     </nav>
   </aside>
 <?php
 }
 
-function navigationLinkClasses(array $item): string
+function navigationLinkClasses(array $item, bool $canBeActive = true): string
 {
   $classes = ['sidebar-nav__link'];
   if ($item['accent'] ?? false) {
     $classes[] = 'sidebar-nav__link--accent';
   }
-  if (isActiveSection($item)) {
+  if (isset($item['variant'])) {
+    $classes[] = 'sidebar-nav__link--' . $item['variant'];
+  }
+  if ($canBeActive && isActiveSection($item)) {
     $classes[] = 'is-active';
   }
 
@@ -64,7 +72,7 @@ function renderNavigationGroup(array $item, int $index, string $assetRoot): void
 <?php
 }
 
-function renderTopbar(): void
+function renderTopbar(string $assetRoot): void
 {
 ?>
   <header class="portal-topbar">
@@ -84,7 +92,9 @@ function renderTopbar(): void
           <?php endforeach; ?>
       </select>
       <span class="portal-topbar__profile-text"><strong><?= e(STUDENT['name']) ?></strong><small>RA: <?= e(STUDENT['registration']) ?></small></span>
-      <span class="portal-topbar__avatar" role="img" aria-label="Perfil de <?= e(STUDENT['name']) ?>"><?= e(studentInitials()) ?></span>
+      <a class="portal-topbar__avatar-link" href="<?= e(linkUrl(PROFILE_LINK, $assetRoot)) ?>" aria-label="Abrir perfil de <?= e(STUDENT['name']) ?>" <?= isCurrentPage(PROFILE_LINK) ? ' aria-current="page"' : '' ?>>
+        <span class="portal-topbar__avatar" aria-hidden="true"><?= e(studentInitials()) ?></span>
+      </a>
     </div>
   </header>
 <?php

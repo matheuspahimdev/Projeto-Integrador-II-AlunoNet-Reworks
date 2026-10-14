@@ -53,7 +53,7 @@ function renderPageStart(string $pageTitle, string $assetRoot = '../../'): void
       <?php renderSidebar($assetRoot); ?>
       <div class="sidebar-backdrop" data-sidebar-backdrop></div>
       <main id="conteudo" class="page-content" tabindex="-1">
-        <?php renderTopbar(); ?>
+        <?php renderTopbar($assetRoot); ?>
       <?php
     }
 

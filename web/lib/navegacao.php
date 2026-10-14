@@ -80,6 +80,11 @@ const NAVIGATION = [
     ],
 ];
 
+const PROFILE_LINK = ['label' => 'Meu Perfil', 'href' => 'pages/perfil/perfil.php'];
+
+// Quando houver autenticação real, aponte para o endpoint de logout.
+const LOGOUT_LINK = ['label' => 'Sair', 'icon' => 'bi-box-arrow-right', 'href' => 'index.php', 'variant' => 'danger'];
+
 function isExternalLink(array $link): bool
 {
     return $link['external'] ?? false;
