@@ -1,53 +1,14 @@
 <?php
-require_once '../../components/layout.php';
-renderHead('Entrada de Requerimentos', 'dark', '../../', false);
+require_once __DIR__ . '/../../components/layout.php';
+require_once __DIR__ . '/../../lib/protocolo.php';
 
-$e = static fn (string $value): string => htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
-
-$curso = 'Engenharia de Software';
-
-$acoesRapidas = [
-    ['icon' => 'bi-file-earmark-text', 'title' => 'Declaração de Matrícula', 'description' => 'Emita um comprovante oficial de que você está regularmente matriculado no semestre atual.', 'attachment' => false],
-    ['icon' => 'bi-book', 'title' => 'Histórico Escolar', 'description' => 'Solicite a 1ª via gratuita (por semestre) com suas notas e disciplinas concluídas.', 'attachment' => false],
-    ['icon' => 'bi-activity', 'title' => 'Atestado Médico', 'description' => 'Envie um atestado para justificar faltas por motivos de saúde.', 'attachment' => true],
-    ['icon' => 'bi-briefcase', 'title' => 'Passe Escolar AVOA', 'description' => 'Solicitação para o passe escolar de uso semestral.', 'attachment' => false],
-];
-
-$outrosRequerimentos = [
-    'Documentos' => [
-        'Declaração de Conclusão de Curso',
-        'Declaração de Carga Horária',
-        'Ementário das Disciplinas',
-        '2ª Via da Carteirinha',
-    ],
-    'Vida acadêmica' => [
-        'Aproveitamento de Estudos',
-        'Dispensa de Disciplina',
-        'Revisão de Nota',
-        'Segunda Chamada de Prova',
-        'Transferência de Turno',
-        'Trancamento de Matrícula',
-        'Cancelamento de Matrícula',
-    ],
-    'Estágio e formatura' => [
-        'Declaração de Estágio',
-        'Colação de Grau',
-    ],
-];
+$curso = STUDENT['course'];
+$acoesRapidas = QUICK_REQUESTS;
+$outrosRequerimentos = OTHER_REQUESTS;
+renderPageStart('Entrada de Requerimentos');
 ?>
 
-<body>
-<div class="app-shell">
-  <nav-bar id="main-navigation"></nav-bar>
-  <main class="page-content">
-    <portal-header></portal-header>
-
-    <section class="hero-header-pages d-flex flex-wrap justify-content-between align-items-center gap-3">
-      <div>
-        <h1 class="display-6">Entrada de Requerimentos</h1>
-        <p class="text-secondary mb-0">Solicite documentos, declarações e serviços da secretaria.</p>
-      </div>
-    </section>
+<?php renderPageHeader('Entrada de Requerimentos', 'Solicite documentos, declarações e serviços da secretaria.'); ?>
 
     <div class="info-banner" role="note">
       <div class="info-banner__icon"><i class="bi bi-info-circle"></i></div>
@@ -62,29 +23,23 @@ $outrosRequerimentos = [
     <section class="grid-mesh grid-mesh--static grid-mesh--academic grid-mesh--auto" aria-label="Ações rápidas">
       <?php foreach ($acoesRapidas as $acao): ?>
         <article class="g-box g-col-1 grid-card request-card">
-          <div class="request-card__icon"><i class="bi <?= $e($acao['icon']) ?>"></i></div>
-          <h3><?= $e($acao['title']) ?></h3>
-          <p><?= $e($acao['description']) ?></p>
-          <button class="btn btn-outline-primary w-100" type="button" data-request="<?= $e($acao['title']) ?>" data-attachment="<?= $acao['attachment'] ? 'true' : 'false' ?>">Solicitar</button>
+          <div class="request-card__icon"><i class="bi <?= e($acao['icon']) ?>"></i></div>
+          <h3><?= e($acao['title']) ?></h3>
+          <p><?= e($acao['description']) ?></p>
+          <button class="btn btn-outline-primary w-100" type="button" data-request="<?= e($acao['title']) ?>" data-attachment="<?= $acao['attachment'] ? 'true' : 'false' ?>">Solicitar</button>
         </article>
       <?php endforeach; ?>
     </section>
 
     <section class="grid-mesh grid-mesh--static grid-mesh--academic grid-mesh--auto">
       <section class="g-box g-col-4 grid-card">
-        <div class="grid-card__head">
-          <div class="grid-card__icon"><i class="bi bi-file-earmark-plus"></i></div>
-          <div>
-            <h2>Outros requerimentos</h2>
-            <p class="grid-card__subtitle">Escolha o tipo de solicitação que não aparece nas ações rápidas.</p>
-          </div>
-        </div>
+        <?php renderCardHead('bi-file-earmark-plus', 'Outros requerimentos', 'Escolha o tipo de solicitação que não aparece nas ações rápidas.'); ?>
         <div class="grid-card__body">
           <form class="academic-form" id="otherRequestForm" method="post" action="" novalidate>
             <div class="row g-3 mb-3">
               <div class="col-12 col-lg-5">
                 <label class="form-label" for="requestCourse">Curso selecionado</label>
-                <input class="form-control" id="requestCourse" type="text" value="<?= $e($curso) ?>" disabled>
+                <input class="form-control" id="requestCourse" type="text" value="<?= e($curso) ?>" disabled>
               </div>
             </div>
             <div class="row g-3">
@@ -93,9 +48,9 @@ $outrosRequerimentos = [
                 <select class="form-select" id="requestType" name="request_type" required>
                   <option value="" selected disabled>-- Selecione uma opção --</option>
                   <?php foreach ($outrosRequerimentos as $grupo => $itens): ?>
-                    <optgroup label="<?= $e($grupo) ?>">
+                    <optgroup label="<?= e($grupo) ?>">
                       <?php foreach ($itens as $item): ?>
-                        <option value="<?= $e($item) ?>"><?= $e($item) ?></option>
+                        <option value="<?= e($item) ?>"><?= e($item) ?></option>
                       <?php endforeach; ?>
                     </optgroup>
                   <?php endforeach; ?>
@@ -112,8 +67,6 @@ $outrosRequerimentos = [
       </section>
     </section>
 
-  </main>
-</div>
 
 <div class="modal fade" id="requestModal" tabindex="-1" aria-labelledby="requestModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
@@ -125,7 +78,7 @@ $outrosRequerimentos = [
       <div class="modal-body">
         <dl class="data-grid data-grid--single mb-3">
           <div><dt>Requerimento</dt><dd id="requestModalType"></dd></div>
-          <div><dt>Curso</dt><dd><?= $e($curso) ?></dd></div>
+          <div><dt>Curso</dt><dd><?= e($curso) ?></dd></div>
         </dl>
         <div class="mb-3 d-none" id="requestAttachmentField">
           <label class="form-label" for="requestAttachment">Anexar atestado (PDF, JPG ou PNG)</label>
@@ -154,8 +107,6 @@ $outrosRequerimentos = [
     </div>
   </div>
 </div>
-
-<?php renderScripts(); ?>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -204,6 +155,4 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 </script>
-
-</body>
-</html>
+<?php renderPageEnd(); ?>

@@ -1,63 +1,14 @@
 <?php
-require_once '../../components/layout.php';
-renderHead('Consulta ao Acervo', 'dark', '../../', false);
+require_once __DIR__ . '/../../components/layout.php';
+require_once __DIR__ . '/../../lib/biblioteca.php';
 
-$e = static fn (string $value): string => htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
-
-$fuso = new DateTimeZone('America/Sao_Paulo');
-$hoje = new DateTimeImmutable('today', $fuso);
-$emDias = static fn (int $dias): string => $hoje->modify(sprintf('%+d days', $dias))->format('Y-m-d');
-
-$categorias = [
-    'computacao' => ['label' => 'Computação', 'icon' => 'bi-laptop'],
-    'direito' => ['label' => 'Direito', 'icon' => 'bi-bank'],
-    'matematica' => ['label' => 'Matemática', 'icon' => 'bi-calculator'],
-    'literatura' => ['label' => 'Literatura', 'icon' => 'bi-book'],
-    'metodologia' => ['label' => 'Metodologia', 'icon' => 'bi-journal-text'],
-];
-
-$horarios = ['08:00', '09:00', '10:00', '11:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00'];
-
-$livro = static fn (int $id, string $titulo, string $autor, string $edicao, int $ano, string $editora, string $categoria, int $total, int $disponiveis, string $estante, ?string $previsao = null): array => [
-    'id' => $id, 'titulo' => $titulo, 'autor' => $autor, 'edicao' => $edicao, 'ano' => $ano, 'editora' => $editora,
-    'categoria' => $categoria, 'total' => $total, 'disponiveis' => $disponiveis, 'estante' => $estante,
-    'previsao' => $previsao, 'tombo' => sprintf('BIB-%06d', 1000 + $id * 7),
-];
-
-$livros = [
-    $livro(1, 'Engenharia de Software', 'Ian Sommerville', '10ª edição', 2018, 'Pearson', 'computacao', 5, 4, 'C-04'),
-    $livro(2, 'Clean Code', 'Robert C. Martin', '', 2009, 'Alta Books', 'computacao', 3, 2, 'C-05'),
-    $livro(3, 'Introdução a Sistemas de Banco de Dados', 'C. J. Date', '8ª edição', 2004, 'Elsevier', 'computacao', 2, 0, 'C-06', $emDias(2)),
-    $livro(4, 'Sistemas de Banco de Dados', 'Ramez Elmasri e Shamkant Navathe', '7ª edição', 2018, 'Pearson', 'computacao', 4, 3, 'C-06'),
-    $livro(5, 'Algoritmos: Teoria e Prática', 'Thomas H. Cormen et al.', '3ª edição', 2012, 'Elsevier', 'computacao', 3, 1, 'C-02'),
-    $livro(6, 'Padrões de Projeto', 'Erich Gamma et al.', '', 2000, 'Bookman', 'computacao', 1, 0, 'C-05', $emDias(6)),
-    $livro(7, 'UML Essencial', 'Martin Fowler', '3ª edição', 2005, 'Bookman', 'computacao', 2, 2, 'C-04'),
-    $livro(8, 'JavaScript: O Guia Definitivo', 'David Flanagan', '6ª edição', 2013, 'Bookman', 'computacao', 2, 1, 'C-07'),
-    $livro(9, 'Redes de Computadores e a Internet', 'James F. Kurose e Keith W. Ross', '6ª edição', 2013, 'Pearson', 'computacao', 3, 2, 'C-03'),
-    $livro(10, 'Manual de Direito Civil', 'Flávio Tartuce', '', 2022, 'Forense', 'direito', 3, 2, 'D-01'),
-    $livro(11, 'Curso de Direito Constitucional', 'Gilmar Mendes e Paulo Gonet Branco', '17ª edição', 2022, 'Saraiva', 'direito', 4, 3, 'D-02'),
-    $livro(12, 'Cálculo, Volume 1', 'James Stewart', '7ª edição', 2013, 'Cengage', 'matematica', 6, 2, 'M-03'),
-    $livro(13, 'Dom Casmurro', 'Machado de Assis', '', 2016, 'Editora Ática', 'literatura', 3, 3, 'L-08'),
-    $livro(14, 'O Cortiço', 'Aluísio Azevedo', '', 2016, 'Editora Ática', 'literatura', 2, 0, 'L-02', $emDias(9)),
-    $livro(15, 'Metodologia do Trabalho Científico', 'Antônio Joaquim Severino', '24ª edição', 2016, 'Cortez', 'metodologia', 4, 4, 'G-01'),
-];
-
-usort($livros, static fn (array $a, array $b): int => strcoll($a['titulo'], $b['titulo']));
+$categorias = BOOK_CATEGORIES;
+$horarios = PICKUP_TIMES;
+$livros = libraryCollectionByTitle();
+renderPageStart('Consulta ao Acervo');
 ?>
 
-<body>
-<div class="app-shell">
-  <nav-bar id="main-navigation"></nav-bar>
-  <main class="page-content">
-    <portal-header></portal-header>
-
-    <section class="hero-header-pages d-flex flex-wrap justify-content-between align-items-center gap-3">
-      <div>
-        <h1 class="display-6">Consulta ao Acervo</h1>
-        <p class="text-secondary mb-0">Pesquise os livros da biblioteca local e agende o empréstimo.</p>
-      </div>
-      <a class="btn btn-outline-primary" href="meusEmprestimos.php"><i class="bi bi-bookmarks me-2"></i>Meus empréstimos</a>
-    </section>
+<?php renderPageHeader('Consulta ao Acervo', 'Pesquise os livros da biblioteca local e agende o empréstimo.', static fn () => renderActionLink('meusEmprestimos.php', 'bi-bookmarks', 'Meus empréstimos')); ?>
 
     <div class="info-banner" role="note">
       <div class="info-banner__icon"><i class="bi bi-info-circle"></i></div>
@@ -75,7 +26,7 @@ usort($livros, static fn (array $a, array $b): int => strcoll($a['titulo'], $b['
       <select class="form-select" id="bookCategory" aria-label="Filtrar por área">
         <option value="">Todas as áreas</option>
         <?php foreach ($categorias as $slug => $categoria): ?>
-          <option value="<?= $e($slug) ?>"><?= $e($categoria['label']) ?></option>
+          <option value="<?= e($slug) ?>"><?= e($categoria['label']) ?></option>
         <?php endforeach; ?>
       </select>
       <select class="form-select" id="bookSort" aria-label="Ordenar por">
@@ -101,20 +52,20 @@ usort($livros, static fn (array $a, array $b): int => strcoll($a['titulo'], $b['
         ?>
         <article class="book-card"
                  data-id="<?= (int) $item['id'] ?>"
-                 data-category="<?= $e($item['categoria']) ?>"
+                 data-category="<?= e($item['categoria']) ?>"
                  data-available="<?= $disponivel ? 'true' : 'false' ?>"
-                 data-titulo="<?= $e($item['titulo']) ?>"
-                 data-autor="<?= $e($item['autor']) ?>"
+                 data-titulo="<?= e($item['titulo']) ?>"
+                 data-autor="<?= e($item['autor']) ?>"
                  data-ano="<?= (int) $item['ano'] ?>"
-                 data-search="<?= $e($busca) ?>">
-          <div class="book-cover book-cover--<?= $e($item['categoria']) ?>" aria-hidden="true">
-            <i class="bi <?= $e($categoria['icon']) ?>"></i>
-            <span><?= $e($categoria['label']) ?></span>
+                 data-search="<?= e($busca) ?>">
+          <div class="book-cover book-cover--<?= e($item['categoria']) ?>" aria-hidden="true">
+            <i class="bi <?= e($categoria['icon']) ?>"></i>
+            <span><?= e($categoria['label']) ?></span>
           </div>
           <div class="book-card__body">
-            <h2 class="book-card__title"><?= $e($item['titulo']) ?></h2>
-            <p class="book-card__author"><?= $e($item['autor']) ?></p>
-            <p class="book-card__meta"><?= $e($meta) ?></p>
+            <h2 class="book-card__title"><?= e($item['titulo']) ?></h2>
+            <p class="book-card__author"><?= e($item['autor']) ?></p>
+            <p class="book-card__meta"><?= e($meta) ?></p>
             <div class="book-card__availability">
               <?php if ($disponivel): ?>
                 <span class="badge rounded-pill text-bg-success">Disponível</span>
@@ -122,12 +73,12 @@ usort($livros, static fn (array $a, array $b): int => strcoll($a['titulo'], $b['
               <?php else: ?>
                 <span class="badge rounded-pill text-bg-secondary">Indisponível</span>
                 <?php if ($item['previsao']): ?>
-                  <span class="text-secondary">Devolução prevista: <?= $e((new DateTimeImmutable($item['previsao']))->format('d/m/Y')) ?></span>
+                  <span class="text-secondary">Devolução prevista: <?= e((new DateTimeImmutable($item['previsao']))->format('d/m/Y')) ?></span>
                 <?php endif; ?>
               <?php endif; ?>
               <span class="badge rounded-pill text-bg-warning" data-pending-badge hidden>Pedido em análise</span>
             </div>
-            <p class="book-card__where">Estante <?= $e($item['estante']) ?> • <?= $e($item['tombo']) ?></p>
+            <p class="book-card__where">Estante <?= e($item['estante']) ?> • <?= e($item['tombo']) ?></p>
           </div>
           <div class="book-card__foot">
             <button class="btn btn-accent w-100" type="button" data-action="schedule"<?= $disponivel ? '' : ' disabled' ?>>
@@ -143,8 +94,6 @@ usort($livros, static fn (array $a, array $b): int => strcoll($a['titulo'], $b['
       <p class="mb-0">Nenhum livro encontrado com esses filtros.</p>
     </div>
 
-  </main>
-</div>
 
 <div class="modal fade" id="loanModal" tabindex="-1" aria-labelledby="loanModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
@@ -173,7 +122,7 @@ usort($livros, static fn (array $a, array $b): int => strcoll($a['titulo'], $b['
             <select class="form-select" id="loanTime">
               <option value="" selected disabled>Escolha</option>
               <?php foreach ($horarios as $horario): ?>
-                <option value="<?= $e($horario) ?>"><?= $e($horario) ?></option>
+                <option value="<?= e($horario) ?>"><?= e($horario) ?></option>
               <?php endforeach; ?>
             </select>
             <div class="invalid-feedback">Escolha um horário.</div>
@@ -208,8 +157,6 @@ usort($livros, static fn (array $a, array $b): int => strcoll($a['titulo'], $b['
     </div>
   </div>
 </div>
-
-<?php renderScripts(); ?>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -389,6 +336,4 @@ document.addEventListener('DOMContentLoaded', () => {
   render();
 });
 </script>
-
-</body>
-</html>
+<?php renderPageEnd(); ?>

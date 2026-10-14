@@ -1,70 +1,40 @@
 <?php
-require_once '../../components/layout.php';
-renderHead('Gráficos de Desempenho', 'dark', '../../', false);
+require_once __DIR__ . '/../../components/layout.php';
 
-$desempenho = [
-    ['short_name' => 'Lab. Programação', 'name' => 'Laboratório de Programação de Computadores', 'average' => 8.8, 'attendance' => 94],
-    ['short_name' => 'Eng. Requisitos', 'name' => 'Engenharia de Requisitos', 'average' => 7.8, 'attendance' => 92],
-    ['short_name' => 'Projeto Integrador', 'name' => 'Projeto Integrador II', 'average' => 9.0, 'attendance' => 97],
-    ['short_name' => 'RDP', 'name' => 'Resolução Diferenciada de Problemas', 'average' => 7.8, 'attendance' => 89],
-    ['short_name' => 'Empreendedorismo', 'name' => 'Empreendedorismo', 'average' => 8.5, 'attendance' => 91],
-    ['short_name' => 'Direito e Inovação', 'name' => 'Direito Aplicado ao Empreendedorismo e Inovação', 'average' => 9.0, 'attendance' => 88],
-];
+$highestAverage = max(array_map('disciplineAverage', DISCIPLINES));
 
-$average = array_sum(array_column($desempenho, 'average')) / count($desempenho);
-$attendance = array_sum(array_column($desempenho, 'attendance')) / count($desempenho);
-$best = max(array_column($desempenho, 'average'));
+renderPageStart('Gráficos de Desempenho');
+renderAcademicHeader('Gráficos de Desempenho');
 ?>
-
-<body>
-<div class="app-shell">
-  <nav-bar id="main-navigation"></nav-bar>
-  <main class="page-content">
-    <portal-header></portal-header>
-
-    <?php require_once '../../components/cabecalhoAcademico.php'; renderHeaderAcademic('Gráficos de Desempenho'); ?>
-
-    <section class="grid-mesh grid-mesh--static grid-mesh--academic">
-      <section class="g-box g-col-3 grid-card">
-        <div class="grid-card__head">
-          <div class="grid-card__icon"><i class="bi bi-bar-chart"></i></div>
-          <div>
-            <h2>Média por disciplina</h2>
-            <p class="grid-card__subtitle">Compare o desempenho nas disciplinas com notas lançadas.</p>
-          </div>
-        </div>
-        <div class="grid-card__body">
-          <div class="bar-chart" aria-label="Gráfico de médias por disciplina">
-            <?php foreach ($desempenho as $item): ?>
-              <div class="bar-row">
-                <span title="<?= htmlspecialchars($item['name'], ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($item['short_name'], ENT_QUOTES, 'UTF-8') ?></span>
-                <div class="bar" role="progressbar" aria-label="Média em <?= htmlspecialchars($item['name'], ENT_QUOTES, 'UTF-8') ?>" aria-valuenow="<?= $item['average'] ?>" aria-valuemin="0" aria-valuemax="10">
-                  <i style="width:<?= $item['average'] * 10 ?>%"></i>
+      <section class="academic-page-grid">
+        <section class="grid-card grid-card--wide">
+          <?php renderCardHead('bi-bar-chart', 'Média por disciplina', 'Compare o desempenho nas disciplinas com notas lançadas.'); ?>
+          <div class="grid-card__body">
+            <div class="bar-chart" aria-label="Gráfico de médias por disciplina">
+              <?php foreach (DISCIPLINES as $discipline): ?>
+                <?php $average = disciplineAverage($discipline); ?>
+                <div class="bar-row">
+                  <span title="<?= e($discipline['name']) ?>"><?= e($discipline['short_name']) ?></span>
+                  <div class="bar" role="progressbar" aria-label="Média em <?= e($discipline['name']) ?>" aria-valuenow="<?= $average ?>" aria-valuemin="0" aria-valuemax="10">
+                    <i style="width:<?= $average * 10 ?>%"></i>
+                  </div>
+                  <strong><?= formatGrade($average) ?></strong>
                 </div>
-                <strong><?= number_format($item['average'], 1, ',', '.') ?></strong>
-              </div>
-            <?php endforeach; ?>
+              <?php endforeach; ?>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section class="g-box g-col-1 grid-card">
-        <div class="grid-card__head">
-          <div class="grid-card__icon"><i class="bi bi-speedometer2"></i></div>
-          <div><h2>Indicadores</h2><p class="grid-card__subtitle">Resumo para acompanhar sua evolução.</p></div>
-        </div>
-        <div class="grid-card__body">
-          <div class="metric-grid">
-            <div><span>Média geral</span><strong><?= number_format($average, 1, ',', '.') ?></strong></div>
-            <div><span>Frequência média</span><strong><?= round($attendance) ?>%</strong></div>
-            <div><span>Maior média</span><strong><?= number_format($best, 1, ',', '.') ?></strong></div>
+        <section class="grid-card">
+          <?php renderCardHead('bi-speedometer2', 'Indicadores', 'Resumo para acompanhar sua evolução.'); ?>
+          <div class="grid-card__body">
+            <div class="metric-grid">
+              <div><span>Média geral</span><strong><?= formatGrade(overallAverage()) ?></strong></div>
+              <div><span>Frequência média</span><strong><?= overallAttendance() ?>%</strong></div>
+              <div><span>Maior média</span><strong><?= formatGrade($highestAverage) ?></strong></div>
+            </div>
+            <div class="notice-box mt-3"><i class="bi bi-lightbulb"></i><span>Use os indicadores para identificar disciplinas que merecem mais atenção ao longo do semestre.</span></div>
           </div>
-          <div class="notice-box mt-3"><i class="bi bi-lightbulb"></i><span>Use os indicadores para identificar disciplinas que merecem mais atenção ao longo do semestre.</span></div>
-        </div>
+        </section>
       </section>
-    </section>
-  </main>
-</div>
-<?php renderScripts(); ?>
-</body>
-</html>
+<?php renderPageEnd(); ?>

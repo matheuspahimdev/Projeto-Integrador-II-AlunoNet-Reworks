@@ -1,75 +1,57 @@
 <?php
-require_once '../../components/layout.php';
-renderHead('Confirmação de Matrícula', 'dark', '../../', false);
+require_once __DIR__ . '/../../components/layout.php';
 
-$matricula = [
-    ['label' => 'RA', 'value' => '274769'],
-    ['label' => 'Curso', 'value' => 'Engenharia de Software'],
-    ['label' => 'Modalidade', 'value' => 'Presencial'],
-    ['label' => 'Período', 'value' => 'Noturno'],
-    ['label' => 'Disciplinas matriculadas', 'value' => '6'],
-    ['label' => 'Data da confirmação', 'value' => '10/08/2026'],
+const ENROLLMENT_CONFIRMATION_DATE = '2026-08-10';
+
+$enrollment = [
+    ['label' => 'RA', 'value' => STUDENT['registration']],
+    ['label' => 'Curso', 'value' => STUDENT['course']],
+    ['label' => 'Modalidade', 'value' => STUDENT['modality']],
+    ['label' => 'Período', 'value' => STUDENT['period']],
+    ['label' => 'Disciplinas matriculadas', 'value' => count(DISCIPLINES)],
+    ['label' => 'Data da confirmação', 'value' => formatDate(ENROLLMENT_CONFIRMATION_DATE)],
 ];
 
-$etapas = [
-    ['label' => 'Solicitação de matrícula', 'date' => '08/08/2026', 'status' => 'Concluída', 'icon' => 'bi-check-circle-fill'],
-    ['label' => 'Análise acadêmica', 'date' => '09/08/2026', 'status' => 'Concluída', 'icon' => 'bi-check-circle-fill'],
-    ['label' => 'Confirmação do semestre', 'date' => '10/08/2026', 'status' => 'Concluída', 'icon' => 'bi-check-circle-fill'],
+$steps = [
+    ['label' => 'Solicitação de matrícula', 'date' => '2026-08-08'],
+    ['label' => 'Análise acadêmica', 'date' => '2026-08-09'],
+    ['label' => 'Confirmação do semestre', 'date' => ENROLLMENT_CONFIRMATION_DATE],
 ];
+
+renderPageStart('Confirmação de Matrícula');
+renderAcademicHeader('Confirmação de Matrícula');
 ?>
-
-<body>
-<div class="app-shell">
-  <nav-bar id="main-navigation"></nav-bar>
-  <main class="page-content">
-    <portal-header></portal-header>
-
-    <?php require_once '../../components/cabecalhoAcademico.php'; renderHeaderAcademic('Confirmação de Matrícula'); ?>
-
-    <section class="grid-mesh grid-mesh--static grid-mesh--academic">
-      <section class="g-box g-col-3 grid-card">
-        <div class="grid-card__head">
-          <div class="grid-card__icon"><i class="bi bi-patch-check"></i></div>
-          <div>
-            <h2>Situação da matrícula</h2>
-            <p class="grid-card__subtitle">Confira o vínculo acadêmico e as disciplinas do período.</p>
+      <section class="academic-page-grid">
+        <section class="grid-card grid-card--wide">
+          <?php renderCardHead('bi-patch-check', 'Situação da matrícula', 'Confira o vínculo acadêmico e as disciplinas do período.'); ?>
+          <div class="grid-card__body">
+            <div class="status-card">
+              <i class="bi bi-patch-check-fill"></i>
+              <div><strong>Matrícula confirmada</strong><span><?= e(STUDENT['term']) ?> • <?= e(STUDENT['course']) ?> • <?= e(STUDENT['semester']) ?></span></div>
+            </div>
+            <hr>
+            <dl class="data-grid">
+              <?php foreach ($enrollment as $item): ?>
+                <div><dt><?= e($item['label']) ?></dt><dd><?= e($item['value']) ?></dd></div>
+              <?php endforeach; ?>
+            </dl>
           </div>
-        </div>
-        <div class="grid-card__body">
-          <div class="status-card">
-            <i class="bi bi-patch-check-fill"></i>
-            <div><strong>Matrícula confirmada</strong><span>2026/2 • Engenharia de Software • 2º semestre</span></div>
-          </div>
-          <hr>
-          <dl class="data-grid">
-            <?php foreach ($matricula as $item): ?>
-              <div><dt><?= htmlspecialchars($item['label'], ENT_QUOTES, 'UTF-8') ?></dt><dd><?= htmlspecialchars($item['value'], ENT_QUOTES, 'UTF-8') ?></dd></div>
-            <?php endforeach; ?>
-          </dl>
-        </div>
-      </section>
+        </section>
 
-      <section class="g-box g-col-1 grid-card">
-        <div class="grid-card__head">
-          <div class="grid-card__icon"><i class="bi bi-list-check"></i></div>
-          <div><h2>Etapas concluídas</h2><p class="grid-card__subtitle">Histórico da confirmação no portal.</p></div>
-        </div>
-        <div class="grid-card__body">
-          <ul class="clean-list">
-            <?php foreach ($etapas as $etapa): ?>
-              <li>
-                <span><strong><?= htmlspecialchars($etapa['label'], ENT_QUOTES, 'UTF-8') ?></strong><small><?= htmlspecialchars($etapa['date'], ENT_QUOTES, 'UTF-8') ?></small></span>
-                <i class="bi <?= $etapa['icon'] ?> text-success" title="<?= htmlspecialchars($etapa['status'], ENT_QUOTES, 'UTF-8') ?>"></i>
-              </li>
-            <?php endforeach; ?>
-          </ul>
-          <button class="btn btn-outline-primary w-100 mt-3" type="button"><i class="bi bi-file-earmark-pdf me-1"></i>Visualizar comprovante</button>
-          <p class="text-secondary small mt-3 mb-0">O documento será gerado em PDF quando a secretaria estiver integrada ao portal.</p>
-        </div>
+        <section class="grid-card">
+          <?php renderCardHead('bi-list-check', 'Etapas concluídas', 'Histórico da confirmação no portal.'); ?>
+          <div class="grid-card__body">
+            <ul class="clean-list">
+              <?php foreach ($steps as $step): ?>
+                <li>
+                  <span><strong><?= e($step['label']) ?></strong><small><?= formatDate($step['date']) ?></small></span>
+                  <i class="bi bi-check-circle-fill text-success" title="Concluída"></i>
+                </li>
+              <?php endforeach; ?>
+            </ul>
+            <button class="btn btn-outline-primary w-100 mt-3" type="button"><i class="bi bi-file-earmark-pdf me-1"></i>Visualizar comprovante</button>
+            <p class="text-secondary small mt-3 mb-0">O documento será gerado em PDF quando a secretaria estiver integrada ao portal.</p>
+          </div>
+        </section>
       </section>
-    </section>
-  </main>
-</div>
-<?php renderScripts(); ?>
-</body>
-</html>
+<?php renderPageEnd(); ?>

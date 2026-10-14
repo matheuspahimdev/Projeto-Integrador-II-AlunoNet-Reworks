@@ -1,78 +1,58 @@
 <?php
-require_once '../../components/layout.php';
-renderHead('Consultar Dados Cadastrais', 'dark', '../../', false);
+require_once __DIR__ . '/../../components/layout.php';
 
-$dadosAcademicos = [
-    ['label' => 'Nome completo', 'value' => 'Victor H. Oliveira'],
-    ['label' => 'RA', 'value' => '274769'],
-    ['label' => 'Curso', 'value' => 'Engenharia de Software'],
-    ['label' => 'Período', 'value' => 'Noturno'],
-    ['label' => 'Semestre atual', 'value' => '2º semestre • 2026/2'],
-    ['label' => 'Situação acadêmica', 'value' => 'Matriculado', 'badge' => 'text-bg-success'],
-    ['label' => 'E-mail institucional', 'value' => 'victor.oliveira@aluno.edu.br'],
-    ['label' => 'Telefone', 'value' => '(14) 99999-0000'],
+$academicData = [
+    ['label' => 'Nome completo', 'value' => STUDENT['name']],
+    ['label' => 'RA', 'value' => STUDENT['registration']],
+    ['label' => 'Curso', 'value' => STUDENT['course']],
+    ['label' => 'Período', 'value' => STUDENT['period']],
+    ['label' => 'Semestre atual', 'value' => STUDENT['semester'] . ' • ' . STUDENT['term']],
+    ['label' => 'Situação acadêmica', 'value' => STUDENT['status'], 'badge' => true],
+    ['label' => 'E-mail institucional', 'value' => STUDENT['email']],
+    ['label' => 'Telefone', 'value' => STUDENT['phone']],
 ];
 
-$contatos = [
-    ['label' => 'E-mail alternativo', 'value' => 'victor.oliveira@email.com'],
-    ['label' => 'Cidade', 'value' => 'Ourinhos - SP'],
-    ['label' => 'Última atualização', 'value' => '08/08/2026'],
+$contacts = [
+    ['label' => 'E-mail alternativo', 'value' => STUDENT['alternative_email']],
+    ['label' => 'Cidade', 'value' => STUDENT['city']],
+    ['label' => 'Última atualização', 'value' => formatDate('2026-08-08')],
 ];
+
+renderPageStart('Consultar Dados Cadastrais');
+renderAcademicHeader('Consultar Dados Cadastrais');
 ?>
-
-<body>
-<div class="app-shell">
-  <nav-bar id="main-navigation"></nav-bar>
-  <main class="page-content">
-    <portal-header></portal-header>
-
-    <?php require_once '../../components/cabecalhoAcademico.php'; renderHeaderAcademic('Consultar Dados Cadastrais'); ?>
-
-    <section class="grid-mesh grid-mesh--static grid-mesh--academic">
-      <section class="g-box g-col-3 grid-card">
-        <div class="grid-card__head">
-          <div class="grid-card__icon"><i class="bi bi-person-vcard"></i></div>
-          <div>
-            <h2>Dados do aluno</h2>
-            <p class="grid-card__subtitle">Informações acadêmicas registradas no portal.</p>
+      <section class="academic-page-grid">
+        <section class="grid-card grid-card--wide">
+          <?php renderCardHead('bi-person-vcard', 'Dados do aluno', 'Informações acadêmicas registradas no portal.'); ?>
+          <div class="grid-card__body">
+            <dl class="data-grid">
+              <?php foreach ($academicData as $item): ?>
+                <div>
+                  <dt><?= e($item['label']) ?></dt>
+                  <dd>
+                    <?php if (isset($item['badge'])): ?>
+                      <span class="badge <?= statusBadge($item['value']) ?>"><?= e($item['value']) ?></span>
+                    <?php else: ?>
+                      <?= e($item['value']) ?>
+                    <?php endif; ?>
+                  </dd>
+                </div>
+              <?php endforeach; ?>
+            </dl>
           </div>
-        </div>
-        <div class="grid-card__body">
-          <dl class="data-grid">
-            <?php foreach ($dadosAcademicos as $item): ?>
-              <div>
-                <dt><?= htmlspecialchars($item['label'], ENT_QUOTES, 'UTF-8') ?></dt>
-                <dd>
-                  <?php if (isset($item['badge'])): ?>
-                    <span class="badge <?= $item['badge'] ?>"><?= htmlspecialchars($item['value'], ENT_QUOTES, 'UTF-8') ?></span>
-                  <?php else: ?>
-                    <?= htmlspecialchars($item['value'], ENT_QUOTES, 'UTF-8') ?>
-                  <?php endif; ?>
-                </dd>
-              </div>
-            <?php endforeach; ?>
-          </dl>
-        </div>
-      </section>
+        </section>
 
-      <section class="g-box g-col-1 grid-card">
-        <div class="grid-card__head">
-          <div class="grid-card__icon"><i class="bi bi-person-lines-fill"></i></div>
-          <div><h2>Contato e atualização</h2><p class="grid-card__subtitle">Dados usados para comunicação acadêmica.</p></div>
-        </div>
-        <div class="grid-card__body">
-          <dl class="data-grid data-grid--single">
-            <?php foreach ($contatos as $item): ?>
-              <div><dt><?= htmlspecialchars($item['label'], ENT_QUOTES, 'UTF-8') ?></dt><dd><?= htmlspecialchars($item['value'], ENT_QUOTES, 'UTF-8') ?></dd></div>
-            <?php endforeach; ?>
-          </dl>
-          <a href="atualizacaoDadosCadastrais.php" class="btn btn-primary w-100 mt-3"><i class="bi bi-pencil-square me-1"></i>Atualizar dados</a>
-          <p class="text-secondary small mt-3 mb-0">Mantenha seus contatos atualizados para receber avisos da instituição.</p>
-        </div>
+        <section class="grid-card">
+          <?php renderCardHead('bi-person-lines-fill', 'Contato e atualização', 'Dados usados para comunicação acadêmica.'); ?>
+          <div class="grid-card__body">
+            <dl class="data-grid data-grid--single">
+              <?php foreach ($contacts as $item): ?>
+                <div><dt><?= e($item['label']) ?></dt><dd><?= e($item['value']) ?></dd></div>
+              <?php endforeach; ?>
+            </dl>
+            <a href="atualizacaoDadosCadastrais.php" class="btn btn-primary w-100 mt-3"><i class="bi bi-pencil-square me-1"></i>Atualizar dados</a>
+            <p class="text-secondary small mt-3 mb-0">Mantenha seus contatos atualizados para receber avisos da instituição.</p>
+          </div>
+        </section>
       </section>
-    </section>
-  </main>
-</div>
-<?php renderScripts(); ?>
-</body>
-</html>
+<?php renderPageEnd(); ?>

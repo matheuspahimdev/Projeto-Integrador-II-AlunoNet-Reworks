@@ -1,41 +1,22 @@
 <?php
-require_once '../../components/layout.php';
-renderHead('Avaliação Institucional (CPA)', 'dark', '../../', false);
+require_once __DIR__ . '/../../components/layout.php';
+require_once __DIR__ . '/../../lib/avaliacao.php';
 
-$e = static fn (string $value): string => htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+$prazo = EVALUATION_DEADLINE;
+$escala = RATING_SCALE;
+$secoes = EVALUATION_SECTIONS;
+$disciplinas = EVALUATED_DISCIPLINES;
 
-$prazo = '30/10';
-
-$escala = [
-    1 => 'Muito ruim',
-    2 => 'Ruim',
-    3 => 'Regular',
-    4 => 'Bom',
-    5 => 'Excelente',
-];
-
-$secoes = [
-    ['name' => 'infraestrutura', 'icon' => 'bi-house', 'title' => '1. Infraestrutura e Serviços', 'question' => 'Como avalia as condições das salas de aula, laboratórios e biblioteca?'],
-    ['name' => 'atendimento', 'icon' => 'bi-plus-circle', 'title' => '2. Atendimento Institucional', 'question' => 'Como avalia a agilidade e eficiência do atendimento da Secretaria?'],
-];
-
-$disciplinas = [
-    ['id' => 'projeto-integrador-ii', 'label' => 'Projeto Integrador II — Prof. Nome do Professor 1'],
-    ['id' => 'direito-aplicado', 'label' => 'Direito Aplicado — Prof. Nome do Professor 2'],
-    ['id' => 'banco-de-dados', 'label' => 'Banco de Dados — Prof. Nome do Professor 3'],
-    ['id' => 'programacao-web', 'label' => 'Programação Web — Prof. Nome do Professor 4'],
-];
-
-$renderEscala = static function (string $name, string $question, array $escala) use ($e): void {
+$renderEscala = static function (string $name, string $question, array $escala): void {
     ?>
     <fieldset class="rating-group">
-      <legend><?= $e($question) ?></legend>
+      <legend><?= e($question) ?></legend>
       <div class="rating-scale">
         <?php foreach ($escala as $valor => $rotulo): ?>
           <label class="rating-option">
-            <input class="form-check-input" type="radio" name="<?= $e($name) ?>" value="<?= $valor ?>">
+            <input class="form-check-input" type="radio" name="<?= e($name) ?>" value="<?= $valor ?>">
             <strong><?= $valor ?></strong>
-            <span><?= $e($rotulo) ?></span>
+            <span><?= e($rotulo) ?></span>
           </label>
         <?php endforeach; ?>
       </div>
@@ -43,21 +24,12 @@ $renderEscala = static function (string $name, string $question, array $escala) 
     </fieldset>
     <?php
 };
+renderPageStart('Avaliação Institucional (CPA)');
 ?>
 
-<body>
-<div class="app-shell">
-  <nav-bar id="main-navigation"></nav-bar>
-  <main class="page-content">
-    <portal-header></portal-header>
-
-    <section class="hero-header-pages d-flex flex-wrap justify-content-between align-items-center gap-3">
-      <div>
-        <h1 class="display-6">Avaliação Institucional (CPA)</h1>
-        <p class="text-secondary mb-0">Sua opinião é fundamental para a melhoria contínua da Unifio.</p>
-      </div>
-      <span class="badge rounded-pill text-bg-warning px-3 py-2"><i class="bi bi-clock me-1"></i>Pendente (Prazo: <?= $e($prazo) ?>)</span>
-    </section>
+<?php renderPageHeader('Avaliação Institucional (CPA)', 'Sua opinião é fundamental para a melhoria contínua da Unifio.', static function () use ($prazo): void { ?>
+      <span class="badge rounded-pill text-bg-warning px-3 py-2"><i class="bi bi-clock me-1"></i>Pendente (Prazo: <?= e($prazo) ?>)</span>
+<?php }); ?>
 
     <div class="info-banner" role="note">
       <div class="info-banner__icon"><i class="bi bi-shield-check"></i></div>
@@ -73,7 +45,7 @@ $renderEscala = static function (string $name, string $question, array $escala) 
           <div class="grid-card__body">
             <?php foreach ($secoes as $secao): ?>
               <div class="rating-section">
-                <h2 class="rating-section__title"><i class="bi <?= $e($secao['icon']) ?>"></i><?= $e($secao['title']) ?></h2>
+                <h2 class="rating-section__title"><i class="bi <?= e($secao['icon']) ?>"></i><?= e($secao['title']) ?></h2>
                 <?php $renderEscala($secao['name'], $secao['question'], $escala); ?>
               </div>
             <?php endforeach; ?>
@@ -81,19 +53,14 @@ $renderEscala = static function (string $name, string $question, array $escala) 
         </section>
 
         <section class="g-box g-col-4 grid-card">
-          <div class="grid-card__head">
-            <div class="grid-card__icon"><i class="bi bi-mortarboard"></i></div>
-            <div>
-              <h2>Avaliação docente</h2>
-            </div>
-          </div>
+          <?php renderCardHead('bi-mortarboard', 'Avaliação docente'); ?>
           <div class="grid-card__body academic-form">
             <div class="mb-4">
               <label class="form-label" for="disciplineSelect">Selecione a disciplina / professor para avaliar:</label>
               <select class="form-select" id="disciplineSelect" name="disciplina">
                 <option value="" selected disabled>-- Escolha a disciplina --</option>
                 <?php foreach ($disciplinas as $disciplina): ?>
-                  <option value="<?= $e($disciplina['id']) ?>"><?= $e($disciplina['label']) ?></option>
+                  <option value="<?= e($disciplina['id']) ?>"><?= e($disciplina['label']) ?></option>
                 <?php endforeach; ?>
               </select>
               <div class="invalid-feedback">Selecione a disciplina que deseja avaliar.</div>
@@ -114,8 +81,6 @@ $renderEscala = static function (string $name, string $question, array $escala) 
       </div>
     </form>
 
-  </main>
-</div>
 
 <div class="toast-container position-fixed bottom-0 end-0 p-3">
   <div id="evaluationToast" class="toast align-items-center text-bg-success border-0" role="status" aria-live="polite" aria-atomic="true">
@@ -125,8 +90,6 @@ $renderEscala = static function (string $name, string $question, array $escala) 
     </div>
   </div>
 </div>
-
-<?php renderScripts(); ?>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -165,6 +128,4 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 </script>
-
-</body>
-</html>
+<?php renderPageEnd(); ?>

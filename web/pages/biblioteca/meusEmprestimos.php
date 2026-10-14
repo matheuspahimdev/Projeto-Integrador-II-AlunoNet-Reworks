@@ -1,55 +1,12 @@
 <?php
-require_once '../../components/layout.php';
-renderHead('Meus Empréstimos', 'dark', '../../', false);
+require_once __DIR__ . '/../../components/layout.php';
+require_once __DIR__ . '/../../lib/biblioteca.php';
 
-$fuso = new DateTimeZone('America/Sao_Paulo');
-$hoje = new DateTimeImmutable('today', $fuso);
-$emDias = static fn (int $dias): string => $hoje->modify(sprintf('%+d days', $dias))->format('Y-m-d');
-
-$emprestimos = [
-    [
-        'id' => 'EMP-2026-0412', 'bookId' => 2, 'titulo' => 'Clean Code', 'autor' => 'Robert C. Martin', 'categoria' => 'computacao',
-        'retirada' => $emDias(-3), 'horario' => '14:00', 'devolucao' => $emDias(4), 'solicitadoEm' => $emDias(-5),
-        'status' => 'retirado', 'renovacoes' => 0, 'devolvidoEm' => null,
-    ],
-    [
-        'id' => 'EMP-2026-0398', 'bookId' => 3, 'titulo' => 'Introdução a Sistemas de Banco de Dados', 'autor' => 'C. J. Date', 'categoria' => 'computacao',
-        'retirada' => $emDias(-12), 'horario' => '10:00', 'devolucao' => $emDias(-5), 'solicitadoEm' => $emDias(-14),
-        'status' => 'retirado', 'renovacoes' => 0, 'devolvidoEm' => null,
-    ],
-    [
-        'id' => 'EMP-2026-0431', 'bookId' => 5, 'titulo' => 'Algoritmos: Teoria e Prática', 'autor' => 'Thomas H. Cormen et al.', 'categoria' => 'computacao',
-        'retirada' => $emDias(2), 'horario' => '15:00', 'devolucao' => $emDias(9), 'solicitadoEm' => $emDias(0),
-        'status' => 'analise', 'renovacoes' => 0, 'devolvidoEm' => null,
-    ],
-    [
-        'id' => 'EMP-2026-0301', 'bookId' => 13, 'titulo' => 'Dom Casmurro', 'autor' => 'Machado de Assis', 'categoria' => 'literatura',
-        'retirada' => $emDias(-30), 'horario' => '09:00', 'devolucao' => $emDias(-23), 'solicitadoEm' => $emDias(-32),
-        'status' => 'retirado', 'renovacoes' => 0, 'devolvidoEm' => $emDias(-24),
-    ],
-    [
-        'id' => 'EMP-2026-0245', 'bookId' => 15, 'titulo' => 'Metodologia do Trabalho Científico', 'autor' => 'Antônio Joaquim Severino', 'categoria' => 'metodologia',
-        'retirada' => $emDias(-60), 'horario' => '16:00', 'devolucao' => $emDias(-53), 'solicitadoEm' => $emDias(-62),
-        'status' => 'retirado', 'renovacoes' => 1, 'devolvidoEm' => $emDias(-55),
-    ],
-];
-
-$dadosJson = json_encode($emprestimos, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+$dadosJson = jsonForScript(studentLoans());
+renderPageStart('Meus Empréstimos');
 ?>
 
-<body>
-<div class="app-shell">
-  <nav-bar id="main-navigation"></nav-bar>
-  <main class="page-content">
-    <portal-header></portal-header>
-
-    <section class="hero-header-pages d-flex flex-wrap justify-content-between align-items-center gap-3">
-      <div>
-        <h1 class="display-6">Meus Empréstimos</h1>
-        <p class="text-secondary mb-0">Acompanhe seus pedidos, prazos de devolução e pendências.</p>
-      </div>
-      <a class="btn btn-accent" href="consultaAcervo.php"><i class="bi bi-search me-2"></i>Consultar acervo</a>
-    </section>
+<?php renderPageHeader('Meus Empréstimos', 'Acompanhe seus pedidos, prazos de devolução e pendências.', static fn () => renderActionLink('consultaAcervo.php', 'bi-search', 'Consultar acervo', 'btn-accent')); ?>
 
     <div class="alert alert-danger d-flex align-items-start gap-2" id="overdueAlert" role="alert" hidden>
       <i class="bi bi-exclamation-triangle-fill mt-1" aria-hidden="true"></i>
@@ -78,8 +35,6 @@ $dadosJson = json_encode($emprestimos, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | J
       <p class="mb-0" id="loanEmptyText"></p>
     </div>
 
-  </main>
-</div>
 
 <div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-sm">
@@ -109,8 +64,6 @@ $dadosJson = json_encode($emprestimos, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | J
 </div>
 
 <script id="loanData" type="application/json"><?= $dadosJson ?></script>
-
-<?php renderScripts(); ?>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -312,6 +265,4 @@ document.addEventListener('DOMContentLoaded', () => {
   render();
 });
 </script>
-
-</body>
-</html>
+<?php renderPageEnd(); ?>

@@ -1,72 +1,42 @@
 <?php
-require_once '../../components/layout.php';
-renderHead('Carteirinha Digital', 'dark', '../../', false);
-
-$aluno = [
-    'name' => 'Victor H. Oliveira',
-    'initials' => 'VO',
-    'course' => 'Engenharia de Software',
-    'registration' => '274769',
-    'period' => 'Noturno',
-    'semester' => '2026/2',
-    'status' => 'Aluno regular',
-];
+require_once __DIR__ . '/../../components/layout.php';
 
 $validations = [
     ['label' => 'Identificação acadêmica', 'value' => 'Ativa'],
     ['label' => 'Vínculo acadêmico', 'value' => 'Regular'],
-    ['label' => 'Validade', 'value' => 'Semestre 2026/2'],
+    ['label' => 'Validade', 'value' => 'Semestre ' . STUDENT['term']],
 ];
+
+renderPageStart('Carteirinha Digital');
+renderAcademicHeader('Carteirinha Digital');
 ?>
-
-<body>
-<div class="app-shell">
-  <nav-bar id="main-navigation"></nav-bar>
-  <main class="page-content">
-    <portal-header></portal-header>
-
-    <?php require_once '../../components/cabecalhoAcademico.php'; renderHeaderAcademic('Carteirinha Digital'); ?>
-
-    <section class="grid-mesh grid-mesh--static grid-mesh--academic">
-      <section class="g-box g-col-3 grid-card">
-        <div class="grid-card__head">
-          <div class="grid-card__icon"><i class="bi bi-person-badge"></i></div>
-          <div>
-            <h2>Identificação do aluno</h2>
-            <p class="grid-card__subtitle">Apresente esta identificação em ambientes e serviços da instituição.</p>
+      <section class="academic-page-grid">
+        <section class="grid-card grid-card--wide">
+          <?php renderCardHead('bi-person-badge', 'Identificação do aluno', 'Apresente esta identificação em ambientes e serviços da instituição.'); ?>
+          <div class="grid-card__body">
+            <div class="digital-card">
+              <div class="digital-card__brand">UNIFIO</div>
+              <div class="digital-card__avatar"><?= e(studentInitials()) ?></div>
+              <div class="digital-card__name"><?= e(STUDENT['name']) ?></div>
+              <div class="digital-card__course"><?= e(STUDENT['course']) ?> • <?= e(STUDENT['period']) ?></div>
+              <div class="digital-card__ra">RA <?= e(STUDENT['registration']) ?></div>
+              <div class="digital-card__footer"><span><?= e(STUDENT['term']) ?></span><span>Aluno regular</span></div>
+            </div>
           </div>
-        </div>
-        <div class="grid-card__body">
-          <div class="digital-card">
-            <div class="digital-card__brand">UNIFIO</div>
-            <div class="digital-card__avatar"><?= htmlspecialchars($aluno['initials'], ENT_QUOTES, 'UTF-8') ?></div>
-            <div class="digital-card__name"><?= htmlspecialchars($aluno['name'], ENT_QUOTES, 'UTF-8') ?></div>
-            <div class="digital-card__course"><?= htmlspecialchars($aluno['course'], ENT_QUOTES, 'UTF-8') ?> • <?= htmlspecialchars($aluno['period'], ENT_QUOTES, 'UTF-8') ?></div>
-            <div class="digital-card__ra">RA <?= htmlspecialchars($aluno['registration'], ENT_QUOTES, 'UTF-8') ?></div>
-            <div class="digital-card__footer"><span><?= htmlspecialchars($aluno['semester'], ENT_QUOTES, 'UTF-8') ?></span><span><?= htmlspecialchars($aluno['status'], ENT_QUOTES, 'UTF-8') ?></span></div>
-          </div>
-        </div>
-      </section>
+        </section>
 
-      <section class="g-box g-col-1 grid-card">
-        <div class="grid-card__head">
-          <div class="grid-card__icon"><i class="bi bi-qr-code"></i></div>
-          <div><h2>Validação</h2><p class="grid-card__subtitle">Confira a situação da carteirinha.</p></div>
-        </div>
-        <div class="grid-card__body">
-          <ul class="clean-list">
-            <?php foreach ($validations as $validation): ?>
-              <li><span><?= htmlspecialchars($validation['label'], ENT_QUOTES, 'UTF-8') ?></span><strong><?= htmlspecialchars($validation['value'], ENT_QUOTES, 'UTF-8') ?></strong></li>
-            <?php endforeach; ?>
-          </ul>
-          <div class="qr-placeholder mt-3"><i class="bi bi-qr-code"></i><span>QR CODE</span></div>
-          <button class="btn btn-primary w-100 mt-3" type="button"><i class="bi bi-download me-1"></i>Salvar carteirinha</button>
-          <p class="text-secondary small mt-3 mb-0">O QR Code poderá ser validado pela instituição quando o recurso estiver integrado.</p>
-        </div>
+        <section class="grid-card">
+          <?php renderCardHead('bi-qr-code', 'Validação', 'Confira a situação da carteirinha.'); ?>
+          <div class="grid-card__body">
+            <ul class="clean-list">
+              <?php foreach ($validations as $validation): ?>
+                <li><span><?= e($validation['label']) ?></span><strong><?= e($validation['value']) ?></strong></li>
+              <?php endforeach; ?>
+            </ul>
+            <div class="qr-placeholder mt-3"><i class="bi bi-qr-code"></i><span>QR CODE</span></div>
+            <button class="btn btn-primary w-100 mt-3" type="button"><i class="bi bi-download me-1"></i>Salvar carteirinha</button>
+            <p class="text-secondary small mt-3 mb-0">O QR Code poderá ser validado pela instituição quando o recurso estiver integrado.</p>
+          </div>
+        </section>
       </section>
-    </section>
-  </main>
-</div>
-<?php renderScripts(); ?>
-</body>
-</html>
+<?php renderPageEnd(); ?>

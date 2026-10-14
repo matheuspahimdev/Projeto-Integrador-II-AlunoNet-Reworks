@@ -35,18 +35,38 @@ externos para serem exibidas.
 web/
 ├── index.php                    # Página inicial do portal
 ├── components/
-│   └── layout.php               # Cabeçalho e scripts compartilhados
+│   ├── layout.php               # Estrutura da página, e() e scripts
+│   ├── navegacao.php            # Menu lateral e barra superior
+│   ├── cabecalho.php            # Cabeçalho de página, botões de ação e "Em construção"
+│   └── cartao.php               # Cabeçalho dos cards (grid-card)
 ├── assets/
 │   ├── css/style.css            # Estilos da aplicação
-│   ├── js/components.js         # Menu e componentes JavaScript
-│   └── img/                     # Imagens e logotipos
+│   ├── js/components.js         # Comportamento do menu, submenus e tema
+│   ├── img/                     # Imagens e logotipos
+│   └── icons/                   # Favicon (.ico/.svg), ícones de app e manifest
 ├── lib/
-│   └── title.php                # Auxiliar para títulos das páginas
+│   ├── dados.php                # Dados simulados do aluno e do semestre
+│   ├── navegacao.php            # Itens do menu e detecção da página atual
+│   ├── academico.php            # Regras acadêmicas (médias, frequência, provas)
+│   ├── formatacao.php           # Formatação de datas, notas e valores
+│   ├── tempo.php                # Relógio da simulação e datas relativas
+│   ├── avaliacao.php            # Questionário da Avaliação Institucional
+│   ├── avisos.php               # Avisos, categorias e prioridades
+│   ├── biblioteca.php           # Acervo e empréstimos
+│   ├── eventos.php              # Calendário de eventos
+│   ├── financeiro.php           # Parcelas, boleto, informe de IR e contrato
+│   ├── materiais.php            # Pastas e arquivos do repositório
+│   ├── protocolo.php            # Requerimentos
+│   └── suporte.php              # Departamentos e chamados
 └── pages/                       # Páginas organizadas por módulo
     ├── academico/
     ├── avalieNos/
+    ├── avisos/
+    ├── biblioteca/
+    ├── eventos/
     ├── financeiro/
     ├── materiais/
+    ├── protocolo/
     └── suporte/
 ```
 
@@ -57,46 +77,86 @@ O fluxo atual é simples e não possui processamento de login ou persistência:
 ```text
 Navegador
     -> web/index.php
-    -> Menu lateral em components.js
+    -> Menu lateral renderizado em PHP (components/navegacao.php)
     -> Página PHP do módulo
     -> HTML renderizado no navegador
 ```
 
-Cada página inclui `components/layout.php`, chama `renderHead()` para montar o
-cabeçalho e `renderScripts()` para carregar o Bootstrap e os componentes
-JavaScript. Os caminhos dos assets são ajustados pelo parâmetro `$assetRoot`.
+Cada página inclui `components/layout.php`, chama `renderPageStart()` para abrir
+o documento e `renderPageEnd()` para fechá-lo e carregar os scripts. Os caminhos
+dos assets são ajustados pelo parâmetro `$assetRoot`.
 
-O arquivo `web/assets/js/components.js` calcula as URLs com base na localização
-do próprio script. Dessa forma, os links funcionam tanto no diretório raiz do
-servidor quanto quando o projeto é executado dentro de uma subpasta.
+Os links do menu são relativos e montados com o mesmo `$assetRoot`. Dessa
+forma, funcionam tanto no diretório raiz do servidor quanto quando o projeto é
+executado dentro de uma subpasta.
 
 ## Layout compartilhado
 
-O arquivo `web/components/layout.php` fornece duas funções:
+O arquivo `web/components/layout.php` fornece:
 
-- `renderHead()`: gera a estrutura inicial do documento, define o título,
-  carrega Bootstrap, Bootstrap Icons, o CSS principal e aplica o tema salvo no
-  `localStorage`.
-- `renderScripts()`: carrega o JavaScript do Bootstrap e,
-  opcionalmente, `assets/js/components.js`.
+- `renderPageStart()`: gera o `<head>` (Bootstrap, Bootstrap Icons, CSS
+  principal, favicon e tema salvo no `localStorage`), o link "Pular para o
+  conteúdo", o menu lateral e a barra superior com os dados do aluno.
+- `renderPageEnd()`: fecha a estrutura da página e carrega o JavaScript do
+  Bootstrap e `assets/js/components.js`.
+- `e()`: escapa valores antes de exibi-los no HTML.
+- `jsonForScript()`: serializa dados para os scripts das páginas com segurança.
+
+Componentes reutilizáveis:
+
+- `renderPageHeader($titulo, $subtitulo, $acoes, $classeExtra)`: título da
+  página. `$acoes` é uma função opcional que imprime os botões à direita.
+- `renderActionLink()` e `renderActionButton()`: botões de ação com ícone,
+  usados dentro de `$acoes`.
+- `renderAcademicHeader($titulo)`: cabeçalho padrão das páginas acadêmicas, com
+  o atalho para a Central Acadêmica.
+- `renderCardHead($icone, $titulo, $subtitulo)`: cabeçalho dos cards
+  `.grid-card`. O corpo do card usa `.grid-card__body`.
+- `renderUnderConstruction()`: estado "Em construção".
+
+Exemplo de página nova:
+
+```php
+<?php
+require_once __DIR__ . '/../../components/layout.php';
+
+renderPageStart('Minha Página');
+renderPageHeader('Minha Página', 'Descrição curta', static fn () => renderActionLink('outra.php', 'bi-arrow-right', 'Ir para outra'));
+?>
+    <section class="grid-card">
+      <?php renderCardHead('bi-star', 'Título do card', 'Subtítulo opcional'); ?>
+      <div class="grid-card__body">Conteúdo</div>
+    </section>
+<?php renderPageEnd(); ?>
+```
 
 O layout não inicia sessões, não valida usuários e não injeta dados de
 autenticação no navegador.
 
 ## Navegação e componentes
 
-O menu lateral é criado pelo componente `NavBar` em
-`web/assets/js/components.js`. Os itens são organizados por módulos, como:
+O menu lateral e a barra superior são gerados no servidor por
+`web/components/navegacao.php`, a partir da lista `NAVIGATION` em
+`web/lib/navegacao.php`. Como chegam prontos no HTML, a logo e o menu aparecem
+já na primeira pintura, sem piscar ao trocar de página. Para adicionar uma
+página ao menu, basta incluir um item em `NAVIGATION`. O item ativo e o
+`aria-current` são marcados automaticamente. Os itens são organizados por
+módulos, como:
 
 - Acadêmico;
 - Financeiro;
+- Protocolos;
 - Avalie-nos;
 - Materiais;
+- Avisos;
+- Biblioteca;
+- Eventos;
 - Suporte.
 
-Funcionalidades ainda não implementadas são apresentadas visualmente como
-indisponíveis. Como não existe autenticação nesta fase, o menu não possui a
-opção de logout.
+O `web/assets/js/components.js` cuida apenas do comportamento: abrir e fechar
+submenus, abrir o menu no celular (fecha com Esc ou tocando fora) e alternar o
+tema. Como não existe autenticação nesta fase, o menu não possui a opção de
+logout.
 
 O tema claro/escuro é uma preferência local do navegador, armazenada em
 `localStorage` com a chave `alunonet-theme`. Essa preferência não representa uma
@@ -104,8 +164,24 @@ sessão de usuário e não é enviada ao servidor.
 
 ## Dados e persistência
 
-Os conteúdos exibidos atualmente são estáticos e estão definidos nas próprias
-páginas PHP. Não há:
+Os conteúdos exibidos são simulados. As páginas cuidam apenas da apresentação:
+os dados e as regras de negócio ficam em `web/lib`, com um arquivo por módulo.
+
+- `dados.php` concentra os dados do aluno e do semestre, e `academico.php`
+  calcula médias, frequências, situações e a próxima avaliação.
+- Cada módulo (`avisos.php`, `biblioteca.php`, `financeiro.php` etc.) expõe seus
+  dados por constantes ou funções e implementa suas próprias regras, como
+  parcelas em atraso, próximo vencimento ou o informe de IR por ano.
+- `formatacao.php` e `tempo.php` são compartilhados entre os módulos.
+
+O módulo acadêmico e o financeiro usam a constante `SIMULATED_TODAY` como data
+de referência. Avisos, biblioteca e suporte geram datas relativas ao dia atual
+(`dateFromToday()`), porque os scripts dessas páginas comparam as datas com o
+relógio do navegador.
+
+Para integrar um banco de dados ou uma API, basta trocar o corpo das funções da
+`lib` mantendo o formato dos dados retornados; as páginas não precisam mudar.
+Não há:
 
 - banco de dados;
 - arquivo `database.json` em uso;

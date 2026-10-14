@@ -1,70 +1,14 @@
 <?php
-require_once '../../components/layout.php';
-renderHead('Abrir Chamado', 'dark', '../../', false);
+require_once __DIR__ . '/../../components/layout.php';
+require_once __DIR__ . '/../../lib/suporte.php';
 
-$e = static fn (string $value): string => htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
-
-$departamentos = [
-    'secretaria' => ['label' => 'Secretaria', 'icon' => 'bi-building', 'desc' => 'Documentos, matrícula, notas e dados cadastrais.', 'prazo' => 'até 2 dias úteis'],
-    'ti' => ['label' => 'TI', 'icon' => 'bi-pc-display', 'desc' => 'Acesso ao portal, senhas, Wi-Fi e laboratórios.', 'prazo' => 'até 1 dia útil'],
-    'financeiro' => ['label' => 'Financeiro', 'icon' => 'bi-cash-coin', 'desc' => 'Boletos, pagamentos, negociação e informe de rendimentos.', 'prazo' => 'até 2 dias úteis'],
-    'coordenacao' => ['label' => 'Coordenação', 'icon' => 'bi-diagram-3', 'desc' => 'Grade curricular, estágio, TCC e atividades complementares.', 'prazo' => 'até 3 dias úteis'],
-    'biblioteca' => ['label' => 'Biblioteca', 'icon' => 'bi-book', 'desc' => 'Empréstimos, acervo e sugestões de aquisição.', 'prazo' => 'até 2 dias úteis'],
-];
-
-$tipos = [
-    'secretaria' => [
-        'Correção de dados cadastrais',
-        'Lançamento ou correção de nota/falta',
-        'Justificativa de falta',
-        'Dúvida sobre matrícula',
-        'Segunda via de documento',
-    ],
-    'ti' => [
-        'Esqueci minha senha do portal',
-        'Acesso bloqueado ao portal ou Moodle',
-        'Problema no Wi-Fi do campus',
-        'Problema em computador de laboratório',
-        'E-mail institucional',
-    ],
-    'financeiro' => [
-        'Segunda via de boleto',
-        'Boleto com valor incorreto',
-        'Pagamento não identificado',
-        'Negociação de débitos',
-        'Informe de rendimentos (IR)',
-    ],
-    'coordenacao' => [
-        'Aproveitamento de estudos',
-        'Orientação sobre grade curricular',
-        'Atividades complementares',
-        'Dúvida sobre estágio ou TCC',
-        'Reclamação sobre disciplina',
-    ],
-    'biblioteca' => [
-        'Pendência ou multa de empréstimo',
-        'Livro não encontrado no acervo',
-        'Sugestão de aquisição de livro',
-        'Problema com agendamento de empréstimo',
-    ],
-];
-
-$dadosJson = json_encode($departamentos, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+$departamentos = SUPPORT_DEPARTMENTS;
+$tipos = SUPPORT_REQUEST_TYPES;
+$dadosJson = jsonForScript($departamentos);
+renderPageStart('Abrir Chamado');
 ?>
 
-<body>
-<div class="app-shell">
-  <nav-bar id="main-navigation"></nav-bar>
-  <main class="page-content">
-    <portal-header></portal-header>
-
-    <section class="hero-header-pages d-flex flex-wrap justify-content-between align-items-center gap-3">
-      <div>
-        <h1 class="display-6">Abrir Chamado</h1>
-        <p class="text-secondary mb-0">Escolha o departamento e o tipo de solicitação. Acompanhe o andamento em Meus chamados.</p>
-      </div>
-      <a class="btn btn-outline-primary" href="meusChamados.php"><i class="bi bi-chat-left-text me-2"></i>Meus chamados</a>
-    </section>
+<?php renderPageHeader('Abrir Chamado', 'Escolha o departamento e o tipo de solicitação. Acompanhe o andamento em Meus chamados.', static fn () => renderActionLink('meusChamados.php', 'bi-chat-left-text', 'Meus chamados')); ?>
 
     <form id="ticketForm" novalidate>
       <section class="ticket-step" id="stepDept">
@@ -72,11 +16,11 @@ $dadosJson = json_encode($departamentos, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG |
         <div class="choice-grid" role="radiogroup" aria-label="Departamento">
           <?php foreach ($departamentos as $slug => $dep): ?>
             <label class="choice-card">
-              <input type="radio" name="departamento" value="<?= $e($slug) ?>">
-              <span class="choice-card__icon"><i class="bi <?= $e($dep['icon']) ?>"></i></span>
+              <input type="radio" name="departamento" value="<?= e($slug) ?>">
+              <span class="choice-card__icon"><i class="bi <?= e($dep['icon']) ?>"></i></span>
               <span>
-                <strong><?= $e($dep['label']) ?></strong>
-                <span class="choice-card__desc"><?= $e($dep['desc']) ?></span>
+                <strong><?= e($dep['label']) ?></strong>
+                <span class="choice-card__desc"><?= e($dep['desc']) ?></span>
               </span>
             </label>
           <?php endforeach; ?>
@@ -88,11 +32,11 @@ $dadosJson = json_encode($departamentos, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG |
         <h2 class="ticket-step__title"><span class="ticket-step__num">2</span><span id="stepTypeTitle">Qual é a sua solicitação?</span></h2>
         <p class="text-secondary small" id="deptHint"></p>
         <?php foreach ($tipos as $slug => $lista): ?>
-          <div class="choice-grid choice-grid--compact" data-dept-panel="<?= $e($slug) ?>" role="radiogroup" aria-label="Tipo de solicitação" hidden>
+          <div class="choice-grid choice-grid--compact" data-dept-panel="<?= e($slug) ?>" role="radiogroup" aria-label="Tipo de solicitação" hidden>
             <?php foreach ($lista as $tipo): ?>
               <label class="choice-card">
-                <input type="radio" name="tipo" value="<?= $e($tipo) ?>">
-                <span><strong><?= $e($tipo) ?></strong></span>
+                <input type="radio" name="tipo" value="<?= e($tipo) ?>">
+                <span><strong><?= e($tipo) ?></strong></span>
               </label>
             <?php endforeach; ?>
             <label class="choice-card">
@@ -153,8 +97,6 @@ $dadosJson = json_encode($departamentos, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG |
       </section>
     </form>
 
-  </main>
-</div>
 
 <div class="toast-container position-fixed bottom-0 end-0 p-3">
   <div id="ticketToast" class="toast align-items-center text-bg-success border-0" role="status" aria-live="polite" aria-atomic="true">
@@ -166,8 +108,6 @@ $dadosJson = json_encode($departamentos, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG |
 </div>
 
 <script id="deptData" type="application/json"><?= $dadosJson ?></script>
-
-<?php renderScripts(); ?>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -331,6 +271,4 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 </script>
-
-</body>
-</html>
+<?php renderPageEnd(); ?>

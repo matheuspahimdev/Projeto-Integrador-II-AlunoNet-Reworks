@@ -1,89 +1,13 @@
 <?php
-require_once '../../components/layout.php';
-renderHead('Eventos', 'dark', '../../', false);
+require_once __DIR__ . '/../../components/layout.php';
+require_once __DIR__ . '/../../lib/eventos.php';
 
-$e = static fn (string $value): string => htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
-
-$categorias = [
-    'prova' => ['label' => 'Prova', 'icon' => 'bi-pencil-square'],
-    'apresentacao' => ['label' => 'Apresentação do Projeto Integrador', 'icon' => 'bi-easel'],
-    'feriado' => ['label' => 'Feriado', 'icon' => 'bi-flag'],
-    'palestra' => ['label' => 'Palestra / Evento', 'icon' => 'bi-mic'],
-    'oficina' => ['label' => 'Oficina / Minicurso', 'icon' => 'bi-tools'],
-    'prazo' => ['label' => 'Prazo / Marco acadêmico', 'icon' => 'bi-hourglass-split'],
-];
-
-$ev = static fn (string $data, string $categoria, string $titulo, ?string $hora = null, ?string $local = null, ?string $descricao = null): array => [
-    'data' => $data, 'categoria' => $categoria, 'titulo' => $titulo, 'hora' => $hora, 'local' => $local, 'descricao' => $descricao,
-];
-
-$eventos = [
-    // Feriados e pontos facultativos
-    $ev('2026-01-01', 'feriado', 'Confraternização Universal'),
-    $ev('2026-02-16', 'feriado', 'Carnaval (ponto facultativo)'),
-    $ev('2026-02-17', 'feriado', 'Carnaval (ponto facultativo)'),
-    $ev('2026-04-03', 'feriado', 'Sexta-feira Santa'),
-    $ev('2026-04-21', 'feriado', 'Tiradentes'),
-    $ev('2026-05-01', 'feriado', 'Dia do Trabalho'),
-    $ev('2026-06-04', 'feriado', 'Corpus Christi (ponto facultativo)'),
-    $ev('2026-09-07', 'feriado', 'Independência do Brasil'),
-    $ev('2026-10-12', 'feriado', 'Nossa Senhora Aparecida'),
-    $ev('2026-11-02', 'feriado', 'Finados', null, null, 'Não haverá aulas. As atividades retornam na terça-feira, 03/11.'),
-    $ev('2026-11-15', 'feriado', 'Proclamação da República'),
-    $ev('2026-11-20', 'feriado', 'Consciência Negra'),
-    $ev('2026-12-25', 'feriado', 'Natal'),
-
-    // Provas
-    $ev('2026-09-22', 'prova', 'Prova — Programação Web', '19:00', 'Sala 204 — Bloco 1'),
-    $ev('2026-09-24', 'prova', 'Prova — Direito Aplicado', '19:00', 'Sala 305 — Bloco 1'),
-    $ev('2026-10-20', 'prova', 'Prova — Projeto Integrador II', '19:00', 'Sala 712 — Bloco 2', 'Sala alterada conforme aviso da coordenação. Leve documento com foto e chegue com 15 minutos de antecedência.'),
-    $ev('2026-10-22', 'prova', 'Prova — Banco de Dados', '19:00', 'Sala 305 — Bloco 1'),
-    $ev('2026-10-29', 'prova', 'Prova — Programação Web', '19:00', 'Sala 204 — Bloco 1'),
-    $ev('2026-12-08', 'prova', 'Prova substitutiva', '19:00', 'Bloco 1', 'Para alunos que não realizaram alguma prova do semestre.'),
-    $ev('2026-12-10', 'prova', 'Exame final', '19:00', 'Bloco 1'),
-
-    // Apresentações do Projeto Integrador
-    $ev('2026-11-24', 'apresentacao', 'Apresentação do Projeto Integrador II — Turma A', '19:00', 'Auditório Central', 'Apresentação do projeto para a banca avaliadora, com cerca de 15 minutos por grupo.'),
-    $ev('2026-11-26', 'apresentacao', 'Apresentação do Projeto Integrador II — Turma B', '19:00', 'Auditório Central', 'Apresentação do projeto para a banca avaliadora, com cerca de 15 minutos por grupo.'),
-
-    // Palestras e eventos
-    $ev('2026-09-17', 'palestra', 'Palestra: Direito Digital e LGPD', '19:30', 'Auditório Central'),
-    $ev('2026-10-26', 'palestra', 'Abertura da Semana de Tecnologia', '19:30', 'Auditório Central', 'Palestra de abertura sobre inteligência artificial aplicada ao desenvolvimento de software.'),
-    $ev('2026-10-28', 'palestra', 'Maratona de Programação', '14:00', 'Laboratório de Informática 2', 'Competição em equipes, parte da Semana de Tecnologia.'),
-    $ev('2026-11-12', 'palestra', 'Palestra: Carreira em Tecnologia', '19:30', 'Auditório Central', 'Promovida pelo núcleo de carreiras.'),
-
-    // Oficinas e minicursos
-    $ev('2026-10-27', 'oficina', 'Minicurso de Git e GitHub', '19:00', 'Laboratório de Informática 2', 'Vagas limitadas. Inscrição na secretaria.'),
-    $ev('2026-11-05', 'oficina', 'Oficina de Currículo e LinkedIn', '18:30', 'Sala de Reuniões — Bloco 2'),
-
-    // Prazos e marcos acadêmicos
-    $ev('2026-08-03', 'prazo', 'Início do semestre letivo'),
-    $ev('2026-08-10', 'prazo', 'Vencimento da mensalidade'),
-    $ev('2026-09-10', 'prazo', 'Vencimento da mensalidade'),
-    $ev('2026-10-10', 'prazo', 'Vencimento da mensalidade'),
-    $ev('2026-10-30', 'prazo', 'Prazo da Avaliação Institucional (CPA)', null, 'Portal do aluno', 'Responda ao questionário até esta data.'),
-    $ev('2026-11-10', 'prazo', 'Vencimento da mensalidade'),
-    $ev('2026-11-17', 'prazo', 'Entrega do relatório final — Projeto Integrador II', null, 'Portal do aluno'),
-    $ev('2026-12-10', 'prazo', 'Vencimento da mensalidade'),
-    $ev('2026-12-11', 'prazo', 'Último dia para registrar atividades complementares', null, 'Portal do aluno'),
-    $ev('2026-12-18', 'prazo', 'Encerramento do semestre letivo'),
-];
-
-$dadosJson = json_encode(['categories' => $categorias, 'events' => $eventos], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+$categorias = EVENT_CATEGORIES;
+$dadosJson = jsonForScript(['categories' => $categorias, 'events' => calendarEvents()]);
+renderPageStart('Eventos');
 ?>
 
-<body>
-<div class="app-shell">
-  <nav-bar id="main-navigation"></nav-bar>
-  <main class="page-content">
-    <portal-header></portal-header>
-
-    <section class="hero-header-pages d-flex flex-wrap justify-content-between align-items-center gap-3">
-      <div>
-        <h1 class="display-6">Eventos</h1>
-        <p class="text-secondary mb-0">Calendário acadêmico: provas, apresentações, feriados, palestras e prazos.</p>
-      </div>
-    </section>
+<?php renderPageHeader('Eventos', 'Calendário acadêmico: provas, apresentações, feriados, palestras e prazos.'); ?>
 
     <div class="cal-layout">
       <section class="grid-card cal-card" aria-label="Calendário">
@@ -96,8 +20,8 @@ $dadosJson = json_encode(['categories' => $categorias, 'events' => $eventos], JS
 
         <div class="cal-legend" role="group" aria-label="Legenda e filtro de categorias">
           <?php foreach ($categorias as $slug => $categoria): ?>
-            <button class="cal-legend__item cat--<?= $e($slug) ?>" type="button" data-category="<?= $e($slug) ?>" aria-pressed="true">
-              <span class="cal-dot"></span><?= $e($categoria['label']) ?>
+            <button class="cal-legend__item cat--<?= e($slug) ?>" type="button" data-category="<?= e($slug) ?>" aria-pressed="true">
+              <span class="cal-dot"></span><?= e($categoria['label']) ?>
             </button>
           <?php endforeach; ?>
         </div>
@@ -115,8 +39,6 @@ $dadosJson = json_encode(['categories' => $categorias, 'events' => $eventos], JS
       </aside>
     </div>
 
-  </main>
-</div>
 
 <div class="modal fade" id="dayModal" tabindex="-1" aria-labelledby="dayModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
@@ -131,8 +53,6 @@ $dadosJson = json_encode(['categories' => $categorias, 'events' => $eventos], JS
 </div>
 
 <script id="calData" type="application/json"><?= $dadosJson ?></script>
-
-<?php renderScripts(); ?>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -296,6 +216,4 @@ document.addEventListener('DOMContentLoaded', () => {
   render();
 });
 </script>
-
-</body>
-</html>
+<?php renderPageEnd(); ?>

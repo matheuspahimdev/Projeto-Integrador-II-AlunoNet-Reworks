@@ -1,117 +1,15 @@
 <?php
-require_once '../../components/layout.php';
-renderHead('Avisos', 'dark', '../../', false);
+require_once __DIR__ . '/../../components/layout.php';
+require_once __DIR__ . '/../../lib/avisos.php';
 
-$e = static fn (string $value): string => htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
-
-$fuso = new DateTimeZone('America/Sao_Paulo');
-$agora = new DateTimeImmutable('now', $fuso);
-
-$categorias = [
-    'secretaria' => ['label' => 'Secretaria', 'icon' => 'bi-building'],
-    'coordenacao' => ['label' => 'Coordenação', 'icon' => 'bi-diagram-3'],
-    'professores' => ['label' => 'Professores', 'icon' => 'bi-person-workspace'],
-    'financeiro' => ['label' => 'Financeiro', 'icon' => 'bi-cash-coin'],
-    'eventos' => ['label' => 'Eventos', 'icon' => 'bi-calendar-event'],
-];
-
-$prioridades = [
-    'urgente' => ['label' => 'Urgente', 'class' => 'text-bg-danger'],
-    'importante' => ['label' => 'Importante', 'class' => 'text-bg-warning'],
-];
-
-$avisos = [
-    [
-        'id' => 1, 'categoria' => 'professores', 'autor' => 'Prof. Nome do Professor 1', 'data' => '2026-10-12 08:40',
-        'prioridade' => 'urgente', 'fixado' => true, 'lido' => false,
-        'titulo' => 'Alteração de sala da prova de Projeto Integrador II',
-        'texto' => 'Atenção, turma: a prova de Projeto Integrador II será realizada na Sala 712 (Bloco 2) e não mais no local divulgado anteriormente. O horário permanece o mesmo. Chegue com 15 minutos de antecedência e leve um documento com foto.',
-    ],
-    [
-        'id' => 2, 'categoria' => 'secretaria', 'autor' => 'Secretaria Acadêmica', 'data' => '2026-10-12 08:05',
-        'prioridade' => 'importante', 'fixado' => false, 'lido' => false,
-        'titulo' => 'Avaliação Institucional (CPA) disponível até 30/10',
-        'texto' => 'A Comissão Própria de Avaliação abriu o questionário do semestre. A participação é anônima e leva cerca de 5 minutos. Suas respostas ajudam a orientar melhorias na infraestrutura, no atendimento e nas disciplinas.',
-        'link' => ['label' => 'Responder avaliação', 'href' => '../avalieNos/avaliacaoInstitucional.php'],
-    ],
-    [
-        'id' => 3, 'categoria' => 'financeiro', 'autor' => 'Setor Financeiro', 'data' => '2026-10-09 17:20',
-        'prioridade' => 'importante', 'fixado' => false, 'lido' => false,
-        'titulo' => 'Boleto de outubro disponível',
-        'texto' => 'O boleto da parcela de outubro já pode ser consultado no portal. Você pode copiar a linha digitável, pagar com PIX ou baixar a 2ª via em PDF. Em caso de dúvidas sobre valores, procure o setor financeiro.',
-        'link' => ['label' => 'Ver boleto', 'href' => '../financeiro/boletoOnline.php'],
-    ],
-    [
-        'id' => 4, 'categoria' => 'secretaria', 'autor' => 'Secretaria Acadêmica', 'data' => '2026-10-08 10:00',
-        'prioridade' => 'normal', 'fixado' => false, 'lido' => false,
-        'titulo' => 'Sem aulas em 02/11 (Finados)',
-        'texto' => 'Em razão do feriado de Finados, não haverá aulas na segunda-feira, 02/11. As atividades retornam normalmente na terça-feira, 03/11.',
-    ],
-    [
-        'id' => 5, 'categoria' => 'eventos', 'autor' => 'Núcleo de Eventos', 'data' => '2026-10-06 14:15',
-        'prioridade' => 'normal', 'fixado' => false, 'lido' => true,
-        'titulo' => 'Semana de Tecnologia 2026: inscrições abertas',
-        'texto' => 'Palestras, minicursos e maratona de programação fazem parte da programação deste ano. As vagas dos minicursos são limitadas e preenchidas por ordem de inscrição. Participantes podem solicitar certificado de atividade complementar.',
-    ],
-    [
-        'id' => 6, 'categoria' => 'professores', 'autor' => 'Prof. Nome do Professor 3', 'data' => '2026-10-05 09:10',
-        'prioridade' => 'normal', 'fixado' => false, 'lido' => true,
-        'titulo' => 'Novos materiais de Banco de Dados no Repositório',
-        'texto' => 'Publiquei os slides das aulas 1 e 2, as listas de exercícios com gabarito e o script do banco usado em sala. Revisem antes da próxima aula para tirarmos dúvidas.',
-        'link' => ['label' => 'Abrir repositório', 'href' => '../materiais/repositorioAluno.php'],
-    ],
-    [
-        'id' => 7, 'categoria' => 'coordenacao', 'autor' => 'Coordenação do Curso', 'data' => '2026-09-29 16:30',
-        'prioridade' => 'normal', 'fixado' => false, 'lido' => true,
-        'titulo' => 'Resultado da seleção de monitoria',
-        'texto' => 'Está disponível o resultado da seleção de monitores do semestre. Os aprovados devem procurar a coordenação para assinar o termo de compromisso. Agradecemos a todos que participaram do processo.',
-        'anexos' => [['nome' => 'Resultado_Monitoria.pdf', 'tamanho' => '180 KB']],
-    ],
-    [
-        'id' => 8, 'categoria' => 'secretaria', 'autor' => 'Secretaria Acadêmica', 'data' => '2026-09-24 11:00',
-        'prioridade' => 'normal', 'fixado' => false, 'lido' => true,
-        'titulo' => 'Manutenção programada do portal do aluno',
-        'texto' => 'O portal ficará indisponível no sábado, 26/09, das 22h às 02h, para atualização dos sistemas. Pedimos que concluam solicitações e downloads antes desse período.',
-    ],
-    [
-        'id' => 9, 'categoria' => 'coordenacao', 'autor' => 'Coordenação do Curso', 'data' => '2026-09-18 13:45',
-        'prioridade' => 'importante', 'fixado' => false, 'lido' => true,
-        'titulo' => 'Prazo de entrega das atividades complementares',
-        'texto' => 'Lembramos que os comprovantes de atividades complementares devem ser registrados no portal até o fim do semestre. Alunos em fase de conclusão têm prioridade na análise.',
-        'link' => ['label' => 'Registrar atividades', 'href' => '../academico/atividadesComplementares.php'],
-    ],
-];
-
-usort($avisos, static fn (array $a, array $b): int => [(int) $b['fixado'], $b['data']] <=> [(int) $a['fixado'], $a['data']]);
-
-$rotuloData = static function (DateTimeImmutable $data) use ($agora): string {
-    $dias = -((int) $agora->setTime(0, 0)->diff($data->setTime(0, 0))->format('%r%a'));
-    $hora = $data->format('H:i');
-
-    return match (true) {
-        $dias === 0 => "Hoje às {$hora}",
-        $dias === 1 => "Ontem às {$hora}",
-        $dias > 1 && $dias < 7 => "Há {$dias} dias",
-        default => $data->format('d/m/Y'),
-    };
-};
-
-$naoLidos = count(array_filter($avisos, static fn (array $aviso): bool => !$aviso['lido']));
+$categorias = NOTICE_CATEGORIES;
+$prioridades = NOTICE_PRIORITIES;
+$avisos = noticesPinnedFirst();
+$naoLidos = unreadNoticesCount($avisos);
+renderPageStart('Avisos');
 ?>
 
-<body>
-<div class="app-shell">
-  <nav-bar id="main-navigation"></nav-bar>
-  <main class="page-content">
-    <portal-header></portal-header>
-
-    <section class="hero-header-pages d-flex flex-wrap justify-content-between align-items-center gap-3">
-      <div>
-        <h1 class="display-6">Avisos</h1>
-        <p class="text-secondary mb-0">Comunicados da secretaria, coordenação e professores.</p>
-      </div>
-      <button class="btn btn-outline-primary" type="button" id="markAllRead"><i class="bi bi-check2-all me-2"></i>Marcar todos como lidos</button>
-    </section>
+<?php renderPageHeader('Avisos', 'Comunicados da secretaria, coordenação e professores.', static fn () => renderActionButton('markAllRead', 'bi-check2-all', 'Marcar todos como lidos')); ?>
 
     <div class="notice-wrap">
       <div class="notice-toolbar">
@@ -119,7 +17,7 @@ $naoLidos = count(array_filter($avisos, static fn (array $aviso): bool => !$avis
           <button class="notice-filter active" type="button" data-filter="all">Todos</button>
           <button class="notice-filter" type="button" data-filter="unread">Não lidos <span class="badge text-bg-primary" id="unreadCount"><?= $naoLidos ?></span></button>
           <?php foreach ($categorias as $slug => $categoria): ?>
-            <button class="notice-filter" type="button" data-filter="<?= $e($slug) ?>"><i class="bi <?= $e($categoria['icon']) ?> me-1"></i><?= $e($categoria['label']) ?></button>
+            <button class="notice-filter" type="button" data-filter="<?= e($slug) ?>"><i class="bi <?= e($categoria['icon']) ?> me-1"></i><?= e($categoria['label']) ?></button>
           <?php endforeach; ?>
         </div>
         <div class="input-group notice-search">
@@ -131,7 +29,7 @@ $naoLidos = count(array_filter($avisos, static fn (array $aviso): bool => !$avis
       <div class="notice-feed" id="noticeFeed" aria-live="polite">
         <?php foreach ($avisos as $aviso): ?>
           <?php
-            $data = new DateTimeImmutable($aviso['data'], $fuso);
+            $data = parseDateTime($aviso['data']);
             $categoria = $categorias[$aviso['categoria']];
             $prioridade = $prioridades[$aviso['prioridade']] ?? null;
             $anexos = $aviso['anexos'] ?? [];
@@ -140,45 +38,45 @@ $naoLidos = count(array_filter($avisos, static fn (array $aviso): bool => !$avis
             $busca = mb_strtolower($aviso['titulo'] . ' ' . $aviso['texto'] . ' ' . $aviso['autor'] . ' ' . $categoria['label']);
             $classes = 'notice-card notice-card--' . $aviso['prioridade'] . ($aviso['lido'] ? '' : ' is-unread');
           ?>
-          <article class="<?= $e($classes) ?>"
+          <article class="<?= e($classes) ?>"
                    data-id="<?= (int) $aviso['id'] ?>"
-                   data-category="<?= $e($aviso['categoria']) ?>"
-                   data-date="<?= $e($data->format('Y-m-d\TH:i')) ?>"
+                   data-category="<?= e($aviso['categoria']) ?>"
+                   data-date="<?= e($data->format('Y-m-d\TH:i')) ?>"
                    data-pinned="<?= $aviso['fixado'] ? 'true' : 'false' ?>"
                    data-read="<?= $aviso['lido'] ? 'true' : 'false' ?>"
-                   data-search="<?= $e($busca) ?>">
+                   data-search="<?= e($busca) ?>">
             <header class="notice-card__head">
-              <span class="notice-card__avatar" aria-hidden="true"><i class="bi <?= $e($categoria['icon']) ?>"></i></span>
+              <span class="notice-card__avatar" aria-hidden="true"><i class="bi <?= e($categoria['icon']) ?>"></i></span>
               <div class="notice-card__meta">
-                <strong><?= $e($aviso['autor']) ?></strong>
-                <time datetime="<?= $e($data->format('Y-m-d\TH:i')) ?>"><?= $e($rotuloData($data)) ?></time>
+                <strong><?= e($aviso['autor']) ?></strong>
+                <time datetime="<?= e($data->format('Y-m-d\TH:i')) ?>"><?= e(relativeDateLabel($data)) ?></time>
               </div>
               <div class="notice-card__tags">
                 <span class="notice-dot" title="Não lido"></span>
                 <?php if ($prioridade): ?>
-                  <span class="badge rounded-pill <?= $e($prioridade['class']) ?>"><?= $e($prioridade['label']) ?></span>
+                  <span class="badge rounded-pill <?= e($prioridade['class']) ?>"><?= e($prioridade['label']) ?></span>
                 <?php endif; ?>
-                <span class="badge rounded-pill text-bg-secondary"><?= $e($categoria['label']) ?></span>
+                <span class="badge rounded-pill text-bg-secondary"><?= e($categoria['label']) ?></span>
               </div>
               <button class="notice-action<?= $aviso['fixado'] ? ' is-pinned' : '' ?>" type="button" data-action="pin" aria-pressed="<?= $aviso['fixado'] ? 'true' : 'false' ?>" aria-label="<?= $aviso['fixado'] ? 'Desafixar aviso' : 'Fixar aviso' ?>">
                 <i class="bi <?= $aviso['fixado'] ? 'bi-pin-angle-fill' : 'bi-pin-angle' ?>"></i>
               </button>
             </header>
 
-            <h2 class="notice-card__title"><?= $e($aviso['titulo']) ?></h2>
-            <p class="notice-card__text"><?= $e($aviso['texto']) ?></p>
+            <h2 class="notice-card__title"><?= e($aviso['titulo']) ?></h2>
+            <p class="notice-card__text"><?= e($aviso['texto']) ?></p>
 
             <?php if ($anexos || $link): ?>
               <div class="notice-card__more">
                 <?php if ($anexos): ?>
                   <div class="notice-attachments">
                     <?php foreach ($anexos as $anexo): ?>
-                      <a class="notice-chip" href="#"><i class="bi bi-file-earmark-pdf file-icon--pdf"></i><?= $e($anexo['nome']) ?> <small><?= $e($anexo['tamanho']) ?></small></a>
+                      <a class="notice-chip" href="#"><i class="bi bi-file-earmark-pdf file-icon--pdf"></i><?= e($anexo['nome']) ?> <small><?= e($anexo['tamanho']) ?></small></a>
                     <?php endforeach; ?>
                   </div>
                 <?php endif; ?>
                 <?php if ($link): ?>
-                  <a class="btn btn-sm btn-outline-primary" href="<?= $e($link['href']) ?>"><?= $e($link['label']) ?><i class="bi bi-arrow-right ms-2"></i></a>
+                  <a class="btn btn-sm btn-outline-primary" href="<?= e($link['href']) ?>"><?= e($link['label']) ?><i class="bi bi-arrow-right ms-2"></i></a>
                 <?php endif; ?>
               </div>
             <?php endif; ?>
@@ -203,8 +101,6 @@ $naoLidos = count(array_filter($avisos, static fn (array $aviso): bool => !$avis
       </div>
     </div>
 
-  </main>
-</div>
 
 <div class="toast-container position-fixed bottom-0 end-0 p-3">
   <div id="noticeToast" class="toast align-items-center text-bg-success border-0" role="status" aria-live="polite" aria-atomic="true">
@@ -214,8 +110,6 @@ $naoLidos = count(array_filter($avisos, static fn (array $aviso): bool => !$avis
     </div>
   </div>
 </div>
-
-<?php renderScripts(); ?>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -382,6 +276,4 @@ document.addEventListener('DOMContentLoaded', () => {
   render();
 });
 </script>
-
-</body>
-</html>
+<?php renderPageEnd(); ?>

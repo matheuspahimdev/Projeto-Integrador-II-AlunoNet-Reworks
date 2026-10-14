@@ -1,86 +1,12 @@
 <?php
-require_once '../../components/layout.php';
-renderHead('Repositório do Aluno', 'dark', '../../', false);
+require_once __DIR__ . '/../../components/layout.php';
+require_once __DIR__ . '/../../lib/materiais.php';
 
-$pasta = static fn (int $id, ?int $parent, string $name, string $modified, string $owner): array => [
-    'id' => $id, 'parent' => $parent, 'type' => 'folder', 'name' => $name, 'ext' => '',
-    'size' => 0, 'modified' => $modified, 'owner' => $owner, 'starred' => false,
-];
-
-$arquivo = static fn (int $id, ?int $parent, string $name, int $kb, string $modified, string $owner, bool $starred = false): array => [
-    'id' => $id, 'parent' => $parent, 'type' => 'file', 'name' => $name,
-    'ext' => strtolower(pathinfo($name, PATHINFO_EXTENSION)), 'size' => $kb * 1024,
-    'modified' => $modified, 'owner' => $owner, 'starred' => $starred,
-];
-
-$p1 = 'Prof. Nome do Professor 1';
-$p2 = 'Prof. Nome do Professor 2';
-$p3 = 'Prof. Nome do Professor 3';
-$p4 = 'Prof. Nome do Professor 4';
-$eu = 'Você';
-
-$itens = [
-    // Pastas principais (uma por disciplina) e pasta pessoal
-    $pasta(1, null, 'Projeto Integrador II', '2026-10-08', $p1),
-    $pasta(2, null, 'Direito Aplicado', '2026-10-05', $p2),
-    $pasta(3, null, 'Banco de Dados', '2026-10-09', $p3),
-    $pasta(4, null, 'Programação Web', '2026-09-28', $p4),
-    $pasta(5, null, 'Documentos Pessoais', '2026-10-02', $eu),
-
-    // Subpastas
-    $pasta(6, 1, 'Aulas', '2026-10-08', $p1),
-    $pasta(7, 1, 'Entregas', '2026-10-06', $eu),
-    $pasta(8, 3, 'Slides', '2026-10-09', $p3),
-    $pasta(9, 3, 'Listas de Exercícios', '2026-10-01', $p3),
-
-    // Projeto Integrador II
-    $arquivo(10, 1, 'Plano de Ensino.pdf', 320, '2026-08-03', $p1, true),
-    $arquivo(11, 1, 'Cronograma do Projeto.xlsx', 86, '2026-09-14', $p1),
-    $arquivo(12, 1, 'Modelo de Relatório.docx', 54, '2026-09-20', $p1),
-    $arquivo(13, 6, 'Aula 01 - Introdução.pdf', 1228, '2026-08-10', $p1),
-    $arquivo(14, 6, 'Aula 02 - Levantamento de Requisitos.pptx', 3482, '2026-09-22', $p1),
-    $arquivo(15, 6, 'Gravação Aula 03.mp4', 151552, '2026-10-08', $p1),
-    $arquivo(16, 7, 'Entrega 1 - Documento de Visão.pdf', 540, '2026-09-30', $eu),
-    $arquivo(17, 7, 'Diagrama de Casos de Uso.png', 210, '2026-10-06', $eu),
-
-    // Direito Aplicado
-    $arquivo(18, 2, 'Código de Defesa do Consumidor.pdf', 1843, '2026-08-12', $p2),
-    $arquivo(19, 2, 'Resumo Contratos.docx', 72, '2026-10-05', $p2),
-
-    // Banco de Dados
-    $arquivo(20, 3, 'Modelo Entidade-Relacionamento.png', 480, '2026-09-18', $p3),
-    $arquivo(21, 3, 'Script Banco Escola.sql', 12, '2026-10-09', $p3, true),
-    $arquivo(22, 8, 'Aula 01 - Modelagem.pptx', 2970, '2026-08-17', $p3),
-    $arquivo(23, 8, 'Aula 02 - SQL Básico.pptx', 3174, '2026-09-07', $p3),
-    $arquivo(24, 9, 'Lista 01.pdf', 190, '2026-09-10', $p3),
-    $arquivo(25, 9, 'Lista 02.pdf', 205, '2026-10-01', $p3),
-    $arquivo(26, 9, 'Gabarito Lista 01.pdf', 160, '2026-09-17', $p3),
-
-    // Programação Web
-    $arquivo(27, 4, 'Material Bootstrap.zip', 5734, '2026-09-28', $p4),
-    $arquivo(28, 4, 'Referências de JavaScript.pdf', 940, '2026-09-15', $p4),
-
-    // Documentos pessoais
-    $arquivo(29, 5, 'Declaração de Matrícula.pdf', 120, '2026-10-02', $eu, true),
-    $arquivo(30, 5, 'Histórico Escolar.pdf', 180, '2026-09-12', $eu),
-    $arquivo(31, 5, 'Foto 3x4.jpg', 95, '2026-08-01', $eu),
-];
-
-$dadosJson = json_encode($itens, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+$dadosJson = jsonForScript(repositoryItems());
+renderPageStart('Repositório do Aluno');
 ?>
 
-<body>
-<div class="app-shell">
-  <nav-bar id="main-navigation"></nav-bar>
-  <main class="page-content">
-    <portal-header></portal-header>
-
-    <section class="hero-header-pages d-flex flex-wrap justify-content-between align-items-center gap-3">
-      <div>
-        <h1 class="display-6">Repositório do Aluno</h1>
-        <p class="text-secondary mb-0">Materiais de aula, entregas e documentos organizados por disciplina.</p>
-      </div>
-    </section>
+<?php renderPageHeader('Repositório do Aluno', 'Materiais de aula, entregas e documentos organizados por disciplina.'); ?>
 
     <div class="repo-layout">
       <aside class="grid-card repo-side" aria-label="Menu do repositório">
@@ -133,8 +59,6 @@ $dadosJson = json_encode($itens, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HE
       </section>
     </div>
 
-  </main>
-</div>
 
 <input type="file" id="uploadInput" multiple hidden>
 
@@ -194,8 +118,6 @@ $dadosJson = json_encode($itens, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HE
 </div>
 
 <script id="repoData" type="application/json"><?= $dadosJson ?></script>
-
-<?php renderScripts(); ?>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -577,6 +499,4 @@ document.addEventListener('DOMContentLoaded', () => {
   render();
 });
 </script>
-
-</body>
-</html>
+<?php renderPageEnd(); ?>

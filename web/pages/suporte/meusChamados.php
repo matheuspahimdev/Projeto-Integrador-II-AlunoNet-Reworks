@@ -1,84 +1,12 @@
 <?php
-require_once '../../components/layout.php';
-renderHead('Meus Chamados', 'dark', '../../', false);
+require_once __DIR__ . '/../../components/layout.php';
+require_once __DIR__ . '/../../lib/suporte.php';
 
-$fuso = new DateTimeZone('America/Sao_Paulo');
-$hoje = new DateTimeImmutable('today', $fuso);
-$quando = static fn (int $dias, string $hora): string => $hoje->modify(sprintf('%+d days', $dias))->format('Y-m-d') . 'T' . $hora;
-
-$departamentos = [
-    'secretaria' => ['label' => 'Secretaria', 'icon' => 'bi-building'],
-    'ti' => ['label' => 'TI', 'icon' => 'bi-pc-display'],
-    'financeiro' => ['label' => 'Financeiro', 'icon' => 'bi-cash-coin'],
-    'coordenacao' => ['label' => 'Coordenação', 'icon' => 'bi-diagram-3'],
-    'biblioteca' => ['label' => 'Biblioteca', 'icon' => 'bi-book'],
-];
-
-$chamados = [
-    [
-        'id' => 'CH-2026-0187', 'departamento' => 'ti', 'tipo' => 'Acesso bloqueado ao portal ou Moodle',
-        'assunto' => 'Acesso bloqueado ao portal',
-        'descricao' => 'Depois de errar a senha algumas vezes, o portal passou a informar que meu acesso está bloqueado. Preciso entrar para consultar notas e materiais.',
-        'anexo' => null, 'contato' => 'Portal', 'status' => 'andamento',
-        'abertoEm' => $quando(-2, '09:12'), 'atualizadoEm' => $quando(-1, '14:30'),
-        'historico' => [
-            ['em' => $quando(-2, '09:12'), 'autor' => 'Você', 'texto' => 'Chamado aberto.'],
-            ['em' => $quando(-1, '14:30'), 'autor' => 'TI', 'texto' => 'Chamado em análise. Estamos verificando o bloqueio na sua conta.'],
-        ],
-    ],
-    [
-        'id' => 'CH-2026-0179', 'departamento' => 'financeiro', 'tipo' => 'Boleto com valor incorreto',
-        'assunto' => 'Boleto de setembro com valor incorreto',
-        'descricao' => 'O boleto de setembro veio com um valor diferente do contratado. Gostaria de conferir se houve algum lançamento indevido.',
-        'anexo' => 'boleto-setembro.pdf', 'contato' => 'E-mail', 'status' => 'aguardando',
-        'abertoEm' => $quando(-4, '16:45'), 'atualizadoEm' => $quando(-1, '10:05'),
-        'historico' => [
-            ['em' => $quando(-4, '16:45'), 'autor' => 'Você', 'texto' => 'Chamado aberto.'],
-            ['em' => $quando(-3, '11:20'), 'autor' => 'Financeiro', 'texto' => 'Chamado em análise pelo setor financeiro.'],
-            ['em' => $quando(-1, '10:05'), 'autor' => 'Financeiro', 'texto' => 'Para continuar, envie o comprovante do último pagamento realizado.'],
-        ],
-    ],
-    [
-        'id' => 'CH-2026-0162', 'departamento' => 'secretaria', 'tipo' => 'Correção de dados cadastrais',
-        'assunto' => 'Correção de telefone e endereço',
-        'descricao' => 'Meu telefone e endereço estão desatualizados no cadastro. Solicito a correção dos dados.',
-        'anexo' => null, 'contato' => 'Portal', 'status' => 'resolvido',
-        'abertoEm' => $quando(-12, '08:30'), 'atualizadoEm' => $quando(-9, '15:40'),
-        'historico' => [
-            ['em' => $quando(-12, '08:30'), 'autor' => 'Você', 'texto' => 'Chamado aberto.'],
-            ['em' => $quando(-11, '10:00'), 'autor' => 'Secretaria', 'texto' => 'Solicitação recebida e em atendimento.'],
-            ['em' => $quando(-9, '15:40'), 'autor' => 'Secretaria', 'texto' => 'Dados atualizados no sistema. Confira em Dados Cadastrais.'],
-        ],
-    ],
-    [
-        'id' => 'CH-2026-0150', 'departamento' => 'biblioteca', 'tipo' => 'Livro não encontrado no acervo',
-        'assunto' => 'Livro de Redes não localizado',
-        'descricao' => 'Não encontrei na estante o exemplar que consta como disponível no acervo.',
-        'anexo' => null, 'contato' => 'Portal', 'status' => 'cancelado',
-        'abertoEm' => $quando(-20, '13:15'), 'atualizadoEm' => $quando(-20, '13:40'),
-        'historico' => [
-            ['em' => $quando(-20, '13:15'), 'autor' => 'Você', 'texto' => 'Chamado aberto.'],
-            ['em' => $quando(-20, '13:40'), 'autor' => 'Você', 'texto' => 'Chamado cancelado pelo solicitante.'],
-        ],
-    ],
-];
-
-$dadosJson = json_encode(['departments' => $departamentos, 'tickets' => $chamados], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+$dadosJson = jsonForScript(['departments' => supportDepartmentBadges(), 'tickets' => supportTickets()]);
+renderPageStart('Meus Chamados');
 ?>
 
-<body>
-<div class="app-shell">
-  <nav-bar id="main-navigation"></nav-bar>
-  <main class="page-content">
-    <portal-header></portal-header>
-
-    <section class="hero-header-pages d-flex flex-wrap justify-content-between align-items-center gap-3">
-      <div>
-        <h1 class="display-6">Meus Chamados</h1>
-        <p class="text-secondary mb-0">Acompanhe o andamento das suas solicitações aos departamentos.</p>
-      </div>
-      <a class="btn btn-accent" href="chamados.php"><i class="bi bi-plus-lg me-2"></i>Abrir chamado</a>
-    </section>
+<?php renderPageHeader('Meus Chamados', 'Acompanhe o andamento das suas solicitações aos departamentos.', static fn () => renderActionLink('chamados.php', 'bi-plus-lg', 'Abrir chamado', 'btn-accent')); ?>
 
     <div class="alert alert-warning d-flex align-items-start gap-2" id="waitingAlert" role="alert" hidden>
       <i class="bi bi-exclamation-circle-fill mt-1" aria-hidden="true"></i>
@@ -107,8 +35,6 @@ $dadosJson = json_encode(['departments' => $departamentos, 'tickets' => $chamado
       <p class="mb-0" id="ticketEmptyText"></p>
     </div>
 
-  </main>
-</div>
 
 <div class="modal fade" id="replyModal" tabindex="-1" aria-labelledby="replyModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
@@ -159,8 +85,6 @@ $dadosJson = json_encode(['departments' => $departamentos, 'tickets' => $chamado
 </div>
 
 <script id="ticketData" type="application/json"><?= $dadosJson ?></script>
-
-<?php renderScripts(); ?>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -406,6 +330,4 @@ document.addEventListener('DOMContentLoaded', () => {
   render();
 });
 </script>
-
-</body>
-</html>
+<?php renderPageEnd(); ?>

@@ -1,110 +1,112 @@
 <?php
-require_once '../../components/layout.php';
-renderHead('Extrato Financeiro', 'dark', '../../', false);
+require_once __DIR__ . '/../../components/layout.php';
+require_once __DIR__ . '/../../lib/financeiro.php';
+
+$lancamentos = INSTALLMENTS;
+$ultimoPagamento = lastPayment();
+$emDia = overdueInstallments() === [];
+renderPageStart('Extrato Financeiro');
 ?>
-<body>
 
-<div class="app-shell">
+<?php renderPageHeader('Extrato Financeiro', 'Acompanhe seus lançamentos e histórico de pagamentos'); ?>
 
-  <nav-bar id="main-navigation"></nav-bar>
+    <div class="finance-summary">
+      <div class="bg-body-secondary border rounded-4 finance-summary-card">
+        <?php if ($emDia): ?>
+          <div class="finance-summary-card__icon finance-summary-card__icon--success"><i class="bi bi-check-lg" aria-hidden="true"></i></div>
+          <div>
+            <p class="finance-summary-card__label">Situação financeira</p>
+            <p class="finance-summary-card__value finance-summary-card__value--success">Financeiro em dia</p>
+          </div>
+        <?php else: ?>
+          <div class="finance-summary-card__icon finance-summary-card__icon--danger"><i class="bi bi-exclamation-triangle" aria-hidden="true"></i></div>
+          <div>
+            <p class="finance-summary-card__label">Situação financeira</p>
+            <p class="finance-summary-card__value text-danger">Parcelas em atraso</p>
+          </div>
+        <?php endif; ?>
+      </div>
 
-  <main class="page-content">
+      <div class="bg-body-secondary border rounded-4 finance-summary-card">
+        <div class="finance-summary-card__icon"><i class="bi bi-credit-card" aria-hidden="true"></i></div>
+        <div>
+          <p class="finance-summary-card__label">Último pagamento</p>
+          <?php if ($ultimoPagamento !== null): ?>
+            <p class="finance-summary-card__value"><?= formatCurrency($ultimoPagamento['value']) ?> <small>em <?= formatDate($ultimoPagamento['paid_at']) ?></small></p>
+          <?php else: ?>
+            <p class="finance-summary-card__value">Nenhum pagamento</p>
+          <?php endif; ?>
+        </div>
+      </div>
+    </div>
 
-    <portal-header></portal-header>
-
-    <section class="hero-header-pages">
-      <h1 class="display-6">Extrato Financeiro</h1>
-      <p class="text-secondary mb-0">Acompanhe seus lançamentos e histórico de pagamentos</p>
+    <section class="bg-body-secondary border rounded-4 finance-table-card" aria-labelledby="finance-ledger-title">
+      <div class="finance-table-card__head">
+        <h2 id="finance-ledger-title">Lançamentos <small><?= e(STUDENT['term']) ?></small></h2>
+        <label class="visually-hidden" for="finance-filter">Filtrar lançamentos</label>
+        <select id="finance-filter" class="form-select" data-ledger-filter>
+          <option value="all" selected>Todos os lançamentos</option>
+          <option value="open">Em aberto</option>
+          <option value="paid">Pagos</option>
+        </select>
+      </div>
+      <table class="table finance-ledger">
+        <thead>
+          <tr>
+            <th scope="col">Descrição / Lançamento</th>
+            <th scope="col">Vencimento</th>
+            <th scope="col">Valor</th>
+            <th scope="col">Status</th>
+            <th scope="col"><span class="visually-hidden">Ações</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php foreach ($lancamentos as $lancamento): ?>
+            <?php $pago = isInstallmentPaid($lancamento); ?>
+            <tr data-ledger-status="<?= $pago ? 'paid' : 'open' ?>">
+              <td class="finance-ledger__desc">
+                <strong><?= e($lancamento['description']) ?></strong>
+                <small>Boleto <?= e($lancamento['code']) ?> &bull; <?= date('Y', strtotime($lancamento['due_date'])) ?></small>
+              </td>
+              <td data-label="Vencimento"><?= formatDate($lancamento['due_date']) ?></td>
+              <td data-label="Valor" class="fw-bold"><?= formatCurrency($lancamento['value']) ?></td>
+              <td data-label="Status">
+                <?php if ($pago): ?>
+                  <span class="status-pago"><i class="bi bi-check-lg" aria-hidden="true"></i> <?= e(installmentStatus($lancamento)) ?></span>
+                  <small class="finance-ledger__paid-at">em <?= formatDate($lancamento['paid_at']) ?></small>
+                <?php else: ?>
+                  <span class="badge rounded-pill <?= statusBadge(installmentStatus($lancamento)) ?>"><?= e(installmentStatus($lancamento)) ?></span>
+                <?php endif; ?>
+              </td>
+              <td class="finance-ledger__actions">
+                <?php if ($pago): ?>
+                  <button type="button" class="btn btn-sm btn-outline-secondary"><i class="bi bi-receipt me-1" aria-hidden="true"></i>Recibo</button>
+                <?php else: ?>
+                  <a class="btn btn-sm btn-primary" href="boletoOnline.php"><i class="bi bi-upc-scan me-1" aria-hidden="true"></i>Pagar</a>
+                <?php endif; ?>
+              </td>
+            </tr>
+          <?php endforeach; ?>
+        </tbody>
+      </table>
+      <p class="finance-ledger__empty" data-ledger-empty hidden>Nenhum lançamento encontrado para este filtro.</p>
     </section>
 
-    <div class="grid-mesh grid-mesh--static">
-      <div class="g-box bg-body-secondary border rounded-4 g-col-2 finance-summary-card">
-        <div class="finance-summary-card__icon finance-summary-card__icon--success"><i class="bi bi-check-lg"></i></div>
-        <div>
-          <p class="finance-summary-card__label">Situação Acadêmica</p>
-          <p class="finance-summary-card__value finance-summary-card__value--success">Financeiro em Dia</p>
-        </div>
-      </div>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const filter = document.querySelector('[data-ledger-filter]');
+  const rows = document.querySelectorAll('[data-ledger-status]');
+  const emptyMessage = document.querySelector('[data-ledger-empty]');
 
-      <div class="g-box bg-body-secondary border rounded-4 g-col-2 finance-summary-card">
-        <div class="finance-summary-card__icon"><i class="bi bi-credit-card"></i></div>
-        <div>
-          <p class="finance-summary-card__label">Último Pagamento</p>
-          <p class="finance-summary-card__value">R$ 741,27 <small>(10/09/2026)</small></p>
-        </div>
-      </div>
-    </div>
-
-    <div class="finance-filter-card bg-body-secondary border rounded-4">
-      <div class="finance-filter-bar">
-        <select class="form-select" aria-label="Filtrar período">
-          <option selected>Todos os Lançamentos (2026/2)</option>
-        </select>
-        <button type="button" class="btn btn-outline-primary fw-semibold">Filtrar Histórico</button>
-      </div>
-    </div>
-
-    <div class="grid-mesh grid-mesh--static">
-      <div class="g-box bg-body-secondary border rounded-4 g-col-4 finance-table-card">
-        <table class="table finance-ledger">
-          <thead>
-            <tr>
-              <th scope="col">Descrição / Lançamento</th>
-              <th scope="col">Vencimento</th>
-              <th scope="col">Valor</th>
-              <th scope="col">Status</th>
-              <th scope="col">Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="finance-ledger__desc">
-                <strong>Mensalidade - Parcela</strong>
-                <small>Boleto/Lançamento: 941954725 &bull; Ano: 2026</small>
-              </td>
-              <td>10/09/2026</td>
-              <td class="fw-bold">R$ 741,27</td>
-              <td>
-                <span class="status-pago"><i class="bi bi-check-lg"></i> Pago</span>
-                <div><small class="text-secondary">em 10/09/2026</small></div>
-              </td>
-              <td><button type="button" class="btn btn-sm btn-outline-secondary">Recibo</button></td>
-            </tr>
-            <tr>
-              <td class="finance-ledger__desc">
-                <strong>Mensalidade - Parcela</strong>
-                <small>Boleto/Lançamento: 941941880 &bull; Ano: 2026</small>
-              </td>
-              <td>10/08/2026</td>
-              <td class="fw-bold">R$ 741,27</td>
-              <td>
-                <span class="status-pago"><i class="bi bi-check-lg"></i> Pago</span>
-                <div><small class="text-secondary">em 10/08/2026</small></div>
-              </td>
-              <td><button type="button" class="btn btn-sm btn-outline-secondary">Recibo</button></td>
-            </tr>
-            <tr>
-              <td class="finance-ledger__desc">
-                <strong>Mensalidade - Parcela 01</strong>
-                <small>Boleto/Lançamento: 941936100 &bull; Ano: 2026</small>
-              </td>
-              <td>10/07/2026</td>
-              <td class="fw-bold">R$ 667,14</td>
-              <td>
-                <span class="status-pago"><i class="bi bi-check-lg"></i> Pago</span>
-                <div><small class="text-secondary">em 03/07/2026</small></div>
-              </td>
-              <td><button type="button" class="btn btn-sm btn-outline-secondary">Recibo</button></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-  </main>
-</div>
-
-<?php renderScripts(); ?>
-
-</body>
-</html>
+  filter.addEventListener('change', () => {
+    let visibleRows = 0;
+    rows.forEach((row) => {
+      const isVisible = filter.value === 'all' || row.dataset.ledgerStatus === filter.value;
+      row.hidden = !isVisible;
+      visibleRows += Number(isVisible);
+    });
+    emptyMessage.hidden = visibleRows > 0;
+  });
+});
+</script>
+<?php renderPageEnd(); ?>

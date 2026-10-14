@@ -1,42 +1,19 @@
 <?php
-require_once '../../components/layout.php';
-renderHead('Boleto On Line & Pagamentos', 'dark', '../../', false);
+require_once __DIR__ . '/../../components/layout.php';
+require_once __DIR__ . '/../../lib/financeiro.php';
 
-$e = static fn (string $value): string => htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
-
-$aluno = 'Aluno';
-
-$boletosEmAtraso = [];
-
-$proximoVencimento = [
-    'descricao' => 'Mensalidade - Parcela (Outubro)',
-    'lancamento' => '941967201',
-    'periodo' => '2026/2',
-    'valor' => 741.27,
-    'vencimento' => '10/10/2026',
-    'linhaDigitavel' => '23793.38128 60000.000003 00000.000400 1 99990000074127',
-    'pixCopiaCola' => '00020126580014br.gov.bcb.pix0136exemplo-alunonet-0000-0000-00005204000053039865406741.275802BR5909ALUNONET6009SAO PAULO62070503***6304ABCD',
-];
+$boletosEmAtraso = overdueInstallments();
+$proximoVencimento = nextInstallmentDue();
+renderPageStart('Boleto Online & Pagamentos');
 ?>
 
-<body>
-<div class="app-shell">
-  <nav-bar id="main-navigation"></nav-bar>
-  <main class="page-content">
-    <portal-header></portal-header>
+<?php renderPageHeader('Boleto Online & Pagamentos', 'Acesse suas faturas abertas ou gere a 2ª via.'); ?>
 
-    <section class="hero-header-pages d-flex flex-wrap justify-content-between align-items-center gap-3">
-      <div>
-        <h1 class="display-6">Boleto On Line &amp; Pagamentos</h1>
-        <p class="text-secondary mb-0">Acesse suas faturas abertas ou gere a 2ª via.</p>
-      </div>
-    </section>
-
-    <?php if (empty($boletosEmAtraso)): ?>
+    <?php if ($boletosEmAtraso === []): ?>
       <div class="info-banner info-banner--success" role="status">
         <div class="info-banner__icon"><i class="bi bi-check-lg"></i></div>
         <div>
-          <strong>Tudo certo por aqui, <?= $e($aluno) ?>!</strong>
+          <strong>Tudo certo por aqui, <?= e(studentFirstName()) ?>!</strong>
           <span>Você não possui boletos em atraso neste momento.</span>
         </div>
       </div>
@@ -53,19 +30,19 @@ $proximoVencimento = [
         <div class="invoice-card__top">
           <div>
             <span class="badge rounded-pill text-bg-warning"><i class="bi bi-clock me-1"></i>A vencer</span>
-            <h3 class="invoice-card__title"><?= $e($proximoVencimento['descricao']) ?></h3>
-            <p class="invoice-card__meta">Boleto/Lançamento: <?= $e($proximoVencimento['lancamento']) ?> • Ano/Semestre: <?= $e($proximoVencimento['periodo']) ?></p>
+            <h3 class="invoice-card__title"><?= e($proximoVencimento['description']) ?></h3>
+            <p class="invoice-card__meta">Boleto/Lançamento: <?= e($proximoVencimento['code']) ?> • Ano/Semestre: <?= e(STUDENT['term']) ?></p>
           </div>
           <div class="invoice-card__amount">
             <small>Valor a pagar</small>
-            <span class="invoice-card__value">R$ <?= number_format($proximoVencimento['valor'], 2, ',', '.') ?></span>
-            <span class="invoice-card__due text-danger">Vence em <?= $e($proximoVencimento['vencimento']) ?></span>
+            <span class="invoice-card__value"><?= formatCurrency($proximoVencimento['value']) ?></span>
+            <span class="invoice-card__due text-danger">Vence em <?= formatDate($proximoVencimento['due_date']) ?></span>
           </div>
         </div>
 
         <div class="row g-3">
           <div class="col-12 col-md-4">
-            <button class="btn btn-accent w-100" type="button" data-copy="<?= $e($proximoVencimento['linhaDigitavel']) ?>" data-copy-message="Linha digitável copiada.">
+            <button class="btn btn-accent w-100" type="button" data-copy="<?= e($proximoVencimento['digitable_line']) ?>" data-copy-message="Linha digitável copiada.">
               <i class="bi bi-copy me-2"></i>Copiar linha digitável
             </button>
           </div>
@@ -85,8 +62,6 @@ $proximoVencimento = [
       <div class="notice-box mx-1"><i class="bi bi-info-circle"></i><span>Não há boletos a vencer no momento.</span></div>
     <?php endif; ?>
 
-  </main>
-</div>
 
 <?php if ($proximoVencimento): ?>
 <div class="modal fade" id="pixModal" tabindex="-1" aria-labelledby="pixModalLabel" aria-hidden="true">
@@ -98,11 +73,11 @@ $proximoVencimento = [
       </div>
       <div class="modal-body">
         <div class="pix-qr" aria-hidden="true"><i class="bi bi-qr-code"></i></div>
-        <p class="text-center text-secondary small">Escaneie o QR Code no app do seu banco ou use o código copia e cola. Valor: <strong>R$ <?= number_format($proximoVencimento['valor'], 2, ',', '.') ?></strong></p>
+        <p class="text-center text-secondary small">Escaneie o QR Code no app do seu banco ou use o código copia e cola. Valor: <strong><?= formatCurrency($proximoVencimento['value']) ?></strong></p>
         <label class="form-label" for="pixCode">PIX copia e cola</label>
         <div class="input-group">
-          <input class="form-control" id="pixCode" type="text" readonly value="<?= $e($proximoVencimento['pixCopiaCola']) ?>">
-          <button class="btn btn-accent" type="button" data-copy="<?= $e($proximoVencimento['pixCopiaCola']) ?>" data-copy-message="Código PIX copiado.">Copiar</button>
+          <input class="form-control" id="pixCode" type="text" readonly value="<?= e($proximoVencimento['pix_code']) ?>">
+          <button class="btn btn-accent" type="button" data-copy="<?= e($proximoVencimento['pix_code']) ?>" data-copy-message="Código PIX copiado.">Copiar</button>
         </div>
         <div class="notice-box mt-3"><i class="bi bi-info-circle"></i><span>QR Code e código ilustrativos. Serão gerados pelo backend na versão integrada.</span></div>
       </div>
@@ -119,8 +94,6 @@ $proximoVencimento = [
     </div>
   </div>
 </div>
-
-<?php renderScripts(); ?>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -157,6 +130,4 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 </script>
-
-</body>
-</html>
+<?php renderPageEnd(); ?>
