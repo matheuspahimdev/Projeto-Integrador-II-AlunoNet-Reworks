@@ -32,7 +32,8 @@ renderAcademicHeader('Horário de Aulas');
                   <tr>
                     <th><?= e($slot['start']) ?> - <?= e($slot['end']) ?></th>
                     <?php foreach (WEEKLY_SCHEDULE as $disciplineKeys): ?>
-                      <?php $discipline = DISCIPLINES[$disciplineKeys[$slotIndex]] ?? null; ?>
+                      <?php $disciplineKey = $disciplineKeys[$slotIndex] ?? null; ?>
+                      <?php $discipline = $disciplineKey !== null ? DISCIPLINES[$disciplineKey] : null; ?>
                       <?php if ($discipline === null): ?>
                         <td class="schedule-cell schedule-cell--empty">Sem aula</td>
                       <?php else: ?>
