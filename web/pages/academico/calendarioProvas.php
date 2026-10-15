@@ -2,21 +2,23 @@
 require_once __DIR__ . '/../../components/layout.php';
 
 $exams = upcomingExams();
-$nextExam = $exams[0];
-$nextExamDiscipline = DISCIPLINES[$nextExam['discipline']];
-$onlineExams = count(array_filter($exams, static fn (array $exam): bool => DISCIPLINES[$exam['discipline']]['online']));
+$nextExam = $exams[0] ?? null;
+$onlineExams = count(array_filter($exams, static fn (array $exam): bool => studentDisciplines()[$exam['discipline']]['online']));
 $inPersonExams = count($exams) - $onlineExams;
 
-renderPageStart('Calendário de Provas');
-renderAcademicHeader('Calendário de Provas');
+renderAcademicPageStart('Calendário de Provas');
 ?>
       <section class="academic-calendar-summary" aria-label="Resumo do calendário">
         <div class="academic-calendar-summary__next">
-          <div class="academic-calendar-summary__icon"><i class="bi <?= e($nextExam['icon']) ?>"></i></div>
+          <div class="academic-calendar-summary__icon"><i class="bi <?= e($nextExam['icon'] ?? 'bi-calendar-check') ?>"></i></div>
           <div>
             <span>Próxima avaliação</span>
-            <strong><?= e($nextExamDiscipline['name']) ?></strong>
-            <small><?= formatDate($nextExam['date']) ?> • <?= e($nextExam['time']) ?></small>
+            <?php if ($nextExam === null): ?>
+              <strong>Nenhuma avaliação agendada</strong>
+            <?php else: ?>
+              <strong><?= e(studentDisciplines()[$nextExam['discipline']]['name']) ?></strong>
+              <small><?= formatDate($nextExam['date']) ?> • <?= e($nextExam['time']) ?></small>
+            <?php endif; ?>
           </div>
         </div>
         <div class="academic-calendar-summary__metrics">
@@ -30,9 +32,12 @@ renderAcademicHeader('Calendário de Provas');
         <section class="grid-card grid-card--wide">
           <?php renderCardHead('bi-calendar2-check', 'Próximas avaliações', 'Acompanhe datas, horários e locais das avaliações do semestre.'); ?>
           <div class="grid-card__body">
+            <?php if ($exams === []): ?>
+              <div class="notice-box"><i class="bi bi-info-circle"></i><span>Não há avaliações futuras no calendário.</span></div>
+            <?php endif; ?>
             <div class="academic-calendar-list">
               <?php foreach ($exams as $exam): ?>
-                <?php $discipline = DISCIPLINES[$exam['discipline']]; ?>
+                <?php $discipline = studentDisciplines()[$exam['discipline']]; ?>
                 <?php $status = examStatus($exam); ?>
                 <article class="academic-calendar-item">
                   <div class="academic-calendar-item__date">

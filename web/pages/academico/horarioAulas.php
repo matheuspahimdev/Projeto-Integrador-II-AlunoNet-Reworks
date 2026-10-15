@@ -1,8 +1,7 @@
 <?php
 require_once __DIR__ . '/../../components/layout.php';
 
-renderPageStart('Horário de Aulas');
-renderAcademicHeader('Horário de Aulas');
+renderAcademicPageStart('Horário de Aulas');
 ?>
       <div class="grid-mesh grid-mesh--static">
         <section class="g-box bg-body-secondary border rounded-4 g-col-4 class-schedule-card">
@@ -12,9 +11,9 @@ renderAcademicHeader('Horário de Aulas');
                 <i class="bi bi-calendar-week me-1"></i>
                 Horário de Aulas
               </h2>
-              <p class="text-secondary small mb-0 mt-2"><?= e(STUDENT['course']) ?> • Período <?= e(STUDENT['period']) ?></p>
+              <p class="text-secondary small mb-0 mt-2"><?= e(currentStudent()['course']) ?> • Período <?= e(currentStudent()['period']) ?></p>
             </div>
-            <span class="badge rounded-pill text-bg-primary class-schedule-card__term"><?= e(STUDENT['semester']) ?></span>
+            <span class="badge rounded-pill text-bg-primary class-schedule-card__term"><?= e(currentStudent()['semester']) ?></span>
           </div>
 
           <div class="class-schedule">
@@ -22,18 +21,18 @@ renderAcademicHeader('Horário de Aulas');
               <thead>
                 <tr>
                   <th class="class-schedule__time-header">Horário<br>das aulas</th>
-                  <?php foreach (array_keys(WEEKLY_SCHEDULE) as $weekday): ?>
+                  <?php foreach (array_keys(weeklySchedule()) as $weekday): ?>
                     <th><?= e($weekday) ?></th>
                   <?php endforeach; ?>
                 </tr>
               </thead>
               <tbody>
-                <?php foreach (CLASS_SLOTS as $slotIndex => $slot): ?>
+                <?php foreach (classSlots() as $slotIndex => $slot): ?>
                   <tr>
                     <th><?= e($slot['start']) ?> - <?= e($slot['end']) ?></th>
-                    <?php foreach (WEEKLY_SCHEDULE as $disciplineKeys): ?>
+                    <?php foreach (weeklySchedule() as $disciplineKeys): ?>
                       <?php $disciplineKey = $disciplineKeys[$slotIndex] ?? null; ?>
-                      <?php $discipline = $disciplineKey !== null ? DISCIPLINES[$disciplineKey] : null; ?>
+                      <?php $discipline = $disciplineKey !== null ? studentDisciplines()[$disciplineKey] : null; ?>
                       <?php if ($discipline === null): ?>
                         <td class="schedule-cell schedule-cell--empty">Sem aula</td>
                       <?php else: ?>
@@ -51,10 +50,9 @@ renderAcademicHeader('Horário de Aulas');
           </div>
 
           <div class="class-schedule__legend">
-            <span><i class="bi bi-building me-1"></i>Seg. a Qua.: Bloco 2 • Sala 712</span>
-            <span><i class="bi bi-building me-1"></i>Quinta: Bloco 2 • Sala 725</span>
-            <span><i class="bi bi-camera-video me-1"></i>Sexta: Online</span>
-            <span><i class="bi bi-calendar-x me-1"></i>Sábado: sem aula</span>
+            <?php foreach (scheduleLegend() as $legendItem): ?>
+              <span><i class="bi <?= e($legendItem['icon']) ?> me-1"></i><?= e($legendItem['text']) ?></span>
+            <?php endforeach; ?>
           </div>
         </section>
       </div>

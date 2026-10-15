@@ -2,16 +2,15 @@
 require_once __DIR__ . '/../../components/layout.php';
 
 $fields = [
-    ['label' => 'Nome completo', 'name' => 'full_name', 'value' => STUDENT['name'], 'type' => 'text', 'column' => 'col-md-6'],
-    ['label' => 'E-mail institucional', 'name' => 'email', 'value' => STUDENT['email'], 'type' => 'email', 'column' => 'col-md-6'],
-    ['label' => 'Telefone', 'name' => 'phone', 'value' => STUDENT['phone'], 'type' => 'tel', 'column' => 'col-md-6'],
-    ['label' => 'CEP', 'name' => 'zip_code', 'value' => STUDENT['zip_code'], 'type' => 'text', 'column' => 'col-md-6'],
-    ['label' => 'Endereço', 'name' => 'address', 'value' => STUDENT['address'], 'type' => 'text', 'column' => 'col-md-8'],
-    ['label' => 'Número', 'name' => 'number', 'value' => STUDENT['address_number'], 'type' => 'text', 'column' => 'col-md-4'],
+    ['label' => 'Nome completo', 'name' => 'full_name', 'value' => currentStudent()['name'], 'type' => 'text', 'column' => 'col-md-6'],
+    ['label' => 'E-mail institucional', 'name' => 'email', 'value' => currentStudent()['email'], 'type' => 'email', 'column' => 'col-md-6'],
+    ['label' => 'Telefone', 'name' => 'phone', 'value' => currentStudent()['phone'], 'type' => 'tel', 'column' => 'col-md-6'],
+    ['label' => 'CEP', 'name' => 'zip_code', 'value' => currentStudent()['zip_code'], 'type' => 'text', 'column' => 'col-md-6'],
+    ['label' => 'Endereço', 'name' => 'address', 'value' => currentStudent()['address'], 'type' => 'text', 'column' => 'col-md-8'],
+    ['label' => 'Número', 'name' => 'number', 'value' => currentStudent()['address_number'], 'type' => 'text', 'column' => 'col-md-4'],
 ];
 
-renderPageStart('Atualização de Dados Cadastrais');
-renderAcademicHeader('Atualização de Dados Cadastrais');
+renderAcademicPageStart('Atualização de Dados Cadastrais');
 ?>
       <section class="academic-page-grid">
         <section class="grid-card grid-card--wide">

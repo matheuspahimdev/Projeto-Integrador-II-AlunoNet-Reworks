@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../../components/layout.php';
 require_once __DIR__ . '/../../lib/protocolo.php';
 
-$requerimentos = STUDENT_REQUESTS;
+$requests = studentRequests();
 renderPageStart('Consulta de Requerimentos');
 ?>
 
@@ -12,7 +12,7 @@ renderPageStart('Consulta de Requerimentos');
       <section class="g-box g-col-4 grid-card">
         <?php renderCardHead('bi-clock-history', 'Meus requerimentos', 'Histórico de solicitações enviadas à secretaria.'); ?>
         <div class="grid-card__body">
-          <?php if (empty($requerimentos)): ?>
+          <?php if ($requests === []): ?>
             <div class="notice-box"><i class="bi bi-info-circle"></i><span>Você ainda não possui requerimentos registrados.</span></div>
           <?php else: ?>
             <div class="table-responsive">
@@ -27,16 +27,16 @@ renderPageStart('Consulta de Requerimentos');
                   </tr>
                 </thead>
                 <tbody>
-                  <?php foreach ($requerimentos as $req): ?>
-                    <?php $status = requestStatus($req) ?? ['label' => $req['status'], 'class' => 'text-bg-secondary']; ?>
+                  <?php foreach ($requests as $request): ?>
+                    <?php $status = requestStatus($request); ?>
                     <tr>
-                      <td><?= e($req['protocolo']) ?></td>
-                      <td><?= e($req['data']) ?></td>
-                      <td class="fw-semibold"><?= e($req['tipo']) ?></td>
+                      <td><?= e($request['protocol']) ?></td>
+                      <td><?= formatDate($request['date']) ?></td>
+                      <td class="fw-semibold"><?= e($request['type']) ?></td>
                       <td><span class="badge rounded-pill <?= e($status['class']) ?>"><?= e($status['label']) ?></span></td>
                       <td class="text-end">
-                        <?php if ($req['status'] === 'concluido'): ?>
-                          <a class="btn btn-sm btn-outline-primary" href="#" aria-label="Ver documento do protocolo <?= e($req['protocolo']) ?>">Ver documento</a>
+                        <?php if ($request['status'] === REQUEST_STATUS_DONE): ?>
+                          <a class="btn btn-sm btn-outline-primary" href="#" aria-label="Ver documento do protocolo <?= e($request['protocol']) ?>">Ver documento</a>
                         <?php else: ?>
                           <button class="btn btn-sm btn-outline-secondary" type="button" disabled>Aguardar</button>
                         <?php endif; ?>

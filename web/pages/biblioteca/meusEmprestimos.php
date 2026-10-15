@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../../components/layout.php';
 require_once __DIR__ . '/../../lib/biblioteca.php';
 
-$dadosJson = jsonForScript(studentLoans());
+$loanData = jsonForScript(['loans' => studentLoans(), 'categories' => BOOK_CATEGORIES]);
 renderPageStart('Meus Empréstimos');
 ?>
 
@@ -14,10 +14,10 @@ renderPageStart('Meus Empréstimos');
     </div>
 
     <div class="loan-summary" aria-label="Resumo dos empréstimos">
-      <div class="loan-stat"><strong id="statComVoce">0</strong><span>Com você</span></div>
-      <div class="loan-stat loan-stat--danger"><strong id="statVencido">0</strong><span>Devolução vencida</span></div>
-      <div class="loan-stat"><strong id="statAnalise">0</strong><span>Em análise</span></div>
-      <div class="loan-stat"><strong id="statDevolvido">0</strong><span>Devolvidos</span></div>
+      <div class="loan-stat"><strong id="statWithYou">0</strong><span>Com você</span></div>
+      <div class="loan-stat loan-stat--danger"><strong id="statOverdue">0</strong><span>Devolução vencida</span></div>
+      <div class="loan-stat"><strong id="statPending">0</strong><span>Em análise</span></div>
+      <div class="loan-stat"><strong id="statReturned">0</strong><span>Devolvidos</span></div>
     </div>
 
     <div class="notice-filters mb-3" role="group" aria-label="Filtrar empréstimos">
@@ -54,22 +54,13 @@ renderPageStart('Meus Empréstimos');
   </div>
 </div>
 
-<div class="toast-container position-fixed bottom-0 end-0 p-3">
-  <div id="loanToast" class="toast align-items-center text-bg-success border-0" role="status" aria-live="polite" aria-atomic="true">
-    <div class="d-flex">
-      <div class="toast-body" id="loanToastBody"></div>
-      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
-    </div>
-  </div>
-</div>
-
-<script id="loanData" type="application/json"><?= $dadosJson ?></script>
+<script id="loanData" type="application/json"><?= $loanData ?></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  const STORAGE_KEY = 'alunonet.emprestimos';
-  const RENEW_DAYS = 7;
-  const ICONS = { computacao: 'bi-laptop', direito: 'bi-bank', matematica: 'bi-calculator', literatura: 'bi-book', metodologia: 'bi-journal-text' };
+  const STORAGE_KEY = <?= jsonForScript(studentStorageKey('loans')) ?>;
+  const RENEW_DAYS = <?= LOAN_DAYS ?>;
+  const STATUS_PENDING = <?= jsonForScript(LOAN_STATUS_PENDING) ?>;
   const STATES = {
     vencido: { label: 'Devolução vencida', badge: 'text-bg-danger', order: 0 },
     'com-voce': { label: 'Com você', badge: 'text-bg-success', order: 1 },
@@ -78,155 +69,127 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const $ = (id) => document.getElementById(id);
+  const data = readPageData('loanData');
   const list = $('loanList');
   const filterButtons = [...document.querySelectorAll('.notice-filter')];
-  const toastEl = $('loanToast');
-  const toast = bootstrap.Toast.getOrCreateInstance(toastEl, { delay: 4000 });
   const cancelModal = bootstrap.Modal.getOrCreateInstance($('cancelModal'));
 
-  const parse = (iso) => new Date(`${iso}T00:00:00`);
-  const toISO = (date) => date.toLocaleDateString('sv-SE');
-  const fmt = (iso) => parse(iso).toLocaleDateString('pt-BR');
-  const addDays = (iso, days) => { const date = parse(iso); date.setDate(date.getDate() + days); return toISO(date); };
-  const today = () => { const date = new Date(); date.setHours(0, 0, 0, 0); return date; };
+  const formatIso = (iso) => formatDateBR(parseIsoDate(iso));
   const daysBetween = (from, to) => Math.round((to - from) / 86400000);
-  const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
-
-  const el = (tag, className = '', text = '') => {
-    const node = document.createElement(tag);
-    if (className) node.className = className;
-    if (text) node.textContent = text;
-    return node;
-  };
-  const icon = (className) => {
-    const node = el('i', className);
-    node.setAttribute('aria-hidden', 'true');
-    return node;
-  };
-
-  const loadRequests = () => {
-    try {
-      const value = JSON.parse(localStorage.getItem(STORAGE_KEY));
-      return Array.isArray(value) ? value : [];
-    } catch (error) { return []; }
-  };
-  const saveRequests = (requests) => {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(requests)); } catch (error) { /* ignora */ }
-  };
 
   let loans = [
-    ...JSON.parse($('loanData').textContent).map((loan) => ({ ...loan, stored: false })),
-    ...loadRequests().map((request) => ({ ...request, stored: true })),
+    ...data.loans.map((loan) => ({ ...loan, stored: false })),
+    ...readStoredList(STORAGE_KEY).map((request) => ({ ...request, stored: true })),
   ];
   let filter = 'all';
   let pendingCancel = null;
 
   const stateOf = (loan) => {
-    if (loan.devolvidoEm) return 'devolvido';
-    if (loan.status === 'analise') return 'analise';
-    return parse(loan.devolucao) < today() ? 'vencido' : 'com-voce';
+    if (loan.returned_at) return 'devolvido';
+    if (loan.status === STATUS_PENDING) return 'analise';
+    return parseIsoDate(loan.due_date) < portalToday() ? 'vencido' : 'com-voce';
   };
 
-  const showToast = (message) => {
-    $('loanToastBody').textContent = message;
-    toast.show();
-  };
-
-  const sortKey = {
-    vencido: (a, b) => a.devolucao.localeCompare(b.devolucao),
-    'com-voce': (a, b) => a.devolucao.localeCompare(b.devolucao),
-    analise: (a, b) => a.retirada.localeCompare(b.retirada),
-    devolvido: (a, b) => b.devolvidoEm.localeCompare(a.devolvidoEm),
+  const sortWithinState = {
+    vencido: (a, b) => a.due_date.localeCompare(b.due_date),
+    'com-voce': (a, b) => a.due_date.localeCompare(b.due_date),
+    analise: (a, b) => a.pickup_date.localeCompare(b.pickup_date),
+    devolvido: (a, b) => b.returned_at.localeCompare(a.returned_at),
   };
 
   const field = (label, value) => {
-    const span = el('span');
-    span.append(el('b', '', `${label}: `), document.createTextNode(value));
+    const span = createNode('span');
+    span.append(createNode('b', '', `${label}: `), document.createTextNode(value));
     return span;
   };
 
   const noteFor = (loan, state) => {
     if (state === 'vencido') {
-      const late = daysBetween(parse(loan.devolucao), today());
-      return [`Atrasado há ${plural(late, 'dia', 'dias')}. Devolva à biblioteca o quanto antes para evitar multa.`, 'loan-card__note loan-card__note--danger'];
+      const late = daysBetween(parseIsoDate(loan.due_date), portalToday());
+      return [`Atrasado há ${pluralize(late, 'dia', 'dias')}. Devolva à biblioteca o quanto antes para evitar multa.`, 'loan-card__note loan-card__note--danger'];
     }
     if (state === 'com-voce') {
-      const left = daysBetween(today(), parse(loan.devolucao));
+      const left = daysBetween(portalToday(), parseIsoDate(loan.due_date));
       const text = left === 0 ? 'A devolução é hoje.' : left === 1 ? 'Falta 1 dia para a devolução.' : `Faltam ${left} dias para a devolução.`;
       return [text, left <= 2 ? 'loan-card__note loan-card__note--danger' : 'loan-card__note'];
     }
     if (state === 'analise') return ['Pedido em análise pela biblioteca. Você será avisado quando for confirmado.', 'loan-card__note'];
-    return [`Devolvido em ${fmt(loan.devolvidoEm)}.`, 'loan-card__note'];
+    return [`Devolvido em ${formatIso(loan.returned_at)}.`, 'loan-card__note'];
   };
 
   const renewLoan = (loan) => {
-    loan.devolucao = addDays(loan.devolucao, RENEW_DAYS);
-    loan.renovacoes += 1;
+    loan.due_date = toIsoDate(addDays(parseIsoDate(loan.due_date), RENEW_DAYS));
+    loan.renewals += 1;
     render();
-    showToast(`Empréstimo renovado. Nova devolução: ${fmt(loan.devolucao)} (simulação).`);
+    showToast(`Empréstimo renovado. Nova devolução: ${formatIso(loan.due_date)} (simulação).`);
   };
 
   const askCancel = (loan) => {
     pendingCancel = loan;
-    $('cancelTitle').textContent = loan.titulo;
+    $('cancelTitle').textContent = loan.title;
     cancelModal.show();
   };
 
-  const renderCard = (loan) => {
-    const state = stateOf(loan);
-    const card = el('article', `loan-card loan-card--${state}`);
-
-    const cover = el('div', `book-cover book-cover--mini book-cover--${loan.categoria}`);
-    cover.setAttribute('aria-hidden', 'true');
-    cover.append(icon(`bi ${ICONS[loan.categoria] || 'bi-book'}`));
-
-    const info = el('div', 'loan-card__info');
-    const head = el('div', 'd-flex flex-wrap align-items-center gap-2');
-    head.append(el('h2', 'loan-card__title', loan.titulo), el('span', `badge rounded-pill ${STATES[state].badge}`, STATES[state].label));
-
-    const dates = el('div', 'loan-card__dates');
-    dates.append(field(state === 'analise' ? 'Retirada agendada' : 'Retirada', `${fmt(loan.retirada)}${state === 'analise' ? ` às ${loan.horario}` : ''}`));
-    dates.append(field('Devolução prevista', fmt(loan.devolucao)));
-    if (loan.renovacoes) dates.append(field('Renovações', String(loan.renovacoes)));
-
-    const [noteText, noteClass] = noteFor(loan, state);
-    info.append(head, el('p', 'loan-card__author', loan.autor), dates, el('p', noteClass, noteText));
-
-    const side = el('div', 'loan-card__side');
+  const loanCardActions = (loan, state) => {
+    const side = createNode('div', 'loan-card__side');
     if (state === 'com-voce') {
-      const renewed = loan.renovacoes >= 1;
-      const renew = el('button', 'btn btn-sm btn-outline-primary', renewed ? 'Já renovado' : `Renovar por ${RENEW_DAYS} dias`);
-      renew.type = 'button';
+      const renewed = loan.renewals >= 1;
+      const renew = createButton('btn btn-sm btn-outline-primary', renewed ? 'Já renovado' : `Renovar por ${RENEW_DAYS} dias`);
       renew.disabled = renewed;
       renew.addEventListener('click', () => renewLoan(loan));
       side.append(renew);
     } else if (state === 'vencido') {
-      side.append(el('span', 'text-secondary small', 'Renovação indisponível'));
+      side.append(createNode('span', 'text-secondary small', 'Renovação indisponível'));
     } else if (state === 'analise') {
-      const cancel = el('button', 'btn btn-sm btn-outline-danger', 'Cancelar pedido');
-      cancel.type = 'button';
+      const cancel = createButton('btn btn-sm btn-outline-danger', 'Cancelar pedido');
       cancel.addEventListener('click', () => askCancel(loan));
       side.append(cancel);
     } else {
-      const again = el('a', 'btn btn-sm btn-outline-secondary', 'Pedir novamente');
+      const again = createNode('a', 'btn btn-sm btn-outline-secondary', 'Pedir novamente');
       again.href = 'consultaAcervo.php';
       side.append(again);
     }
+    return side;
+  };
 
-    card.append(cover, info, side);
+  const renderCard = (loan) => {
+    const state = stateOf(loan);
+    const card = createNode('article', `loan-card loan-card--${state}`);
+
+    const cover = createNode('div', `book-cover book-cover--mini book-cover--${loan.category}`);
+    cover.setAttribute('aria-hidden', 'true');
+    cover.append(createIcon(`bi ${data.categories[loan.category]?.icon || 'bi-book'}`));
+
+    const info = createNode('div', 'loan-card__info');
+    const head = createNode('div', 'd-flex flex-wrap align-items-center gap-2');
+    head.append(createNode('h2', 'loan-card__title', loan.title), createNode('span', `badge rounded-pill ${STATES[state].badge}`, STATES[state].label));
+
+    const dates = createNode('div', 'loan-card__dates');
+    dates.append(field(state === 'analise' ? 'Retirada agendada' : 'Retirada', `${formatIso(loan.pickup_date)}${state === 'analise' ? ` às ${loan.pickup_time}` : ''}`));
+    dates.append(field('Devolução prevista', formatIso(loan.due_date)));
+    if (loan.renewals) dates.append(field('Renovações', String(loan.renewals)));
+
+    const [noteText, noteClass] = noteFor(loan, state);
+    info.append(head, createNode('p', 'loan-card__author', loan.author), dates, createNode('p', noteClass, noteText));
+
+    card.append(cover, info, loanCardActions(loan, state));
     return card;
   };
 
-  const render = () => {
+  const renderSummary = () => {
     const counts = { vencido: 0, 'com-voce': 0, analise: 0, devolvido: 0 };
     loans.forEach((loan) => { counts[stateOf(loan)] += 1; });
-    $('statComVoce').textContent = counts['com-voce'];
-    $('statVencido').textContent = counts.vencido;
-    $('statAnalise').textContent = counts.analise;
-    $('statDevolvido').textContent = counts.devolvido;
+    $('statWithYou').textContent = counts['com-voce'];
+    $('statOverdue').textContent = counts.vencido;
+    $('statPending').textContent = counts.analise;
+    $('statReturned').textContent = counts.devolvido;
 
     $('overdueAlert').hidden = counts.vencido === 0;
-    $('overdueText').textContent = `Você possui ${plural(counts.vencido, 'livro com devolução vencida', 'livros com devolução vencida')}. Devolva à biblioteca o quanto antes para evitar multa.`;
+    $('overdueText').textContent = `Você possui ${pluralize(counts.vencido, 'livro com devolução vencida', 'livros com devolução vencida')}. Devolva à biblioteca o quanto antes para evitar multa.`;
+  };
+
+  const render = () => {
+    renderSummary();
 
     filterButtons.forEach((button) => {
       const active = button.dataset.filter === filter;
@@ -237,9 +200,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const visible = loans
       .filter((loan) => filter === 'all' || stateOf(loan) === filter)
       .sort((a, b) => {
-        const sa = stateOf(a);
-        const sb = stateOf(b);
-        return STATES[sa].order - STATES[sb].order || (sa === sb ? sortKey[sa](a, b) : 0);
+        const stateA = stateOf(a);
+        const stateB = stateOf(b);
+        return STATES[stateA].order - STATES[stateB].order || (stateA === stateB ? sortWithinState[stateA](a, b) : 0);
       });
 
     list.replaceChildren(...visible.map(renderCard));
@@ -255,11 +218,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!pendingCancel) return;
     const target = pendingCancel;
     loans = loans.filter((loan) => loan !== target);
-    if (target.stored) saveRequests(loadRequests().filter((request) => request.id !== target.id));
+    if (target.stored) storeJson(STORAGE_KEY, readStoredList(STORAGE_KEY).filter((request) => request.id !== target.id));
     pendingCancel = null;
     cancelModal.hide();
     render();
-    showToast(`Pedido de “${target.titulo}” cancelado.`);
+    showToast(`Pedido de “${target.title}” cancelado.`);
   });
 
   render();

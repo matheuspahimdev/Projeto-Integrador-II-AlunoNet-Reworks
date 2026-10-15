@@ -2,9 +2,8 @@
 require_once __DIR__ . '/../../components/layout.php';
 require_once __DIR__ . '/../../lib/financeiro.php';
 
-$lancamentos = INSTALLMENTS;
-$ultimoPagamento = lastPayment();
-$emDia = overdueInstallments() === [];
+$lastPayment = lastPayment();
+$isUpToDate = overdueInstallments() === [];
 renderPageStart('Extrato Financeiro');
 ?>
 
@@ -12,7 +11,7 @@ renderPageStart('Extrato Financeiro');
 
     <div class="finance-summary">
       <div class="bg-body-secondary border rounded-4 finance-summary-card">
-        <?php if ($emDia): ?>
+        <?php if ($isUpToDate): ?>
           <div class="finance-summary-card__icon finance-summary-card__icon--success"><i class="bi bi-check-lg" aria-hidden="true"></i></div>
           <div>
             <p class="finance-summary-card__label">Situação financeira</p>
@@ -31,8 +30,8 @@ renderPageStart('Extrato Financeiro');
         <div class="finance-summary-card__icon"><i class="bi bi-credit-card" aria-hidden="true"></i></div>
         <div>
           <p class="finance-summary-card__label">Último pagamento</p>
-          <?php if ($ultimoPagamento !== null): ?>
-            <p class="finance-summary-card__value"><?= formatCurrency($ultimoPagamento['value']) ?> <small>em <?= formatDate($ultimoPagamento['paid_at']) ?></small></p>
+          <?php if ($lastPayment !== null): ?>
+            <p class="finance-summary-card__value"><?= formatCurrency($lastPayment['value']) ?> <small>em <?= formatDate($lastPayment['paid_at']) ?></small></p>
           <?php else: ?>
             <p class="finance-summary-card__value">Nenhum pagamento</p>
           <?php endif; ?>
@@ -42,7 +41,7 @@ renderPageStart('Extrato Financeiro');
 
     <section class="bg-body-secondary border rounded-4 finance-table-card" aria-labelledby="finance-ledger-title">
       <div class="finance-table-card__head">
-        <h2 id="finance-ledger-title">Lançamentos <small><?= e(STUDENT['term']) ?></small></h2>
+        <h2 id="finance-ledger-title">Lançamentos <small><?= e(currentStudent()['term']) ?></small></h2>
         <label class="visually-hidden" for="finance-filter">Filtrar lançamentos</label>
         <select id="finance-filter" class="form-select" data-ledger-filter>
           <option value="all" selected>Todos os lançamentos</option>
@@ -61,25 +60,25 @@ renderPageStart('Extrato Financeiro');
           </tr>
         </thead>
         <tbody>
-          <?php foreach ($lancamentos as $lancamento): ?>
-            <?php $pago = isInstallmentPaid($lancamento); ?>
-            <tr data-ledger-status="<?= $pago ? 'paid' : 'open' ?>">
+          <?php foreach (studentInstallments() as $installment): ?>
+            <?php $isPaid = isInstallmentPaid($installment); ?>
+            <tr data-ledger-status="<?= $isPaid ? 'paid' : 'open' ?>">
               <td class="finance-ledger__desc">
-                <strong><?= e($lancamento['description']) ?></strong>
-                <small>Boleto <?= e($lancamento['code']) ?> &bull; <?= date('Y', strtotime($lancamento['due_date'])) ?></small>
+                <strong><?= e($installment['description']) ?></strong>
+                <small>Boleto <?= e($installment['code']) ?> &bull; <?= date('Y', strtotime($installment['due_date'])) ?></small>
               </td>
-              <td data-label="Vencimento"><?= formatDate($lancamento['due_date']) ?></td>
-              <td data-label="Valor" class="fw-bold"><?= formatCurrency($lancamento['value']) ?></td>
+              <td data-label="Vencimento"><?= formatDate($installment['due_date']) ?></td>
+              <td data-label="Valor" class="fw-bold"><?= formatCurrency($installment['value']) ?></td>
               <td data-label="Status">
-                <?php if ($pago): ?>
-                  <span class="status-pago"><i class="bi bi-check-lg" aria-hidden="true"></i> <?= e(installmentStatus($lancamento)) ?></span>
-                  <small class="finance-ledger__paid-at">em <?= formatDate($lancamento['paid_at']) ?></small>
+                <?php if ($isPaid): ?>
+                  <span class="status-pago"><i class="bi bi-check-lg" aria-hidden="true"></i> <?= e(installmentStatus($installment)) ?></span>
+                  <small class="finance-ledger__paid-at">em <?= formatDate($installment['paid_at']) ?></small>
                 <?php else: ?>
-                  <span class="badge rounded-pill <?= statusBadge(installmentStatus($lancamento)) ?>"><?= e(installmentStatus($lancamento)) ?></span>
+                  <span class="badge rounded-pill <?= statusBadge(installmentStatus($installment)) ?>"><?= e(installmentStatus($installment)) ?></span>
                 <?php endif; ?>
               </td>
               <td class="finance-ledger__actions">
-                <?php if ($pago): ?>
+                <?php if ($isPaid): ?>
                   <button type="button" class="btn btn-sm btn-outline-secondary"><i class="bi bi-receipt me-1" aria-hidden="true"></i>Recibo</button>
                 <?php else: ?>
                   <a class="btn btn-sm btn-primary" href="boletoOnline.php"><i class="bi bi-upc-scan me-1" aria-hidden="true"></i>Pagar</a>

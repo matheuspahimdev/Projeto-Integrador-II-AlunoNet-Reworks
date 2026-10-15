@@ -23,9 +23,9 @@ renderPageStart('Meu Perfil');
     <div class="profile-layout">
       <aside class="grid-card profile-card" aria-label="Resumo do perfil">
         <div class="profile-avatar" id="profileAvatar" data-initials="<?= e(studentInitials()) ?>" aria-hidden="true"></div>
-        <h2 class="profile-name"><?= e(STUDENT['name']) ?></h2>
-        <p class="profile-meta">Matrícula <?= e(STUDENT['registration']) ?></p>
-        <span class="badge rounded-pill text-bg-success"><?= e(STUDENT['status']) ?></span>
+        <h2 class="profile-name"><?= e(currentStudent()['name']) ?></h2>
+        <p class="profile-meta">Matrícula <?= e(currentStudent()['registration']) ?></p>
+        <span class="badge rounded-pill text-bg-success"><?= e(currentStudent()['status']) ?></span>
 
         <div class="profile-actions">
           <button class="btn btn-primary" type="button" id="changePhoto"><i class="bi bi-camera me-2"></i>Alterar foto</button>
@@ -33,9 +33,9 @@ renderPageStart('Meu Perfil');
         </div>
 
         <dl class="profile-facts">
-          <div><dt>Curso</dt><dd><?= e(STUDENT['course']) ?></dd></div>
-          <div><dt>Período letivo</dt><dd><?= e(STUDENT['term']) ?></dd></div>
-          <div><dt>Turno</dt><dd><?= e(STUDENT['period']) ?></dd></div>
+          <div><dt>Curso</dt><dd><?= e(currentStudent()['course']) ?></dd></div>
+          <div><dt>Período letivo</dt><dd><?= e(currentStudent()['term']) ?></dd></div>
+          <div><dt>Turno</dt><dd><?= e(currentStudent()['period']) ?></dd></div>
         </dl>
       </aside>
 
@@ -62,12 +62,12 @@ renderPageStart('Meu Perfil');
                 </div>
                 <div class="grid-card__body">
                   <dl class="data-grid">
-                    <div><dt>Matrícula</dt><dd><?= e(STUDENT['registration']) ?></dd></div>
-                    <div><dt>Curso</dt><dd><?= e(STUDENT['course']) ?></dd></div>
-                    <div><dt>Período letivo</dt><dd><?= e(STUDENT['term']) ?></dd></div>
-                    <div><dt>Turno</dt><dd><?= e(STUDENT['period']) ?></dd></div>
-                    <div><dt>Ingresso</dt><dd><?= e(STUDENT['admission']) ?></dd></div>
-                    <div><dt>Situação</dt><dd><?= e(STUDENT['status']) ?></dd></div>
+                    <div><dt>Matrícula</dt><dd><?= e(currentStudent()['registration']) ?></dd></div>
+                    <div><dt>Curso</dt><dd><?= e(currentStudent()['course']) ?></dd></div>
+                    <div><dt>Período letivo</dt><dd><?= e(currentStudent()['term']) ?></dd></div>
+                    <div><dt>Turno</dt><dd><?= e(currentStudent()['period']) ?></dd></div>
+                    <div><dt>Ingresso</dt><dd><?= e(currentStudent()['admission']) ?></dd></div>
+                    <div><dt>Situação</dt><dd><?= e(currentStudent()['status']) ?></dd></div>
                   </dl>
                 </div>
               </section>
@@ -80,10 +80,10 @@ renderPageStart('Meu Perfil');
                 </div>
                 <div class="grid-card__body">
                   <dl class="data-grid">
-                    <div><dt>Nome completo</dt><dd><?= e(STUDENT['name']) ?></dd></div>
-                    <div><dt>Data de nascimento</dt><dd><?= e(STUDENT['birth_date']) ?></dd></div>
-                    <div><dt>CPF</dt><dd data-sensitive data-value="<?= e(STUDENT['cpf']) ?>" data-mask="•••.•••.•••-••">•••.•••.•••-••</dd></div>
-                    <div><dt>RG</dt><dd data-sensitive data-value="<?= e(STUDENT['rg']) ?>" data-mask="•••••••••">•••••••••</dd></div>
+                    <div><dt>Nome completo</dt><dd><?= e(currentStudent()['name']) ?></dd></div>
+                    <div><dt>Data de nascimento</dt><dd><?= e(currentStudent()['birth_date']) ?></dd></div>
+                    <div><dt>CPF</dt><dd data-sensitive data-value="<?= e(currentStudent()['cpf']) ?>" data-mask="•••.•••.•••-••">•••.•••.•••-••</dd></div>
+                    <div><dt>RG</dt><dd data-sensitive data-value="<?= e(currentStudent()['rg']) ?>" data-mask="•••••••••">•••••••••</dd></div>
                   </dl>
                 </div>
               </section>
@@ -96,11 +96,11 @@ renderPageStart('Meu Perfil');
                 </div>
                 <div class="grid-card__body">
                   <dl class="data-grid">
-                    <div><dt>E-mail institucional</dt><dd><?= e(STUDENT['email']) ?></dd></div>
-                    <div><dt>E-mail pessoal</dt><dd><?= e(STUDENT['alternative_email']) ?></dd></div>
-                    <div><dt>Telefone</dt><dd><?= e(STUDENT['phone']) ?></dd></div>
-                    <div><dt>CEP</dt><dd><?= e(STUDENT['zip_code']) ?></dd></div>
-                    <div><dt>Endereço</dt><dd><?= e(STUDENT['address'] . ', ' . STUDENT['address_number'] . ' — ' . STUDENT['city']) ?></dd></div>
+                    <div><dt>E-mail institucional</dt><dd><?= e(currentStudent()['email']) ?></dd></div>
+                    <div><dt>E-mail pessoal</dt><dd><?= e(currentStudent()['alternative_email']) ?></dd></div>
+                    <div><dt>Telefone</dt><dd><?= e(currentStudent()['phone']) ?></dd></div>
+                    <div><dt>CEP</dt><dd><?= e(currentStudent()['zip_code']) ?></dd></div>
+                    <div><dt>Endereço</dt><dd><?= e(currentStudent()['address'] . ', ' . currentStudent()['address_number'] . ' — ' . currentStudent()['city']) ?></dd></div>
                   </dl>
                 </div>
               </section>
@@ -114,7 +114,7 @@ renderPageStart('Meu Perfil');
                   <div class="grid-card__icon"><i class="bi bi-key"></i></div>
                   <div>
                     <h2>Alterar senha</h2>
-                    <p class="grid-card__subtitle">Última alteração em <span id="passwordChanged"><?= e(lastPasswordChange()) ?></span>.</p>
+                    <p class="grid-card__subtitle">Última alteração em <span id="passwordChanged"><?= e(formatDate(LAST_PASSWORD_CHANGE)) ?></span>.</p>
                   </div>
                 </div>
                 <div class="grid-card__body academic-form">
@@ -200,42 +200,21 @@ renderPageStart('Meu Perfil');
   </div>
 </div>
 
-<div class="toast-container position-fixed bottom-0 end-0 p-3">
-  <div id="profileToast" class="toast align-items-center text-bg-success border-0" role="status" aria-live="polite" aria-atomic="true">
-    <div class="d-flex">
-      <div class="toast-body" id="profileToastBody"></div>
-      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
-    </div>
-  </div>
-</div>
-
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  const PHOTO_KEY = 'alunonet.perfil.foto';
-  const PREFS_KEY = 'alunonet.perfil.prefs';
-  const PASSWORD_DATE_KEY = 'alunonet.perfil.senhaEm';
+  const PHOTO_KEY = <?= jsonForScript(studentStorageKey('profile.photo')) ?>;
+  const PREFERENCES_KEY = <?= jsonForScript(studentStorageKey('profile.preferences')) ?>;
+  const PASSWORD_DATE_KEY = <?= jsonForScript(studentStorageKey('profile.passwordChangedAt')) ?>;
   const MAX_PHOTO_SIZE = 5 * 1024 * 1024;
   const PHOTO_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
   const $ = (id) => document.getElementById(id);
-  const toastEl = $('profileToast');
-  const toast = bootstrap.Toast.getOrCreateInstance(toastEl, { delay: 3500 });
   const photoModal = bootstrap.Modal.getOrCreateInstance($('photoModal'));
 
-  const readStore = (key) => { try { return localStorage.getItem(key); } catch (error) { return null; } };
-  const writeStore = (key, value) => { try { localStorage.setItem(key, value); return true; } catch (error) { return false; } };
-  const removeStore = (key) => { try { localStorage.removeItem(key); } catch (error) { /* ignora */ } };
-
-  const showToast = (message, ok = true) => {
-    toastEl.classList.toggle('text-bg-success', ok);
-    toastEl.classList.toggle('text-bg-danger', !ok);
-    $('profileToastBody').textContent = message;
-    toast.show();
-  };
 
   /* ---------- Foto de perfil ---------- */
   const initials = $('profileAvatar').dataset.initials;
-  let photo = readStore(PHOTO_KEY);
+  let photo = readStoredJson(PHOTO_KEY, null);
   let pendingPhoto = null;
 
   const paintAvatar = (target, source) => {
@@ -309,7 +288,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   $('savePhoto').addEventListener('click', () => {
     if (!pendingPhoto) return;
-    if (!writeStore(PHOTO_KEY, pendingPhoto)) { showToast('Não foi possível salvar a foto neste navegador.', false); return; }
+    if (!storeJson(PHOTO_KEY, pendingPhoto)) { showToast('Não foi possível salvar a foto neste navegador.', { ok: false }); return; }
     photo = pendingPhoto;
     pendingPhoto = null;
     refreshAvatars();
@@ -318,7 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   $('removePhoto').addEventListener('click', () => {
-    removeStore(PHOTO_KEY);
+    removeStored(PHOTO_KEY);
     photo = null;
     refreshAvatars();
     showToast('Foto removida.');
@@ -336,9 +315,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const button = event.currentTarget;
     button.setAttribute('aria-pressed', String(revealed));
     button.replaceChildren();
-    const icon = document.createElement('i');
-    icon.className = `bi ${revealed ? 'bi-eye-slash' : 'bi-eye'} me-1`;
-    button.append(icon, document.createTextNode(revealed ? 'Ocultar documentos' : 'Mostrar documentos'));
+    button.append(createIcon(`bi ${revealed ? 'bi-eye-slash' : 'bi-eye'} me-1`), document.createTextNode(revealed ? 'Ocultar documentos' : 'Mostrar documentos'));
   });
 
   /* ---------- Alterar senha ---------- */
@@ -379,17 +356,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return score;
   };
 
-  document.querySelectorAll('[data-toggle-password]').forEach((button) => {
-    button.addEventListener('click', () => {
-      const input = $(button.dataset.togglePassword);
-      const show = input.type === 'password';
-      input.type = show ? 'text' : 'password';
-      button.setAttribute('aria-pressed', String(show));
-      button.setAttribute('aria-label', show ? 'Ocultar senha' : 'Mostrar senha');
-      button.firstElementChild.className = `bi ${show ? 'bi-eye-slash' : 'bi-eye'}`;
-    });
-  });
-
   const setFieldError = (input, message) => {
     $(`${input.id}Feedback`).textContent = message;
     input.classList.toggle('is-invalid', Boolean(message));
@@ -417,28 +383,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const firstInvalid = [current, next, confirm].find((input) => input.classList.contains('is-invalid'));
     if (firstInvalid) { firstInvalid.focus(); return; }
 
-    const today = new Date();
-    writeStore(PASSWORD_DATE_KEY, today.toLocaleDateString('sv-SE'));
-    $('passwordChanged').textContent = today.toLocaleDateString('pt-BR');
+    const today = portalToday();
+    storeJson(PASSWORD_DATE_KEY, toIsoDate(today));
+    $('passwordChanged').textContent = formatDateBR(today);
     form.reset();
     updateMeter();
     showToast('Senha alterada com sucesso (simulação).');
   });
 
-  const savedPasswordDate = readStore(PASSWORD_DATE_KEY);
-  if (savedPasswordDate) $('passwordChanged').textContent = new Date(`${savedPasswordDate}T00:00:00`).toLocaleDateString('pt-BR');
+  const savedPasswordDate = readStoredJson(PASSWORD_DATE_KEY, null);
+  if (savedPasswordDate) $('passwordChanged').textContent = formatDateBR(parseIsoDate(savedPasswordDate));
   updateMeter();
 
   /* ---------- Preferências ---------- */
-  let prefs = {};
-  try { prefs = JSON.parse(readStore(PREFS_KEY)) || {}; } catch (error) { prefs = {}; }
+  const preferences = readStoredJson(PREFERENCES_KEY, {});
 
   document.querySelectorAll('[data-pref]').forEach((input) => {
-    if (input.dataset.pref in prefs) input.checked = Boolean(prefs[input.dataset.pref]);
+    if (input.dataset.pref in preferences) input.checked = Boolean(preferences[input.dataset.pref]);
     input.addEventListener('change', () => {
-      prefs[input.dataset.pref] = input.checked;
-      if (writeStore(PREFS_KEY, JSON.stringify(prefs))) showToast('Preferência salva.');
-      else showToast('Não foi possível salvar a preferência neste navegador.', false);
+      preferences[input.dataset.pref] = input.checked;
+      if (storeJson(PREFERENCES_KEY, preferences)) showToast('Preferência salva.');
+      else showToast('Não foi possível salvar a preferência neste navegador.', { ok: false });
     });
   });
 });

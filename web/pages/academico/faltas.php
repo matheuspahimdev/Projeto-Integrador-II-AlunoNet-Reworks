@@ -1,12 +1,11 @@
 <?php
 require_once __DIR__ . '/../../components/layout.php';
 
-$totalAttended = array_sum(array_column(DISCIPLINES, 'attended'));
-$totalAbsences = array_sum(array_column(DISCIPLINES, 'absences'));
-$hasAttendanceWarning = in_array('Atenção', array_map('attendanceStatus', DISCIPLINES), true);
+$totalAttended = array_sum(array_column(studentDisciplines(), 'attended'));
+$totalAbsences = array_sum(array_column(studentDisciplines(), 'absences'));
+$hasAttendanceWarning = in_array('Atenção', array_map('attendanceStatus', studentDisciplines()), true);
 
-renderPageStart('Faltas');
-renderAcademicHeader('Faltas');
+renderAcademicPageStart('Faltas');
 ?>
       <section class="academic-page-grid">
         <section class="grid-card grid-card--wide">
@@ -16,7 +15,7 @@ renderAcademicHeader('Faltas');
               <table class="table table-hover align-middle academic-table">
                 <thead><tr><th>Disciplina</th><th>Presenças</th><th>Faltas</th><th>Frequência</th><th>Situação</th></tr></thead>
                 <tbody>
-                  <?php foreach (DISCIPLINES as $discipline): ?>
+                  <?php foreach (studentDisciplines() as $discipline): ?>
                     <?php $status = attendanceStatus($discipline); ?>
                     <tr>
                       <td><?= e($discipline['name']) ?></td>

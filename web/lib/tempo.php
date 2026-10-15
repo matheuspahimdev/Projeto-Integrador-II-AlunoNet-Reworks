@@ -2,14 +2,14 @@
 
 const TIMEZONE = 'America/Sao_Paulo';
 
-function now(): DateTimeImmutable
-{
-    return new DateTimeImmutable('now', new DateTimeZone(TIMEZONE));
-}
+// Data fixa do protótipo: provas, boletos, avisos, empréstimos e o JS das páginas partem deste "hoje".
+const SIMULATED_TODAY = '2026-10-14';
+
+date_default_timezone_set(TIMEZONE);
 
 function today(): DateTimeImmutable
 {
-    return now()->setTime(0, 0);
+    return parseDateTime(SIMULATED_TODAY);
 }
 
 function parseDateTime(string $dateTime): DateTimeImmutable
@@ -17,19 +17,15 @@ function parseDateTime(string $dateTime): DateTimeImmutable
     return new DateTimeImmutable($dateTime, new DateTimeZone(TIMEZONE));
 }
 
-function dateFromToday(int $days): string
-{
-    return today()->modify(sprintf('%+d days', $days))->format('Y-m-d');
-}
-
-function dateTimeFromToday(int $days, string $time): string
-{
-    return dateFromToday($days) . 'T' . $time;
-}
-
 function daysAgo(DateTimeImmutable $date): int
 {
     return (int) $date->setTime(0, 0)->diff(today())->format('%r%a');
+}
+
+// Dias de hoje até a data: positivo no futuro, negativo no passado.
+function daysUntil(string $date): int
+{
+    return -daysAgo(parseDateTime($date));
 }
 
 function relativeDateLabel(DateTimeImmutable $date): string

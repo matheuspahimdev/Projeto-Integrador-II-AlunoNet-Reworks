@@ -2,6 +2,8 @@
 
 const WEEKDAYS = [1 => 'Segunda', 2 => 'Terça', 3 => 'Quarta', 4 => 'Quinta', 5 => 'Sexta', 6 => 'Sábado', 7 => 'Domingo'];
 
+const WEEKDAY_ABBREVIATIONS = ['Segunda' => 'Seg.', 'Terça' => 'Ter.', 'Quarta' => 'Qua.', 'Quinta' => 'Qui.', 'Sexta' => 'Sex.', 'Sábado' => 'Sáb.', 'Domingo' => 'Dom.'];
+
 const MONTH_NAMES = [1 => 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
 
 const MONTH_ABBREVIATIONS = [1 => 'JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
@@ -45,5 +47,14 @@ function formatCurrency(float $value): string
 
 function percentage(int|float $part, int|float $total): int
 {
-    return (int) round($part / $total * 100);
+    return $total <= 0 ? 0 : (int) round($part / $total * 100);
+}
+function formatDayMonth(string $date): string
+{
+    return date('d/m', strtotime($date));
+}
+
+function pluralize(int $count, string $singular, string $plural): string
+{
+    return $count . ' ' . ($count === 1 ? $singular : $plural);
 }

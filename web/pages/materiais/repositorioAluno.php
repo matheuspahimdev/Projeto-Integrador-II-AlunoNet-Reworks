@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../../components/layout.php';
 require_once __DIR__ . '/../../lib/materiais.php';
 
-$dadosJson = jsonForScript(repositoryItems());
+$repositoryData = jsonForScript(['items' => repositoryItems(), 'owner' => REPOSITORY_OWNER_STUDENT]);
 renderPageStart('Repositório do Aluno');
 ?>
 
@@ -108,21 +108,12 @@ renderPageStart('Repositório do Aluno');
   </div>
 </div>
 
-<div class="toast-container position-fixed bottom-0 end-0 p-3">
-  <div id="repoToast" class="toast align-items-center text-bg-success border-0" role="status" aria-live="polite" aria-atomic="true">
-    <div class="d-flex">
-      <div class="toast-body" id="repoToastBody"></div>
-      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
-    </div>
-  </div>
-</div>
-
-<script id="repoData" type="application/json"><?= $dadosJson ?></script>
+<script id="repoData" type="application/json"><?= $repositoryData ?></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  const items = JSON.parse(document.getElementById('repoData').textContent);
-  const LIMIT = 5 * 1024 ** 3;
+  const { items, owner: STUDENT_OWNER } = readPageData('repoData');
+  const STORAGE_LIMIT_BYTES = 5 * 1024 ** 3;
   const state = { view: 'mine', folderId: null, query: '', sort: 'name', mode: 'grid' };
   let nextId = Math.max(...items.map((item) => item.id)) + 1;
   let previewId = null;
@@ -134,26 +125,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const searchInput = $('repoSearch');
   const uploadInput = $('uploadInput');
   const folderInput = $('folderName');
-  const toastEl = $('repoToast');
-  const toast = bootstrap.Toast.getOrCreateInstance(toastEl, { delay: 3500 });
   const previewModal = bootstrap.Modal.getOrCreateInstance($('previewModal'));
   const folderModal = bootstrap.Modal.getOrCreateInstance($('folderModal'));
 
-  const el = (tag, className = '', text = '') => {
-    const node = document.createElement(tag);
-    if (className) node.className = className;
-    if (text) node.textContent = text;
-    return node;
-  };
-  const icon = (className) => {
-    const node = el('i', className);
-    node.setAttribute('aria-hidden', 'true');
-    return node;
-  };
-  const button = (className, label = '') => {
-    const node = el('button', className);
-    node.type = 'button';
-    if (label) node.setAttribute('aria-label', label);
+  const iconButton = (className, ariaLabel = '') => {
+    const node = createButton(className);
+    if (ariaLabel) node.setAttribute('aria-label', ariaLabel);
     return node;
   };
 
@@ -177,17 +154,17 @@ document.addEventListener('DOMContentLoaded', () => {
     : (TYPES[item.ext] || ['bi-file-earmark', 'other', item.ext ? item.ext.toUpperCase() : 'Arquivo']));
   const fileIcon = (item, extra = '') => {
     const [iconClass, kind] = typeOf(item);
-    return icon(`bi ${iconClass} file-icon--${kind} ${extra}`.trim());
+    return createIcon(`bi ${iconClass} file-icon--${kind} ${extra}`.trim());
   };
 
-  const fmtSize = (bytes) => {
+  const formatSize = (bytes) => {
     if (bytes < 1024) return `${bytes} B`;
     if (bytes < 1024 ** 2) return `${Math.round(bytes / 1024)} KB`;
     if (bytes < 1024 ** 3) return `${(bytes / 1024 ** 2).toFixed(1).replace('.', ',')} MB`;
     return `${(bytes / 1024 ** 3).toFixed(2).replace('.', ',')} GB`;
   };
-  const fmtDate = (iso) => new Date(`${iso}T00:00:00`).toLocaleDateString('pt-BR');
-  const today = () => new Date().toLocaleDateString('sv-SE');
+  const formatIso = (iso) => formatDateBR(parseIsoDate(iso));
+  const todayIso = () => toIsoDate(portalToday());
 
   const byId = (id) => items.find((item) => item.id === id);
   const pathOf = (id) => {
@@ -218,17 +195,10 @@ document.addEventListener('DOMContentLoaded', () => {
     return [...list].sort(order);
   };
 
-  const showToast = (message, ok = true) => {
-    toastEl.classList.toggle('text-bg-success', ok);
-    toastEl.classList.toggle('text-bg-danger', !ok);
-    $('repoToastBody').textContent = message;
-    toast.show();
-  };
-
   const download = (item) => {
     if (item.blob) {
       const url = URL.createObjectURL(item.blob);
-      const link = el('a');
+      const link = createNode('a');
       link.href = url;
       link.download = item.name;
       link.click();
@@ -257,11 +227,11 @@ document.addEventListener('DOMContentLoaded', () => {
     $('previewIcon').replaceChildren(fileIcon(item));
     $('previewName').textContent = item.name;
     $('previewType').textContent = typeOf(item)[2];
-    $('previewSize').textContent = fmtSize(item.size);
-    $('previewDate').textContent = fmtDate(item.modified);
+    $('previewSize').textContent = formatSize(item.size);
+    $('previewDate').textContent = formatIso(item.modified);
     $('previewOwner').textContent = item.owner;
     $('previewPath').textContent = locationOf(item);
-    $('previewStar').replaceChildren(icon(item.starred ? 'bi bi-star-fill' : 'bi bi-star'), document.createTextNode(item.starred ? ' Remover dos favoritos' : ' Favoritar'));
+    $('previewStar').replaceChildren(createIcon(item.starred ? 'bi bi-star-fill' : 'bi bi-star'), document.createTextNode(item.starred ? ' Remover dos favoritos' : ' Favoritar'));
   };
   const openPreview = (item) => {
     previewId = item.id;
@@ -276,12 +246,12 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const actions = (item) => {
-    const wrap = el('div', 'd-flex align-items-center justify-content-end');
-    const star = button(`repo-icon-btn${item.starred ? ' is-starred' : ''}`, item.starred ? `Remover ${item.name} dos favoritos` : `Adicionar ${item.name} aos favoritos`);
-    star.append(icon(item.starred ? 'bi bi-star-fill' : 'bi bi-star'));
+    const wrap = createNode('div', 'd-flex align-items-center justify-content-end');
+    const star = iconButton(`repo-icon-btn${item.starred ? ' is-starred' : ''}`, item.starred ? `Remover ${item.name} dos favoritos` : `Adicionar ${item.name} aos favoritos`);
+    star.append(createIcon(item.starred ? 'bi bi-star-fill' : 'bi bi-star'));
     star.addEventListener('click', () => toggleStar(item));
-    const down = button('repo-icon-btn', `Baixar ${item.name}`);
-    down.append(icon('bi bi-download'));
+    const down = iconButton('repo-icon-btn', `Baixar ${item.name}`);
+    down.append(createIcon('bi bi-download'));
     down.addEventListener('click', () => download(item));
     wrap.append(star, down);
     return wrap;
@@ -293,12 +263,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const files = list.filter((item) => item.type === 'file');
 
     if (folders.length) {
-      fragment.append(el('h3', 'repo-section-title', 'Pastas'));
-      const grid = el('div', 'repo-folders');
+      fragment.append(createNode('h3', 'repo-section-title', 'Pastas'));
+      const grid = createNode('div', 'repo-folders');
       folders.forEach((folder) => {
-        const card = el('div', 'repo-folder');
-        const open = button('repo-folder__open');
-        open.append(fileIcon(folder, 'fs-4'), el('span', '', folder.name));
+        const card = createNode('div', 'repo-folder');
+        const open = iconButton('repo-folder__open');
+        open.append(fileIcon(folder, 'fs-4'), createNode('span', '', folder.name));
         open.title = folder.name;
         open.addEventListener('click', () => openFolder(folder.id));
         card.append(open);
@@ -308,18 +278,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (files.length) {
-      fragment.append(el('h3', 'repo-section-title', 'Arquivos'));
-      const grid = el('div', 'repo-files');
+      fragment.append(createNode('h3', 'repo-section-title', 'Arquivos'));
+      const grid = createNode('div', 'repo-files');
       files.forEach((file) => {
-        const card = el('article', 'repo-file');
-        const thumb = button('repo-file__thumb', `Visualizar ${file.name}`);
+        const card = createNode('article', 'repo-file');
+        const thumb = iconButton('repo-file__thumb', `Visualizar ${file.name}`);
         thumb.append(fileIcon(file));
         thumb.addEventListener('click', () => openPreview(file));
-        const info = el('div', 'repo-file__info');
-        const name = el('span', 'repo-file__name', file.name);
+        const info = createNode('div', 'repo-file__info');
+        const name = createNode('span', 'repo-file__name', file.name);
         name.title = file.name;
-        info.append(name, el('span', 'repo-file__meta', `${fmtSize(file.size)} • ${fmtDate(file.modified)}`));
-        const foot = el('div', 'repo-file__foot');
+        info.append(name, createNode('span', 'repo-file__meta', `${formatSize(file.size)} • ${formatIso(file.modified)}`));
+        const foot = createNode('div', 'repo-file__foot');
         foot.append(fileIcon(file, 'fs-5'), info, actions(file));
         card.append(thumb, foot);
         grid.append(card);
@@ -330,30 +300,30 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const renderList = (list, showPath) => {
-    const wrap = el('div', 'table-responsive');
-    const table = el('table', 'table table-hover align-middle academic-table repo-table');
-    const head = el('tr');
+    const wrap = createNode('div', 'table-responsive');
+    const table = createNode('table', 'table table-hover align-middle academic-table repo-table');
+    const head = createNode('tr');
     ['Nome', 'Proprietário', 'Modificado', 'Tamanho', ''].forEach((title) => {
-      const th = el('th');
+      const th = createNode('th');
       th.scope = 'col';
       if (title) th.textContent = title;
-      else th.append(el('span', 'visually-hidden', 'Ações'));
+      else th.append(createNode('span', 'visually-hidden', 'Ações'));
       head.append(th);
     });
-    const thead = el('thead');
+    const thead = createNode('thead');
     thead.append(head);
 
-    const body = el('tbody');
+    const body = createNode('tbody');
     list.forEach((item) => {
-      const row = el('tr');
-      const nameCell = el('td');
-      const open = button('repo-name-btn');
-      open.append(fileIcon(item, 'fs-5'), el('span', '', item.name));
+      const row = createNode('tr');
+      const nameCell = createNode('td');
+      const open = iconButton('repo-name-btn');
+      open.append(fileIcon(item, 'fs-5'), createNode('span', '', item.name));
       open.addEventListener('click', () => (item.type === 'folder' ? openFolder(item.id) : openPreview(item)));
       nameCell.append(open);
-      if (showPath) nameCell.append(el('span', 'repo-path', locationOf(item)));
-      row.append(nameCell, el('td', '', item.owner), el('td', '', fmtDate(item.modified)), el('td', '', item.type === 'folder' ? '—' : fmtSize(item.size)));
-      const actionCell = el('td', 'text-end');
+      if (showPath) nameCell.append(createNode('span', 'repo-path', locationOf(item)));
+      row.append(nameCell, createNode('td', '', item.owner), createNode('td', '', formatIso(item.modified)), createNode('td', '', item.type === 'folder' ? '—' : formatSize(item.size)));
+      const actionCell = createNode('td', 'text-end');
       if (item.type === 'file') actionCell.append(actions(item));
       row.append(actionCell);
       body.append(row);
@@ -370,15 +340,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (query) { iconClass = 'bi-search'; message = `Nenhum resultado para “${query}”.`; }
     else if (state.view === 'starred') { iconClass = 'bi-star'; message = 'Nenhum favorito ainda. Marque a estrela de um arquivo para encontrá-lo aqui.'; }
     else if (state.view === 'recent') { iconClass = 'bi-clock-history'; message = 'Nenhum arquivo recente.'; }
-    const box = el('div', 'repo-empty');
-    box.append(icon(`bi ${iconClass}`), el('p', 'mb-0', message));
+    const box = createNode('div', 'repo-empty');
+    box.append(createIcon(`bi ${iconClass}`), createNode('p', 'mb-0', message));
     return box;
   };
 
   const crumb = (label, handler) => {
-    const li = el('li', `breadcrumb-item${handler ? '' : ' active'}`);
+    const li = createNode('li', `breadcrumb-item${handler ? '' : ' active'}`);
     if (handler) {
-      const link = button('repo-crumb');
+      const link = iconButton('repo-crumb');
       link.textContent = label;
       link.addEventListener('click', handler);
       li.append(link);
@@ -415,8 +385,8 @@ document.addEventListener('DOMContentLoaded', () => {
     else content.append(state.mode === 'grid' ? renderGrid(list) : renderList(list, Boolean(query) || state.view !== 'mine'));
 
     const used = items.reduce((total, item) => total + (item.type === 'file' ? item.size : 0), 0);
-    const percent = Math.max(1, Math.min(100, (used / LIMIT) * 100));
-    $('storageText').textContent = `${fmtSize(used)} de 5 GB usados`;
+    const percent = Math.max(1, Math.min(100, (used / STORAGE_LIMIT_BYTES) * 100));
+    $('storageText').textContent = `${formatSize(used)} de 5 GB usados`;
     $('storageBar').style.width = `${percent}%`;
     $('storageBar').parentElement.setAttribute('aria-valuenow', String(Math.round(percent)));
   };
@@ -432,7 +402,7 @@ document.addEventListener('DOMContentLoaded', () => {
       items.push({
         id: nextId++, parent: state.folderId, type: 'file', name: file.name,
         ext: dot > -1 ? file.name.slice(dot + 1).toLowerCase() : '', size: file.size,
-        modified: today(), owner: 'Você', starred: false, blob: file,
+        modified: todayIso(), owner: STUDENT_OWNER, starred: false, blob: file,
       });
     });
     render();
@@ -470,7 +440,7 @@ document.addEventListener('DOMContentLoaded', () => {
     folderInput.classList.toggle('is-invalid', Boolean(error));
     $('folderNameFeedback').textContent = error;
     if (error) return;
-    items.push({ id: nextId++, parent, type: 'folder', name, ext: '', size: 0, modified: today(), owner: 'Você', starred: false });
+    items.push({ id: nextId++, parent, type: 'folder', name, ext: '', size: 0, modified: todayIso(), owner: STUDENT_OWNER, starred: false });
     folderModal.hide();
     state.view = 'mine';
     state.query = '';

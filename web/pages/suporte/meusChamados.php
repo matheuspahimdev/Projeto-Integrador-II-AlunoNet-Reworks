@@ -2,7 +2,11 @@
 require_once __DIR__ . '/../../components/layout.php';
 require_once __DIR__ . '/../../lib/suporte.php';
 
-$dadosJson = jsonForScript(['departments' => supportDepartmentBadges(), 'tickets' => supportTickets()]);
+$ticketData = jsonForScript([
+    'departments' => supportDepartmentBadges(),
+    'tickets' => supportTickets(),
+    'replyMinLength' => TICKET_RULES['subject_min_length'],
+]);
 renderPageStart('Meus Chamados');
 ?>
 
@@ -14,10 +18,10 @@ renderPageStart('Meus Chamados');
     </div>
 
     <div class="loan-summary" aria-label="Resumo dos chamados">
-      <div class="loan-stat"><strong id="statAndamento">0</strong><span>Em andamento</span></div>
-      <div class="loan-stat"><strong id="statAguardando">0</strong><span>Aguardando sua resposta</span></div>
-      <div class="loan-stat"><strong id="statResolvido">0</strong><span>Resolvidos</span></div>
-      <div class="loan-stat"><strong id="statCancelado">0</strong><span>Cancelados</span></div>
+      <div class="loan-stat"><strong id="statInProgress">0</strong><span>Em andamento</span></div>
+      <div class="loan-stat"><strong id="statWaiting">0</strong><span>Aguardando sua resposta</span></div>
+      <div class="loan-stat"><strong id="statResolved">0</strong><span>Resolvidos</span></div>
+      <div class="loan-stat"><strong id="statCanceled">0</strong><span>Cancelados</span></div>
     </div>
 
     <div class="notice-filters mb-3" role="group" aria-label="Filtrar chamados">
@@ -46,8 +50,8 @@ renderPageStart('Meus Chamados');
       <div class="modal-body">
         <p class="text-secondary small mb-3" id="replyContext"></p>
         <label class="form-label" for="replyText">Sua resposta</label>
-        <textarea class="form-control" id="replyText" rows="4" maxlength="1500"></textarea>
-        <div class="invalid-feedback">Escreva sua resposta (mínimo de 5 caracteres).</div>
+        <textarea class="form-control" id="replyText" rows="4" maxlength="<?= TICKET_RULES['description_max_length'] ?>"></textarea>
+        <div class="invalid-feedback">Escreva sua resposta (mínimo de <?= TICKET_RULES['subject_min_length'] ?> caracteres).</div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -75,22 +79,13 @@ renderPageStart('Meus Chamados');
   </div>
 </div>
 
-<div class="toast-container position-fixed bottom-0 end-0 p-3">
-  <div id="ticketToast" class="toast align-items-center text-bg-success border-0" role="status" aria-live="polite" aria-atomic="true">
-    <div class="d-flex">
-      <div class="toast-body" id="ticketToastBody"></div>
-      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
-    </div>
-  </div>
-</div>
-
-<script id="ticketData" type="application/json"><?= $dadosJson ?></script>
+<script id="ticketData" type="application/json"><?= $ticketData ?></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  const STORAGE_KEY = 'alunonet.chamados';
-  const data = JSON.parse(document.getElementById('ticketData').textContent);
-  const DEPTS = data.departments;
+  const STORAGE_KEY = <?= jsonForScript(studentStorageKey('tickets')) ?>;
+  const data = readPageData('ticketData');
+  const DEPARTMENTS = data.departments;
   const STATUS = {
     aguardando: { label: 'Aguardando sua resposta', badge: 'text-bg-warning', order: 0 },
     andamento: { label: 'Em atendimento', badge: 'text-bg-primary', order: 1 },
@@ -109,89 +104,51 @@ document.addEventListener('DOMContentLoaded', () => {
   const $ = (id) => document.getElementById(id);
   const list = $('ticketList');
   const filterButtons = [...document.querySelectorAll('.notice-filter')];
-  const toastEl = $('ticketToast');
-  const toast = bootstrap.Toast.getOrCreateInstance(toastEl, { delay: 4000 });
   const replyModal = bootstrap.Modal.getOrCreateInstance($('replyModal'));
   const cancelModal = bootstrap.Modal.getOrCreateInstance($('cancelModal'));
   const replyText = $('replyText');
 
-  const toISO = (date) => date.toLocaleDateString('sv-SE');
-  const nowISO = () => {
-    const date = new Date();
-    return `${toISO(date)}T${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
-  };
-  const fmt = (iso) => new Date(iso).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
-  const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
-
-  const el = (tag, className = '', text = '') => {
-    const node = document.createElement(tag);
-    if (className) node.className = className;
-    if (text) node.textContent = text;
-    return node;
-  };
-  const icon = (className) => {
-    const node = el('i', className);
-    node.setAttribute('aria-hidden', 'true');
-    return node;
-  };
-  const button = (className, label) => {
-    const node = el('button', className, label);
-    node.type = 'button';
-    return node;
-  };
-
-  const loadTickets = () => {
-    try {
-      const value = JSON.parse(localStorage.getItem(STORAGE_KEY));
-      return Array.isArray(value) ? value : [];
-    } catch (error) { return []; }
-  };
-  const saveTickets = (tickets) => {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(tickets)); } catch (error) { /* ignora */ }
-  };
+  const PREVIEW_LENGTH = 180;
+  const formatDateTime = (iso) => new Date(iso).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
+  const departmentLabel = (ticket) => DEPARTMENTS[ticket.department]?.label || 'departamento';
 
   let tickets = [
     ...data.tickets.map((ticket) => ({ ...ticket, stored: false })),
-    ...loadTickets().map((ticket) => ({ ...ticket, stored: true })),
+    ...readStoredList(STORAGE_KEY).map((ticket) => ({ ...ticket, stored: true })),
   ];
   let filter = 'all';
   const expanded = new Set();
   let target = null;
 
   const syncStored = () => {
-    saveTickets(tickets.filter((ticket) => ticket.stored).map(({ stored, ...rest }) => rest));
-  };
-
-  const showToast = (message) => {
-    $('ticketToastBody').textContent = message;
-    toast.show();
+    storeJson(STORAGE_KEY, tickets.filter((ticket) => ticket.stored).map(({ stored, ...rest }) => rest));
   };
 
   const update = (ticket, text, status) => {
-    const now = nowISO();
-    ticket.historico.push({ em: now, autor: 'Você', texto: text });
+    const now = portalNowISO();
+    ticket.history.push({ at: now, author: 'Você', text });
     ticket.status = status;
-    ticket.atualizadoEm = now;
+    ticket.updated_at = now;
     if (ticket.stored) syncStored();
   };
 
   const noteFor = (ticket) => {
-    const dept = DEPTS[ticket.departamento]?.label || 'departamento';
-    if (ticket.status === 'aguardando') return [`O ${dept} aguarda sua resposta para continuar o atendimento.`, 'loan-card__note loan-card__note--danger'];
-    if (ticket.status === 'andamento') return [`Em atendimento pelo ${dept}.`, 'loan-card__note'];
+    const department = departmentLabel(ticket);
+    if (ticket.status === 'aguardando') return [`O setor ${department} aguarda sua resposta para continuar o atendimento.`, 'loan-card__note loan-card__note--danger'];
+    if (ticket.status === 'andamento') return [`Em atendimento pelo setor ${department}.`, 'loan-card__note'];
     if (ticket.status === 'aberto') return ['Chamado registrado. Aguardando o início do atendimento.', 'loan-card__note'];
-    if (ticket.status === 'resolvido') return [`Resolvido em ${fmt(ticket.atualizadoEm)}.`, 'loan-card__note'];
-    return [`Cancelado em ${fmt(ticket.atualizadoEm)}.`, 'loan-card__note'];
+    if (ticket.status === 'resolvido') return [`Resolvido em ${formatDateTime(ticket.updated_at)}.`, 'loan-card__note'];
+    return [`Cancelado em ${formatDateTime(ticket.updated_at)}.`, 'loan-card__note'];
   };
 
   const timeline = (ticket) => {
-    const ol = el('ol', 'ticket-timeline');
-    ticket.historico.forEach((entry) => {
-      const li = el('li');
-      const time = el('time', '', fmt(entry.em));
-      time.dateTime = entry.em;
-      const who = el('strong', '', `${entry.autor}: `);
-      li.append(time, who, document.createTextNode(entry.texto));
+    const ol = createNode('ol', 'ticket-timeline');
+    ticket.history.forEach((entry) => {
+      const li = createNode('li');
+      const time = createNode('time', '', formatDateTime(entry.at));
+      time.dateTime = entry.at;
+      const who = createNode('strong', '', `${entry.author}: `);
+      li.append(time, who, document.createTextNode(entry.text));
       ol.append(li);
     });
     return ol;
@@ -199,7 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const openReply = (ticket) => {
     target = ticket;
-    $('replyContext').textContent = `${ticket.id} — ${ticket.assunto}`;
+    $('replyContext').textContent = `${ticket.id} — ${ticket.subject}`;
     replyText.value = '';
     replyText.classList.remove('is-invalid');
     replyModal.show();
@@ -207,42 +164,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const renderCard = (ticket) => {
     const status = STATUS[ticket.status];
-    const dept = DEPTS[ticket.departamento] || { label: ticket.departamento, icon: 'bi-chat-dots' };
-    const card = el('article', `loan-card loan-card--${ticket.status}`);
+    const department = DEPARTMENTS[ticket.department] || { label: ticket.department, icon: 'bi-chat-dots' };
+    const card = createNode('article', `loan-card loan-card--${ticket.status}`);
 
-    const iconBox = el('div', 'ticket-icon');
+    const iconBox = createNode('div', 'ticket-icon');
     iconBox.setAttribute('aria-hidden', 'true');
-    iconBox.append(icon(`bi ${dept.icon}`));
+    iconBox.append(createIcon(`bi ${department.icon}`));
 
-    const info = el('div', 'loan-card__info');
-    const head = el('div', 'd-flex flex-wrap align-items-center gap-2');
-    head.append(el('h2', 'loan-card__title', ticket.assunto), el('span', `badge rounded-pill ${status.badge}`, status.label));
+    const info = createNode('div', 'loan-card__info');
+    const head = createNode('div', 'd-flex flex-wrap align-items-center gap-2');
+    head.append(createNode('h2', 'loan-card__title', ticket.subject), createNode('span', `badge rounded-pill ${status.badge}`, status.label));
 
-    const dates = el('div', 'loan-card__dates');
-    [['Aberto em', fmt(ticket.abertoEm)], ['Última atualização', fmt(ticket.atualizadoEm)]].forEach(([label, value]) => {
-      const span = el('span');
-      span.append(el('b', '', `${label}: `), document.createTextNode(value));
+    const dates = createNode('div', 'loan-card__dates');
+    [['Aberto em', formatDateTime(ticket.opened_at)], ['Última atualização', formatDateTime(ticket.updated_at)]].forEach(([label, value]) => {
+      const span = createNode('span');
+      span.append(createNode('b', '', `${label}: `), document.createTextNode(value));
       dates.append(span);
     });
-    if (ticket.anexo) {
-      const attachment = el('span');
-      attachment.append(icon('bi bi-paperclip me-1'), document.createTextNode(ticket.anexo));
+    if (ticket.attachment) {
+      const attachment = createNode('span');
+      attachment.append(createIcon('bi bi-paperclip me-1'), document.createTextNode(ticket.attachment));
       dates.append(attachment);
     }
 
-    const preview = ticket.descricao.length > 180 ? `${ticket.descricao.slice(0, 180)}…` : ticket.descricao;
+    const preview = ticket.description.length > PREVIEW_LENGTH ? `${ticket.description.slice(0, PREVIEW_LENGTH)}…` : ticket.description;
     const [noteText, noteClass] = noteFor(ticket);
     info.append(
       head,
-      el('p', 'loan-card__author', `${ticket.id} • ${dept.label} • ${ticket.tipo}`),
+      createNode('p', 'loan-card__author', `${ticket.id} • ${department.label} • ${ticket.type}`),
       dates,
-      el('p', 'small mt-2 mb-0', preview),
-      el('p', noteClass, noteText),
+      createNode('p', 'small mt-2 mb-0', preview),
+      createNode('p', noteClass, noteText),
     );
 
-    const side = el('div', 'loan-card__side');
+    const side = createNode('div', 'loan-card__side');
     const open = expanded.has(ticket.id);
-    const toggle = button('btn btn-sm btn-outline-secondary', open ? 'Ocultar andamento' : 'Ver andamento');
+    const toggle = createButton('btn btn-sm btn-outline-secondary', open ? 'Ocultar andamento' : 'Ver andamento');
     toggle.setAttribute('aria-expanded', String(open));
     toggle.addEventListener('click', () => {
       if (expanded.has(ticket.id)) expanded.delete(ticket.id); else expanded.add(ticket.id);
@@ -250,11 +207,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     if (ticket.status === 'aguardando') {
-      const reply = button('btn btn-sm btn-primary', 'Responder');
+      const reply = createButton('btn btn-sm btn-primary', 'Responder');
       reply.addEventListener('click', () => openReply(ticket));
       side.append(reply);
     } else if (ticket.status === 'aberto') {
-      const cancel = button('btn btn-sm btn-outline-danger', 'Cancelar chamado');
+      const cancel = createButton('btn btn-sm btn-outline-danger', 'Cancelar chamado');
       cancel.addEventListener('click', () => {
         target = ticket;
         $('cancelTitle').textContent = ticket.id;
@@ -262,7 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       side.append(cancel);
     } else if (ticket.status === 'resolvido') {
-      const reopen = button('btn btn-sm btn-outline-secondary', 'Reabrir');
+      const reopen = createButton('btn btn-sm btn-outline-secondary', 'Reabrir');
       reopen.addEventListener('click', () => {
         update(ticket, 'Chamado reaberto pelo solicitante.', 'aberto');
         render();
@@ -279,14 +236,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const render = () => {
     const count = (predicate) => tickets.filter(predicate).length;
-    $('statAndamento').textContent = count(FILTERS.andamento);
-    $('statAguardando').textContent = count(FILTERS.aguardando);
-    $('statResolvido').textContent = count(FILTERS.resolvido);
-    $('statCancelado').textContent = count(FILTERS.cancelado);
+    $('statInProgress').textContent = count(FILTERS.andamento);
+    $('statWaiting').textContent = count(FILTERS.aguardando);
+    $('statResolved').textContent = count(FILTERS.resolvido);
+    $('statCanceled').textContent = count(FILTERS.cancelado);
 
     const waiting = count(FILTERS.aguardando);
     $('waitingAlert').hidden = waiting === 0;
-    $('waitingText').textContent = `Você tem ${plural(waiting, 'chamado aguardando', 'chamados aguardando')} sua resposta. Responda para que o atendimento continue.`;
+    $('waitingText').textContent = `Você tem ${pluralize(waiting, 'chamado aguardando', 'chamados aguardando')} sua resposta. Responda para que o atendimento continue.`;
 
     filterButtons.forEach((filterButton) => {
       const active = filterButton.dataset.filter === filter;
@@ -296,7 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const visible = tickets
       .filter(FILTERS[filter])
-      .sort((a, b) => STATUS[a.status].order - STATUS[b.status].order || b.atualizadoEm.localeCompare(a.atualizadoEm));
+      .sort((a, b) => STATUS[a.status].order - STATUS[b.status].order || b.updated_at.localeCompare(a.updated_at));
 
     list.replaceChildren(...visible.map(renderCard));
     $('ticketEmpty').hidden = visible.length > 0;
@@ -310,13 +267,13 @@ document.addEventListener('DOMContentLoaded', () => {
   $('replyForm').addEventListener('submit', (event) => {
     event.preventDefault();
     const text = replyText.value.trim();
-    const invalid = text.length < 5;
+    const invalid = text.length < data.replyMinLength;
     replyText.classList.toggle('is-invalid', invalid);
     if (invalid || !target) return;
     update(target, text, 'andamento');
     replyModal.hide();
     render();
-    showToast(`Resposta enviada ao ${DEPTS[target.departamento]?.label || 'departamento'} (simulação).`);
+    showToast(`Resposta enviada ao setor ${departmentLabel(target)} (simulação).`);
   });
 
   $('cancelConfirm').addEventListener('click', () => {

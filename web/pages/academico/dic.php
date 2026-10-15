@@ -1,19 +1,16 @@
 <?php
 require_once __DIR__ . '/../../components/layout.php';
 
-$curriculumComponents = [
-    ['name' => 'Disciplinas obrigatórias', 'completed' => 1680, 'total' => 2520],
-    ['name' => 'Atividades complementares', 'completed' => approvedComplementaryHours(), 'total' => REQUIRED_COMPLEMENTARY_HOURS],
-    ['name' => 'Projeto Integrador', 'completed' => 120, 'total' => 200],
-    ['name' => 'Disciplinas optativas', 'completed' => 40, 'total' => 200],
-];
+$complementaryActivitiesComponent = ['name' => 'Atividades complementares', 'completed' => approvedComplementaryHours(), 'total' => REQUIRED_COMPLEMENTARY_HOURS];
+$mandatoryDisciplines = curriculumComponents()[0];
+$otherComponents = array_slice(curriculumComponents(), 1);
+$curriculumComponents = [$mandatoryDisciplines, $complementaryActivitiesComponent, ...$otherComponents];
 
 $completedHours = array_sum(array_column($curriculumComponents, 'completed'));
 $totalHours = array_sum(array_column($curriculumComponents, 'total'));
 $progress = percentage($completedHours, $totalHours);
 
-renderPageStart('DIC — Documentação de Integralização Curricular');
-renderAcademicHeader('DIC — Documentação de Integralização Curricular');
+renderAcademicPageStart('DIC — Documentação de Integralização Curricular');
 ?>
       <section class="academic-page-grid">
         <section class="grid-card grid-card--wide">

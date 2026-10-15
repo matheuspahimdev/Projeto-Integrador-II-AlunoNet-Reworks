@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/autenticacao.php';
 
 const REQUEST_STATUSES = [
     'concluido' => ['label' => 'Concluído', 'class' => 'text-bg-success'],
@@ -6,9 +7,22 @@ const REQUEST_STATUSES = [
     'indeferido' => ['label' => 'Indeferido', 'class' => 'text-bg-danger'],
 ];
 
+const REQUEST_STATUS_DONE = 'concluido';
+
 const STUDENT_REQUESTS = [
-    ['protocolo' => '#REQ-2026-9012', 'data' => '12/08/2026', 'tipo' => 'Declaração de Matrícula', 'status' => 'concluido'],
-    ['protocolo' => '#REQ-2026-8834', 'data' => '05/08/2026', 'tipo' => 'Passe Escolar AVOA', 'status' => 'analise'],
+    '274769' => [
+        ['protocol' => '#REQ-2026-9012', 'date' => '2026-08-12', 'type' => 'Declaração de Matrícula', 'status' => 'concluido'],
+        ['protocol' => '#REQ-2026-8834', 'date' => '2026-08-05', 'type' => 'Passe Escolar AVOA', 'status' => 'analise'],
+    ],
+    '281450' => [
+        ['protocol' => '#REQ-2026-9230', 'date' => '2026-10-08', 'type' => 'Revisão de Prova', 'status' => 'analise'],
+        ['protocol' => '#REQ-2026-9105', 'date' => '2026-09-02', 'type' => 'Histórico Escolar', 'status' => 'concluido'],
+    ],
+    '268112' => [
+        ['protocol' => '#REQ-2026-9301', 'date' => '2026-10-11', 'type' => 'Negociação de Débitos', 'status' => 'analise'],
+        ['protocol' => '#REQ-2026-9188', 'date' => '2026-09-25', 'type' => 'Declaração de Estágio', 'status' => 'concluido'],
+        ['protocol' => '#REQ-2026-8710', 'date' => '2026-07-28', 'type' => 'Trancamento de Disciplina', 'status' => 'indeferido'],
+    ],
 ];
 
 const QUICK_REQUESTS = [
@@ -42,5 +56,10 @@ const OTHER_REQUESTS = [
 
 function requestStatus(array $request): array
 {
-    return REQUEST_STATUSES[$request['status']];
+    return REQUEST_STATUSES[$request['status']] ?? ['label' => $request['status'], 'class' => 'text-bg-secondary'];
+}
+
+function studentRequests(): array
+{
+    return STUDENT_REQUESTS[currentStudent()['registration']] ?? [];
 }

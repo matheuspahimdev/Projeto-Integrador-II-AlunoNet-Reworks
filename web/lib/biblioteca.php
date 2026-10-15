@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/tempo.php';
+require_once __DIR__ . '/autenticacao.php';
 
 const BOOK_CATEGORIES = [
     'computacao' => ['label' => 'Computação', 'icon' => 'bi-laptop'],
@@ -11,70 +11,85 @@ const BOOK_CATEGORIES = [
 
 const PICKUP_TIMES = ['08:00', '09:00', '10:00', '11:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00'];
 
-function libraryBook(int $id, string $title, string $author, string $edition, int $year, string $publisher, string $category, int $copies, int $available, string $shelf, ?string $expectedReturn = null): array
+const LOAN_DAYS = 7;
+
+const MAX_PICKUP_DAYS_AHEAD = 14;
+
+const LOAN_STATUS_PENDING = 'analise';
+
+const LOAN_STATUS_PICKED_UP = 'retirado';
+
+const LIBRARY_BOOKS = [
+    ['id' => 1, 'title' => 'Engenharia de Software', 'author' => 'Ian Sommerville', 'edition' => '10ª edição', 'year' => 2018, 'publisher' => 'Pearson', 'category' => 'computacao', 'copies' => 5, 'available' => 4, 'shelf' => 'C-04', 'expected_return' => null],
+    ['id' => 2, 'title' => 'Clean Code', 'author' => 'Robert C. Martin', 'edition' => '', 'year' => 2009, 'publisher' => 'Alta Books', 'category' => 'computacao', 'copies' => 3, 'available' => 2, 'shelf' => 'C-05', 'expected_return' => null],
+    ['id' => 3, 'title' => 'Introdução a Sistemas de Banco de Dados', 'author' => 'C. J. Date', 'edition' => '8ª edição', 'year' => 2004, 'publisher' => 'Elsevier', 'category' => 'computacao', 'copies' => 2, 'available' => 0, 'shelf' => 'C-06', 'expected_return' => '2026-10-16'],
+    ['id' => 4, 'title' => 'Sistemas de Banco de Dados', 'author' => 'Ramez Elmasri e Shamkant Navathe', 'edition' => '7ª edição', 'year' => 2018, 'publisher' => 'Pearson', 'category' => 'computacao', 'copies' => 4, 'available' => 3, 'shelf' => 'C-06', 'expected_return' => null],
+    ['id' => 5, 'title' => 'Algoritmos: Teoria e Prática', 'author' => 'Thomas H. Cormen et al.', 'edition' => '3ª edição', 'year' => 2012, 'publisher' => 'Elsevier', 'category' => 'computacao', 'copies' => 3, 'available' => 1, 'shelf' => 'C-02', 'expected_return' => null],
+    ['id' => 6, 'title' => 'Padrões de Projeto', 'author' => 'Erich Gamma et al.', 'edition' => '', 'year' => 2000, 'publisher' => 'Bookman', 'category' => 'computacao', 'copies' => 1, 'available' => 0, 'shelf' => 'C-05', 'expected_return' => '2026-10-20'],
+    ['id' => 7, 'title' => 'UML Essencial', 'author' => 'Martin Fowler', 'edition' => '3ª edição', 'year' => 2005, 'publisher' => 'Bookman', 'category' => 'computacao', 'copies' => 2, 'available' => 2, 'shelf' => 'C-04', 'expected_return' => null],
+    ['id' => 8, 'title' => 'JavaScript: O Guia Definitivo', 'author' => 'David Flanagan', 'edition' => '6ª edição', 'year' => 2013, 'publisher' => 'Bookman', 'category' => 'computacao', 'copies' => 2, 'available' => 1, 'shelf' => 'C-07', 'expected_return' => null],
+    ['id' => 9, 'title' => 'Redes de Computadores e a Internet', 'author' => 'James F. Kurose e Keith W. Ross', 'edition' => '6ª edição', 'year' => 2013, 'publisher' => 'Pearson', 'category' => 'computacao', 'copies' => 3, 'available' => 2, 'shelf' => 'C-03', 'expected_return' => null],
+    ['id' => 10, 'title' => 'Manual de Direito Civil', 'author' => 'Flávio Tartuce', 'edition' => '', 'year' => 2022, 'publisher' => 'Forense', 'category' => 'direito', 'copies' => 3, 'available' => 2, 'shelf' => 'D-01', 'expected_return' => null],
+    ['id' => 11, 'title' => 'Curso de Direito Constitucional', 'author' => 'Gilmar Mendes e Paulo Gonet Branco', 'edition' => '17ª edição', 'year' => 2022, 'publisher' => 'Saraiva', 'category' => 'direito', 'copies' => 4, 'available' => 3, 'shelf' => 'D-02', 'expected_return' => null],
+    ['id' => 12, 'title' => 'Cálculo, Volume 1', 'author' => 'James Stewart', 'edition' => '7ª edição', 'year' => 2013, 'publisher' => 'Cengage', 'category' => 'matematica', 'copies' => 6, 'available' => 2, 'shelf' => 'M-03', 'expected_return' => null],
+    ['id' => 13, 'title' => 'Dom Casmurro', 'author' => 'Machado de Assis', 'edition' => '', 'year' => 2016, 'publisher' => 'Editora Ática', 'category' => 'literatura', 'copies' => 3, 'available' => 3, 'shelf' => 'L-08', 'expected_return' => null],
+    ['id' => 14, 'title' => 'O Cortiço', 'author' => 'Aluísio Azevedo', 'edition' => '', 'year' => 2016, 'publisher' => 'Editora Ática', 'category' => 'literatura', 'copies' => 2, 'available' => 0, 'shelf' => 'L-02', 'expected_return' => '2026-10-23'],
+    ['id' => 15, 'title' => 'Metodologia do Trabalho Científico', 'author' => 'Antônio Joaquim Severino', 'edition' => '24ª edição', 'year' => 2016, 'publisher' => 'Cortez', 'category' => 'metodologia', 'copies' => 4, 'available' => 4, 'shelf' => 'G-01', 'expected_return' => null],
+    ['id' => 16, 'title' => 'Clean Architecture', 'author' => 'Robert C. Martin', 'edition' => '', 'year' => 2017, 'publisher' => 'Alta Books', 'category' => 'computacao', 'copies' => 2, 'available' => 1, 'shelf' => 'C-05', 'expected_return' => null],
+];
+
+const STUDENT_LOANS = [
+    '274769' => [
+        ['id' => 'EMP-2026-0412', 'book_id' => 2, 'pickup_date' => '2026-10-11', 'pickup_time' => '14:00', 'due_date' => '2026-10-18', 'requested_at' => '2026-10-09', 'status' => LOAN_STATUS_PICKED_UP, 'renewals' => 0, 'returned_at' => null],
+        ['id' => 'EMP-2026-0398', 'book_id' => 3, 'pickup_date' => '2026-10-02', 'pickup_time' => '10:00', 'due_date' => '2026-10-09', 'requested_at' => '2026-09-30', 'status' => LOAN_STATUS_PICKED_UP, 'renewals' => 0, 'returned_at' => null],
+        ['id' => 'EMP-2026-0431', 'book_id' => 5, 'pickup_date' => '2026-10-16', 'pickup_time' => '15:00', 'due_date' => '2026-10-23', 'requested_at' => '2026-10-14', 'status' => LOAN_STATUS_PENDING, 'renewals' => 0, 'returned_at' => null],
+        ['id' => 'EMP-2026-0301', 'book_id' => 13, 'pickup_date' => '2026-09-14', 'pickup_time' => '09:00', 'due_date' => '2026-09-21', 'requested_at' => '2026-09-12', 'status' => LOAN_STATUS_PICKED_UP, 'renewals' => 0, 'returned_at' => '2026-09-20'],
+        ['id' => 'EMP-2026-0245', 'book_id' => 15, 'pickup_date' => '2026-08-15', 'pickup_time' => '16:00', 'due_date' => '2026-08-22', 'requested_at' => '2026-08-13', 'status' => LOAN_STATUS_PICKED_UP, 'renewals' => 1, 'returned_at' => '2026-08-20'],
+    ],
+    '281450' => [
+        ['id' => 'EMP-2026-0420', 'book_id' => 4, 'pickup_date' => '2026-10-12', 'pickup_time' => '09:00', 'due_date' => '2026-10-19', 'requested_at' => '2026-10-10', 'status' => LOAN_STATUS_PICKED_UP, 'renewals' => 0, 'returned_at' => null],
+        ['id' => 'EMP-2026-0415', 'book_id' => 9, 'pickup_date' => '2026-10-08', 'pickup_time' => '10:00', 'due_date' => '2026-10-15', 'requested_at' => '2026-10-06', 'status' => LOAN_STATUS_PICKED_UP, 'renewals' => 1, 'returned_at' => null],
+        ['id' => 'EMP-2026-0287', 'book_id' => 8, 'pickup_date' => '2026-09-04', 'pickup_time' => '08:00', 'due_date' => '2026-09-11', 'requested_at' => '2026-09-02', 'status' => LOAN_STATUS_PICKED_UP, 'renewals' => 0, 'returned_at' => '2026-09-10'],
+    ],
+    '268112' => [
+        ['id' => 'EMP-2026-0402', 'book_id' => 15, 'pickup_date' => '2026-10-04', 'pickup_time' => '19:00', 'due_date' => '2026-10-11', 'requested_at' => '2026-10-03', 'status' => LOAN_STATUS_PICKED_UP, 'renewals' => 0, 'returned_at' => null],
+        ['id' => 'EMP-2026-0433', 'book_id' => 11, 'pickup_date' => '2026-10-15', 'pickup_time' => '18:00', 'due_date' => '2026-10-22', 'requested_at' => '2026-10-14', 'status' => LOAN_STATUS_PENDING, 'renewals' => 0, 'returned_at' => null],
+    ],
+];
+
+function bookRegistryCode(array $book): string
 {
-    return [
-        'id' => $id, 'titulo' => $title, 'autor' => $author, 'edicao' => $edition, 'ano' => $year, 'editora' => $publisher,
-        'categoria' => $category, 'total' => $copies, 'disponiveis' => $available, 'estante' => $shelf,
-        'previsao' => $expectedReturn, 'tombo' => sprintf('BIB-%06d', 1000 + $id * 7),
-    ];
+    return sprintf('BIB-%06d', 1000 + $book['id'] * 7);
 }
 
-function libraryCollection(): array
+function libraryBook(int $bookId): array
 {
-    return [
-        libraryBook(1, 'Engenharia de Software', 'Ian Sommerville', '10ª edição', 2018, 'Pearson', 'computacao', 5, 4, 'C-04'),
-        libraryBook(2, 'Clean Code', 'Robert C. Martin', '', 2009, 'Alta Books', 'computacao', 3, 2, 'C-05'),
-        libraryBook(3, 'Introdução a Sistemas de Banco de Dados', 'C. J. Date', '8ª edição', 2004, 'Elsevier', 'computacao', 2, 0, 'C-06', dateFromToday(2)),
-        libraryBook(4, 'Sistemas de Banco de Dados', 'Ramez Elmasri e Shamkant Navathe', '7ª edição', 2018, 'Pearson', 'computacao', 4, 3, 'C-06'),
-        libraryBook(5, 'Algoritmos: Teoria e Prática', 'Thomas H. Cormen et al.', '3ª edição', 2012, 'Elsevier', 'computacao', 3, 1, 'C-02'),
-        libraryBook(6, 'Padrões de Projeto', 'Erich Gamma et al.', '', 2000, 'Bookman', 'computacao', 1, 0, 'C-05', dateFromToday(6)),
-        libraryBook(7, 'UML Essencial', 'Martin Fowler', '3ª edição', 2005, 'Bookman', 'computacao', 2, 2, 'C-04'),
-        libraryBook(8, 'JavaScript: O Guia Definitivo', 'David Flanagan', '6ª edição', 2013, 'Bookman', 'computacao', 2, 1, 'C-07'),
-        libraryBook(9, 'Redes de Computadores e a Internet', 'James F. Kurose e Keith W. Ross', '6ª edição', 2013, 'Pearson', 'computacao', 3, 2, 'C-03'),
-        libraryBook(10, 'Manual de Direito Civil', 'Flávio Tartuce', '', 2022, 'Forense', 'direito', 3, 2, 'D-01'),
-        libraryBook(11, 'Curso de Direito Constitucional', 'Gilmar Mendes e Paulo Gonet Branco', '17ª edição', 2022, 'Saraiva', 'direito', 4, 3, 'D-02'),
-        libraryBook(12, 'Cálculo, Volume 1', 'James Stewart', '7ª edição', 2013, 'Cengage', 'matematica', 6, 2, 'M-03'),
-        libraryBook(13, 'Dom Casmurro', 'Machado de Assis', '', 2016, 'Editora Ática', 'literatura', 3, 3, 'L-08'),
-        libraryBook(14, 'O Cortiço', 'Aluísio Azevedo', '', 2016, 'Editora Ática', 'literatura', 2, 0, 'L-02', dateFromToday(9)),
-        libraryBook(15, 'Metodologia do Trabalho Científico', 'Antônio Joaquim Severino', '24ª edição', 2016, 'Cortez', 'metodologia', 4, 4, 'G-01'),
-    ];
+    return array_values(array_filter(LIBRARY_BOOKS, static fn (array $book): bool => $book['id'] === $bookId))[0];
 }
 
 function libraryCollectionByTitle(): array
 {
-    $books = libraryCollection();
-    usort($books, static fn (array $a, array $b): int => strcoll($a['titulo'], $b['titulo']));
+    $books = LIBRARY_BOOKS;
+    usort($books, static fn (array $a, array $b): int => strcoll($a['title'], $b['title']));
     return $books;
 }
 
+// Empréstimos do aluno logado com título, autor e área do livro.
 function studentLoans(): array
 {
-    return [
-        [
-            'id' => 'EMP-2026-0412', 'bookId' => 2, 'titulo' => 'Clean Code', 'autor' => 'Robert C. Martin', 'categoria' => 'computacao',
-            'retirada' => dateFromToday(-3), 'horario' => '14:00', 'devolucao' => dateFromToday(4), 'solicitadoEm' => dateFromToday(-5),
-            'status' => 'retirado', 'renovacoes' => 0, 'devolvidoEm' => null,
-        ],
-        [
-            'id' => 'EMP-2026-0398', 'bookId' => 3, 'titulo' => 'Introdução a Sistemas de Banco de Dados', 'autor' => 'C. J. Date', 'categoria' => 'computacao',
-            'retirada' => dateFromToday(-12), 'horario' => '10:00', 'devolucao' => dateFromToday(-5), 'solicitadoEm' => dateFromToday(-14),
-            'status' => 'retirado', 'renovacoes' => 0, 'devolvidoEm' => null,
-        ],
-        [
-            'id' => 'EMP-2026-0431', 'bookId' => 5, 'titulo' => 'Algoritmos: Teoria e Prática', 'autor' => 'Thomas H. Cormen et al.', 'categoria' => 'computacao',
-            'retirada' => dateFromToday(2), 'horario' => '15:00', 'devolucao' => dateFromToday(9), 'solicitadoEm' => dateFromToday(0),
-            'status' => 'analise', 'renovacoes' => 0, 'devolvidoEm' => null,
-        ],
-        [
-            'id' => 'EMP-2026-0301', 'bookId' => 13, 'titulo' => 'Dom Casmurro', 'autor' => 'Machado de Assis', 'categoria' => 'literatura',
-            'retirada' => dateFromToday(-30), 'horario' => '09:00', 'devolucao' => dateFromToday(-23), 'solicitadoEm' => dateFromToday(-32),
-            'status' => 'retirado', 'renovacoes' => 0, 'devolvidoEm' => dateFromToday(-24),
-        ],
-        [
-            'id' => 'EMP-2026-0245', 'bookId' => 15, 'titulo' => 'Metodologia do Trabalho Científico', 'autor' => 'Antônio Joaquim Severino', 'categoria' => 'metodologia',
-            'retirada' => dateFromToday(-60), 'horario' => '16:00', 'devolucao' => dateFromToday(-53), 'solicitadoEm' => dateFromToday(-62),
-            'status' => 'retirado', 'renovacoes' => 1, 'devolvidoEm' => dateFromToday(-55),
-        ],
-    ];
+    return array_map(static function (array $loan): array {
+        $book = libraryBook($loan['book_id']);
+        return $loan + ['title' => $book['title'], 'author' => $book['author'], 'category' => $book['category']];
+    }, STUDENT_LOANS[currentStudent()['registration']] ?? []);
+}
+
+function activeLoanStatus(int $bookId): ?string
+{
+    foreach (studentLoans() as $loan) {
+        if ($loan['book_id'] === $bookId && $loan['returned_at'] === null) {
+            return $loan['status'];
+        }
+    }
+
+    return null;
 }

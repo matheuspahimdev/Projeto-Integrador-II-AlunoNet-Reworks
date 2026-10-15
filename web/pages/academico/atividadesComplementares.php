@@ -2,12 +2,11 @@
 require_once __DIR__ . '/../../components/layout.php';
 
 $completedHours = approvedComplementaryHours();
-$pendingHours = complementaryHoursWithStatus('Em análise');
+$pendingHours = complementaryHoursWithStatus(ACTIVITY_UNDER_REVIEW);
 $remainingHours = max(0, REQUIRED_COMPLEMENTARY_HOURS - $completedHours);
 $progress = percentage($completedHours, REQUIRED_COMPLEMENTARY_HOURS);
 
-renderPageStart('Atividades Complementares');
-renderAcademicHeader('Atividades Complementares');
+renderAcademicPageStart('Atividades Complementares');
 ?>
       <section class="academic-page-grid">
         <section class="grid-card">
@@ -27,7 +26,7 @@ renderAcademicHeader('Atividades Complementares');
           <?php renderCardHead('bi-journal-check', 'Atividades registradas', 'Acompanhe o resultado da análise de cada comprovante.'); ?>
           <div class="grid-card__body">
             <div class="academic-list">
-              <?php foreach (COMPLEMENTARY_ACTIVITIES as $activity): ?>
+              <?php foreach (complementaryActivities() as $activity): ?>
                 <article class="academic-list__item">
                   <div>
                     <strong><?= e($activity['name']) ?></strong>

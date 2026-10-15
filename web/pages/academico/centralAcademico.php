@@ -22,8 +22,8 @@ renderPageHeader('Central Acadêmica', 'Acesse os principais recursos acadêmico
       <section class="academic-hero-card">
         <div class="academic-hero-card__icon"><i class="bi bi-mortarboard-fill"></i></div>
         <div>
-          <h2><?= e(STUDENT['course']) ?></h2>
-          <p><?= e(STUDENT['semester']) ?> • <?= e(STUDENT['term']) ?> • Período <?= e(STUDENT['period']) ?></p>
+          <h2><?= e(currentStudent()['course']) ?></h2>
+          <p><?= e(currentStudent()['semester']) ?> • <?= e(currentStudent()['term']) ?> • Período <?= e(currentStudent()['period']) ?></p>
         </div>
         <div class="academic-hero-card__status"><span class="status-dot"></span> Matrícula ativa</div>
       </section>

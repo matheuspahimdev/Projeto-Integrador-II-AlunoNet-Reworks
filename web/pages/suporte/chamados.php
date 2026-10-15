@@ -2,25 +2,28 @@
 require_once __DIR__ . '/../../components/layout.php';
 require_once __DIR__ . '/../../lib/suporte.php';
 
-$departamentos = SUPPORT_DEPARTMENTS;
-$tipos = SUPPORT_REQUEST_TYPES;
-$dadosJson = jsonForScript($departamentos);
+$ticketFormData = jsonForScript([
+    'departments' => SUPPORT_DEPARTMENTS,
+    'rules' => TICKET_RULES,
+    'openStatus' => TICKET_STATUS_OPEN,
+    'ticketIds' => array_column(supportTickets(), 'id'),
+]);
 renderPageStart('Abrir Chamado');
 ?>
 
 <?php renderPageHeader('Abrir Chamado', 'Escolha o departamento e o tipo de solicitação. Acompanhe o andamento em Meus chamados.', static fn () => renderActionLink('meusChamados.php', 'bi-chat-left-text', 'Meus chamados')); ?>
 
     <form id="ticketForm" novalidate>
-      <section class="ticket-step" id="stepDept">
+      <section class="ticket-step" id="stepDepartment">
         <h2 class="ticket-step__title"><span class="ticket-step__num">1</span>Escolha o departamento</h2>
         <div class="choice-grid" role="radiogroup" aria-label="Departamento">
-          <?php foreach ($departamentos as $slug => $dep): ?>
+          <?php foreach (SUPPORT_DEPARTMENTS as $slug => $department): ?>
             <label class="choice-card">
-              <input type="radio" name="departamento" value="<?= e($slug) ?>">
-              <span class="choice-card__icon"><i class="bi <?= e($dep['icon']) ?>"></i></span>
+              <input type="radio" name="department" value="<?= e($slug) ?>">
+              <span class="choice-card__icon"><i class="bi <?= e($department['icon']) ?>"></i></span>
               <span>
-                <strong><?= e($dep['label']) ?></strong>
-                <span class="choice-card__desc"><?= e($dep['desc']) ?></span>
+                <strong><?= e($department['label']) ?></strong>
+                <span class="choice-card__desc"><?= e($department['description']) ?></span>
               </span>
             </label>
           <?php endforeach; ?>
@@ -30,17 +33,17 @@ renderPageStart('Abrir Chamado');
 
       <section class="ticket-step" id="stepType" hidden>
         <h2 class="ticket-step__title"><span class="ticket-step__num">2</span><span id="stepTypeTitle">Qual é a sua solicitação?</span></h2>
-        <p class="text-secondary small" id="deptHint"></p>
-        <?php foreach ($tipos as $slug => $lista): ?>
-          <div class="choice-grid choice-grid--compact" data-dept-panel="<?= e($slug) ?>" role="radiogroup" aria-label="Tipo de solicitação" hidden>
-            <?php foreach ($lista as $tipo): ?>
+        <p class="text-secondary small" id="departmentHint"></p>
+        <?php foreach (SUPPORT_REQUEST_TYPES as $slug => $requestTypes): ?>
+          <div class="choice-grid choice-grid--compact" data-department-panel="<?= e($slug) ?>" role="radiogroup" aria-label="Tipo de solicitação" hidden>
+            <?php foreach ($requestTypes as $requestType): ?>
               <label class="choice-card">
-                <input type="radio" name="tipo" value="<?= e($tipo) ?>">
-                <span><strong><?= e($tipo) ?></strong></span>
+                <input type="radio" name="type" value="<?= e($requestType) ?>">
+                <span><strong><?= e($requestType) ?></strong></span>
               </label>
             <?php endforeach; ?>
             <label class="choice-card">
-              <input type="radio" name="tipo" value="__outros">
+              <input type="radio" name="type" value="__outros">
               <span class="choice-card__icon"><i class="bi bi-pencil-square"></i></span>
               <span>
                 <strong>Outros</strong>
@@ -64,25 +67,25 @@ renderPageStart('Abrir Chamado');
 
             <div class="mb-3">
               <label class="form-label" for="ticketDescription" id="ticketDescriptionLabel">Descrição</label>
-              <textarea class="form-control" id="ticketDescription" rows="5" maxlength="1500"></textarea>
+              <textarea class="form-control" id="ticketDescription" rows="5" maxlength="<?= TICKET_RULES['description_max_length'] ?>"></textarea>
               <div class="invalid-feedback" id="ticketDescriptionFeedback"></div>
-              <small class="d-block text-end text-secondary mt-1" id="ticketCount">0/1500</small>
+              <small class="d-block text-end text-secondary mt-1" id="ticketCount">0/<?= TICKET_RULES['description_max_length'] ?></small>
             </div>
 
             <div class="row g-3">
               <div class="col-12 col-md-6">
                 <label class="form-label" for="ticketFile">Anexo (opcional)</label>
                 <input class="form-control" type="file" id="ticketFile" accept=".pdf,.jpg,.jpeg,.png">
-                <div class="invalid-feedback">O anexo deve ter até 5 MB.</div>
+                <div class="invalid-feedback">O anexo deve ter até <?= TICKET_RULES['attachment_max_mb'] ?> MB.</div>
               </div>
               <div class="col-12 col-md-6">
                 <span class="form-label d-block">Como prefere ser contatado?</span>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="contato" id="contactPortal" value="Portal" checked>
+                  <input class="form-check-input" type="radio" name="contact" id="contactPortal" value="Portal" checked>
                   <label class="form-check-label" for="contactPortal">Pelo portal</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="contato" id="contactEmail" value="E-mail">
+                  <input class="form-check-input" type="radio" name="contact" id="contactEmail" value="E-mail">
                   <label class="form-check-label" for="contactEmail">Por e-mail</label>
                 </div>
               </div>
@@ -98,176 +101,149 @@ renderPageStart('Abrir Chamado');
     </form>
 
 
-<div class="toast-container position-fixed bottom-0 end-0 p-3">
-  <div id="ticketToast" class="toast align-items-center text-bg-success border-0" role="status" aria-live="polite" aria-atomic="true">
-    <div class="d-flex">
-      <div class="toast-body" id="ticketToastBody"></div>
-      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
-    </div>
-  </div>
-</div>
-
-<script id="deptData" type="application/json"><?= $dadosJson ?></script>
+<script id="ticketFormData" type="application/json"><?= $ticketFormData ?></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  const STORAGE_KEY = 'alunonet.chamados';
-  const MAX_FILE_SIZE = 5 * 1024 * 1024;
+  const STORAGE_KEY = <?= jsonForScript(studentStorageKey('tickets')) ?>;
   const OTHERS = '__outros';
-  const departments = JSON.parse(document.getElementById('deptData').textContent);
+  const data = readPageData('ticketFormData');
+  const { departments, rules } = data;
 
   const $ = (id) => document.getElementById(id);
   const form = $('ticketForm');
-  const stepDept = $('stepDept');
-  const stepType = $('stepType');
-  const stepDetails = $('stepDetails');
+  const departmentStep = $('stepDepartment');
+  const typeStep = $('stepType');
+  const detailsStep = $('stepDetails');
   const subject = $('ticketSubject');
   const description = $('ticketDescription');
   const file = $('ticketFile');
-  const toastEl = $('ticketToast');
-  const toast = bootstrap.Toast.getOrCreateInstance(toastEl, { delay: 6000 });
-  const deptRadios = [...form.querySelectorAll('input[name="departamento"]')];
-  const typeRadios = [...form.querySelectorAll('input[name="tipo"]')];
-  const panels = [...form.querySelectorAll('[data-dept-panel]')];
+  const departmentRadios = [...form.querySelectorAll('input[name="department"]')];
+  const typeRadios = [...form.querySelectorAll('input[name="type"]')];
+  const panels = [...form.querySelectorAll('[data-department-panel]')];
 
   const checked = (radios) => radios.find((radio) => radio.checked);
-  const toISO = (date) => date.toLocaleDateString('sv-SE');
-  const nowISO = () => {
-    const date = new Date();
-    return `${toISO(date)}T${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
-  };
-
-  const loadTickets = () => {
-    try {
-      const value = JSON.parse(localStorage.getItem(STORAGE_KEY));
-      return Array.isArray(value) ? value : [];
-    } catch (error) { return []; }
-  };
-  const saveTickets = (list) => {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); return true; } catch (error) { return false; }
-  };
-
-  const showToast = (message, ok = true, linkHref = '') => {
-    toastEl.classList.toggle('text-bg-success', ok);
-    toastEl.classList.toggle('text-bg-danger', !ok);
-    const body = $('ticketToastBody');
-    body.replaceChildren(document.createTextNode(message));
-    if (linkHref) {
-      const link = document.createElement('a');
-      link.href = linkHref;
-      link.className = 'text-white fw-bold ms-1';
-      link.textContent = 'Acompanhar chamado';
-      body.append(link);
-    }
-    toast.show();
-  };
-
-  const minLength = () => (checked(typeRadios)?.value === OTHERS ? 20 : 10);
+  const isOthersSelected = () => checked(typeRadios)?.value === OTHERS;
+  const descriptionMinLength = () => (isOthersSelected() ? rules.other_description_min_length : rules.description_min_length);
+  const updateCharacterCount = () => { $('ticketCount').textContent = `${description.value.length}/${rules.description_max_length}`; };
 
   const setDescriptionError = (message) => {
     $('ticketDescriptionFeedback').textContent = message;
     description.classList.toggle('is-invalid', Boolean(message));
   };
 
-  const resetAll = () => {
+  const resetForm = () => {
     form.reset();
-    [stepType, stepDetails].forEach((step) => { step.hidden = true; });
-    [stepDept, stepType].forEach((step) => step.classList.remove('is-invalid'));
+    [typeStep, detailsStep].forEach((step) => { step.hidden = true; });
+    [departmentStep, typeStep].forEach((step) => step.classList.remove('is-invalid'));
     form.querySelectorAll('.is-invalid').forEach((field) => field.classList.remove('is-invalid'));
     setDescriptionError('');
-    $('ticketCount').textContent = '0/1500';
+    updateCharacterCount();
   };
 
-  deptRadios.forEach((radio) => {
-    radio.addEventListener('change', () => {
-      const dept = departments[radio.value];
-      stepDept.classList.remove('is-invalid');
-      typeRadios.forEach((type) => { type.checked = false; });
-      panels.forEach((panel) => { panel.hidden = panel.dataset.deptPanel !== radio.value; });
-      $('stepTypeTitle').textContent = `Qual é a sua solicitação para ${dept.label}?`;
-      $('deptHint').textContent = `Prazo médio de resposta: ${dept.prazo}.`;
-      stepType.hidden = false;
-      stepType.classList.remove('is-invalid');
-      stepDetails.hidden = true;
-    });
-  });
+  const showTypeStep = (departmentSlug) => {
+    const department = departments[departmentSlug];
+    departmentStep.classList.remove('is-invalid');
+    typeRadios.forEach((type) => { type.checked = false; });
+    panels.forEach((panel) => { panel.hidden = panel.dataset.departmentPanel !== departmentSlug; });
+    $('stepTypeTitle').textContent = `Qual é a sua solicitação para ${department.label}?`;
+    $('departmentHint').textContent = `Prazo médio de resposta: ${department.response_time}.`;
+    typeStep.hidden = false;
+    typeStep.classList.remove('is-invalid');
+    detailsStep.hidden = true;
+  };
 
-  typeRadios.forEach((radio) => {
-    radio.addEventListener('change', () => {
-      const dept = departments[checked(deptRadios).value];
-      const others = radio.value === OTHERS;
-      stepType.classList.remove('is-invalid');
-      subject.value = others ? '' : radio.value;
-      subject.placeholder = others ? 'Resuma sua solicitação em poucas palavras' : '';
-      description.placeholder = others ? 'Explique o que você precisa com o máximo de detalhes.' : 'Conte o que aconteceu e o que você espera como solução.';
-      $('ticketDescriptionLabel').textContent = others ? 'Descreva sua solicitação' : 'Descrição';
-      $('ticketSla').textContent = `Departamento: ${dept.label} • Prazo médio de resposta: ${dept.prazo}.`;
-      subject.classList.remove('is-invalid');
-      setDescriptionError('');
-      stepDetails.hidden = false;
-      (others ? subject : description).focus({ preventScroll: true });
-      stepDetails.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    });
-  });
+  const showDetailsStep = (type) => {
+    const department = departments[checked(departmentRadios).value];
+    const others = type === OTHERS;
+    typeStep.classList.remove('is-invalid');
+    subject.value = others ? '' : type;
+    subject.placeholder = others ? 'Resuma sua solicitação em poucas palavras' : '';
+    description.placeholder = others ? 'Explique o que você precisa com o máximo de detalhes.' : 'Conte o que aconteceu e o que você espera como solução.';
+    $('ticketDescriptionLabel').textContent = others ? 'Descreva sua solicitação' : 'Descrição';
+    $('ticketSla').textContent = `Departamento: ${department.label} • Prazo médio de resposta: ${department.response_time}.`;
+    subject.classList.remove('is-invalid');
+    setDescriptionError('');
+    detailsStep.hidden = false;
+    (others ? subject : description).focus({ preventScroll: true });
+    detailsStep.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  };
+
+  const areStepsValid = () => {
+    const department = checked(departmentRadios);
+    const type = checked(typeRadios);
+    departmentStep.classList.toggle('is-invalid', !department);
+    typeStep.classList.toggle('is-invalid', Boolean(department) && !type);
+    if (!department) departmentStep.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    else if (!type) typeStep.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return Boolean(department && type);
+  };
+
+  const areDetailsValid = () => {
+    const subjectText = subject.value.trim();
+    const attachment = file.files[0];
+    const subjectError = subjectText.length < rules.subject_min_length;
+    const descriptionError = description.value.trim().length < descriptionMinLength();
+    const fileError = Boolean(attachment) && attachment.size > rules.attachment_max_mb * 1024 * 1024;
+
+    $('ticketSubjectFeedback').textContent = subjectText ? `O assunto precisa ter pelo menos ${rules.subject_min_length} caracteres.` : 'Informe o assunto do chamado.';
+    subject.classList.toggle('is-invalid', subjectError);
+    setDescriptionError(descriptionError ? `Descreva com pelo menos ${descriptionMinLength()} caracteres.` : '');
+    file.classList.toggle('is-invalid', fileError);
+
+    const firstInvalid = [[subjectError, subject], [descriptionError, description], [fileError, file]].find(([hasError]) => hasError);
+    firstInvalid?.[1].focus();
+    return !firstInvalid;
+  };
+
+  const nextTicketId = (storedTickets) => {
+    const usedIds = [...data.ticketIds, ...storedTickets.map((ticket) => ticket.id)];
+    const next = Math.max(0, ...usedIds.map((id) => Number(String(id).split('-')[2]) || 0)) + 1;
+    return `CH-${portalToday().getFullYear()}-${String(next).padStart(4, '0')}`;
+  };
+
+  const ticketFromForm = (storedTickets) => {
+    const now = portalNowISO();
+    const type = checked(typeRadios).value;
+    return {
+      id: nextTicketId(storedTickets),
+      department: checked(departmentRadios).value,
+      type: type === OTHERS ? 'Outros' : type,
+      subject: subject.value.trim(),
+      description: description.value.trim(),
+      attachment: file.files[0]?.name ?? null,
+      contact: form.querySelector('input[name="contact"]:checked').value,
+      status: data.openStatus,
+      opened_at: now,
+      updated_at: now,
+      history: [{ at: now, author: 'Você', text: 'Chamado aberto.' }],
+    };
+  };
+
+  departmentRadios.forEach((radio) => radio.addEventListener('change', () => showTypeStep(radio.value)));
+  typeRadios.forEach((radio) => radio.addEventListener('change', () => showDetailsStep(radio.value)));
 
   description.addEventListener('input', () => {
-    $('ticketCount').textContent = `${description.value.length}/1500`;
-    if (description.classList.contains('is-invalid') && description.value.trim().length >= minLength()) setDescriptionError('');
+    updateCharacterCount();
+    if (description.classList.contains('is-invalid') && description.value.trim().length >= descriptionMinLength()) setDescriptionError('');
   });
-  subject.addEventListener('input', () => { if (subject.value.trim().length >= 5) subject.classList.remove('is-invalid'); });
+  subject.addEventListener('input', () => { if (subject.value.trim().length >= rules.subject_min_length) subject.classList.remove('is-invalid'); });
   file.addEventListener('change', () => file.classList.remove('is-invalid'));
 
   form.addEventListener('submit', (event) => {
     event.preventDefault();
+    if (!areStepsValid() || !areDetailsValid()) return;
 
-    const dept = checked(deptRadios);
-    const type = checked(typeRadios);
-    stepDept.classList.toggle('is-invalid', !dept);
-    stepType.classList.toggle('is-invalid', Boolean(dept) && !type);
-    if (!dept) { stepDept.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
-    if (!type) { stepType.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
-
-    const subjectText = subject.value.trim();
-    const descriptionText = description.value.trim();
-    const subjectError = subjectText.length < 5;
-    const descriptionError = descriptionText.length < minLength();
-    const attachment = file.files[0] || null;
-    const fileError = Boolean(attachment) && attachment.size > MAX_FILE_SIZE;
-
-    $('ticketSubjectFeedback').textContent = subjectText ? 'O assunto precisa ter pelo menos 5 caracteres.' : 'Informe o assunto do chamado.';
-    subject.classList.toggle('is-invalid', subjectError);
-    setDescriptionError(descriptionError ? `Descreva com pelo menos ${minLength()} caracteres.` : '');
-    file.classList.toggle('is-invalid', fileError);
-    if (subjectError) { subject.focus(); return; }
-    if (descriptionError) { description.focus(); return; }
-    if (fileError) { file.focus(); return; }
-
-    const tickets = loadTickets();
-    const next = Math.max(190, ...tickets.map((ticket) => (Number(String(ticket.id).split('-')[2]) || 0) + 1));
-    const now = nowISO();
-    const ticket = {
-      id: `CH-${new Date().getFullYear()}-${String(next).padStart(4, '0')}`,
-      departamento: dept.value,
-      tipo: type.value === OTHERS ? 'Outros' : type.value,
-      assunto: subjectText,
-      descricao: descriptionText,
-      anexo: attachment ? attachment.name : null,
-      contato: form.querySelector('input[name="contato"]:checked').value,
-      status: 'aberto',
-      abertoEm: now,
-      atualizadoEm: now,
-      historico: [{ em: now, autor: 'Você', texto: 'Chamado aberto.' }],
-    };
-
-    tickets.push(ticket);
-    if (!saveTickets(tickets)) {
-      showToast('Não foi possível registrar o chamado neste navegador.', false);
+    const storedTickets = readStoredList(STORAGE_KEY);
+    const ticket = ticketFromForm(storedTickets);
+    if (!storeJson(STORAGE_KEY, [...storedTickets, ticket])) {
+      showToast('Não foi possível registrar o chamado neste navegador.', { ok: false });
       return;
     }
 
-    resetAll();
+    resetForm();
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    showToast(`Chamado ${ticket.id} aberto para ${departments[ticket.departamento].label}.`, true, 'meusChamados.php');
+    showToast(`Chamado ${ticket.id} aberto para ${departments[ticket.department].label}.`, { link: { href: 'meusChamados.php', label: 'Acompanhar chamado' } });
   });
 });
 </script>

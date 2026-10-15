@@ -2,10 +2,7 @@
 require_once __DIR__ . '/../../components/layout.php';
 require_once __DIR__ . '/../../lib/avisos.php';
 
-$categorias = NOTICE_CATEGORIES;
-$prioridades = NOTICE_PRIORITIES;
-$avisos = noticesPinnedFirst();
-$naoLidos = unreadNoticesCount($avisos);
+$notices = noticesPinnedFirst();
 renderPageStart('Avisos');
 ?>
 
@@ -15,9 +12,9 @@ renderPageStart('Avisos');
       <div class="notice-toolbar">
         <div class="notice-filters" role="group" aria-label="Filtrar avisos">
           <button class="notice-filter active" type="button" data-filter="all">Todos</button>
-          <button class="notice-filter" type="button" data-filter="unread">Não lidos <span class="badge text-bg-primary" id="unreadCount"><?= $naoLidos ?></span></button>
-          <?php foreach ($categorias as $slug => $categoria): ?>
-            <button class="notice-filter" type="button" data-filter="<?= e($slug) ?>"><i class="bi <?= e($categoria['icon']) ?> me-1"></i><?= e($categoria['label']) ?></button>
+          <button class="notice-filter" type="button" data-filter="unread">Não lidos <span class="badge text-bg-primary" id="unreadCount"><?= unreadNoticesCount($notices) ?></span></button>
+          <?php foreach (NOTICE_CATEGORIES as $slug => $category): ?>
+            <button class="notice-filter" type="button" data-filter="<?= e($slug) ?>"><i class="bi <?= e($category['icon']) ?> me-1"></i><?= e($category['label']) ?></button>
           <?php endforeach; ?>
         </div>
         <div class="input-group notice-search">
@@ -27,51 +24,51 @@ renderPageStart('Avisos');
       </div>
 
       <div class="notice-feed" id="noticeFeed" aria-live="polite">
-        <?php foreach ($avisos as $aviso): ?>
+        <?php foreach ($notices as $notice): ?>
           <?php
-            $data = parseDateTime($aviso['data']);
-            $categoria = $categorias[$aviso['categoria']];
-            $prioridade = $prioridades[$aviso['prioridade']] ?? null;
-            $anexos = $aviso['anexos'] ?? [];
-            $link = $aviso['link'] ?? null;
-            $temMais = mb_strlen($aviso['texto']) > 170 || $anexos || $link;
-            $busca = mb_strtolower($aviso['titulo'] . ' ' . $aviso['texto'] . ' ' . $aviso['autor'] . ' ' . $categoria['label']);
-            $classes = 'notice-card notice-card--' . $aviso['prioridade'] . ($aviso['lido'] ? '' : ' is-unread');
+            $publishedAt = parseDateTime($notice['published_at']);
+            $category = NOTICE_CATEGORIES[$notice['category']];
+            $priority = NOTICE_PRIORITIES[$notice['priority']] ?? null;
+            $attachments = $notice['attachments'] ?? [];
+            $link = $notice['link'] ?? null;
+            $hasMore = mb_strlen($notice['text']) > NOTICE_PREVIEW_LENGTH || $attachments || $link;
+            $searchText = mb_strtolower($notice['title'] . ' ' . $notice['text'] . ' ' . $notice['author'] . ' ' . $category['label']);
+            $classes = 'notice-card notice-card--' . $notice['priority'] . ($notice['read'] ? '' : ' is-unread');
           ?>
           <article class="<?= e($classes) ?>"
-                   data-id="<?= (int) $aviso['id'] ?>"
-                   data-category="<?= e($aviso['categoria']) ?>"
-                   data-date="<?= e($data->format('Y-m-d\TH:i')) ?>"
-                   data-pinned="<?= $aviso['fixado'] ? 'true' : 'false' ?>"
-                   data-read="<?= $aviso['lido'] ? 'true' : 'false' ?>"
-                   data-search="<?= e($busca) ?>">
+                   data-id="<?= (int) $notice['id'] ?>"
+                   data-category="<?= e($notice['category']) ?>"
+                   data-date="<?= e($publishedAt->format('Y-m-d\TH:i')) ?>"
+                   data-pinned="<?= $notice['pinned'] ? 'true' : 'false' ?>"
+                   data-read="<?= $notice['read'] ? 'true' : 'false' ?>"
+                   data-search="<?= e($searchText) ?>">
             <header class="notice-card__head">
-              <span class="notice-card__avatar" aria-hidden="true"><i class="bi <?= e($categoria['icon']) ?>"></i></span>
+              <span class="notice-card__avatar" aria-hidden="true"><i class="bi <?= e($category['icon']) ?>"></i></span>
               <div class="notice-card__meta">
-                <strong><?= e($aviso['autor']) ?></strong>
-                <time datetime="<?= e($data->format('Y-m-d\TH:i')) ?>"><?= e(relativeDateLabel($data)) ?></time>
+                <strong><?= e($notice['author']) ?></strong>
+                <time datetime="<?= e($publishedAt->format('Y-m-d\TH:i')) ?>"><?= e(relativeDateLabel($publishedAt)) ?></time>
               </div>
               <div class="notice-card__tags">
                 <span class="notice-dot" title="Não lido"></span>
-                <?php if ($prioridade): ?>
-                  <span class="badge rounded-pill <?= e($prioridade['class']) ?>"><?= e($prioridade['label']) ?></span>
+                <?php if ($priority): ?>
+                  <span class="badge rounded-pill <?= e($priority['class']) ?>"><?= e($priority['label']) ?></span>
                 <?php endif; ?>
-                <span class="badge rounded-pill text-bg-secondary"><?= e($categoria['label']) ?></span>
+                <span class="badge rounded-pill text-bg-secondary"><?= e($category['label']) ?></span>
               </div>
-              <button class="notice-action<?= $aviso['fixado'] ? ' is-pinned' : '' ?>" type="button" data-action="pin" aria-pressed="<?= $aviso['fixado'] ? 'true' : 'false' ?>" aria-label="<?= $aviso['fixado'] ? 'Desafixar aviso' : 'Fixar aviso' ?>">
-                <i class="bi <?= $aviso['fixado'] ? 'bi-pin-angle-fill' : 'bi-pin-angle' ?>"></i>
+              <button class="notice-action<?= $notice['pinned'] ? ' is-pinned' : '' ?>" type="button" data-action="pin" aria-pressed="<?= $notice['pinned'] ? 'true' : 'false' ?>" aria-label="<?= $notice['pinned'] ? 'Desafixar aviso' : 'Fixar aviso' ?>">
+                <i class="bi <?= $notice['pinned'] ? 'bi-pin-angle-fill' : 'bi-pin-angle' ?>"></i>
               </button>
             </header>
 
-            <h2 class="notice-card__title"><?= e($aviso['titulo']) ?></h2>
-            <p class="notice-card__text"><?= e($aviso['texto']) ?></p>
+            <h2 class="notice-card__title"><?= e($notice['title']) ?></h2>
+            <p class="notice-card__text"><?= e($notice['text']) ?></p>
 
-            <?php if ($anexos || $link): ?>
+            <?php if ($attachments || $link): ?>
               <div class="notice-card__more">
-                <?php if ($anexos): ?>
+                <?php if ($attachments): ?>
                   <div class="notice-attachments">
-                    <?php foreach ($anexos as $anexo): ?>
-                      <a class="notice-chip" href="#"><i class="bi bi-file-earmark-pdf file-icon--pdf"></i><?= e($anexo['nome']) ?> <small><?= e($anexo['tamanho']) ?></small></a>
+                    <?php foreach ($attachments as $attachment): ?>
+                      <a class="notice-chip" href="#"><i class="bi bi-file-earmark-pdf file-icon--pdf"></i><?= e($attachment['name']) ?> <small><?= e($attachment['size']) ?></small></a>
                     <?php endforeach; ?>
                   </div>
                 <?php endif; ?>
@@ -82,7 +79,7 @@ renderPageStart('Avisos');
             <?php endif; ?>
 
             <footer class="notice-card__foot">
-              <?php if ($temMais): ?>
+              <?php if ($hasMore): ?>
                 <button class="notice-action" type="button" data-action="expand" aria-expanded="false">Ler mais</button>
               <?php endif; ?>
               <button class="notice-action ms-auto" type="button" data-action="read"></button>
@@ -102,19 +99,10 @@ renderPageStart('Avisos');
     </div>
 
 
-<div class="toast-container position-fixed bottom-0 end-0 p-3">
-  <div id="noticeToast" class="toast align-items-center text-bg-success border-0" role="status" aria-live="polite" aria-atomic="true">
-    <div class="d-flex">
-      <div class="toast-body" id="noticeToastBody"></div>
-      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
-    </div>
-  </div>
-</div>
-
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const PAGE_SIZE = 6;
-  const STORAGE_KEY = 'alunonet.avisos';
+  const STORAGE_KEY = <?= jsonForScript(studentStorageKey('notices')) ?>;
 
   const feed = document.getElementById('noticeFeed');
   const cards = [...feed.querySelectorAll('.notice-card')];
@@ -124,26 +112,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const unreadBadge = document.getElementById('unreadCount');
   const search = document.getElementById('noticeSearch');
   const filterButtons = [...document.querySelectorAll('.notice-filter')];
-  const toast = bootstrap.Toast.getOrCreateInstance(document.getElementById('noticeToast'), { delay: 3500 });
 
   const state = { filter: 'all', query: '', limit: PAGE_SIZE };
   const touched = new Set();
 
-  let saved = { read: {}, pinned: {} };
-  try {
-    const raw = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if (raw && typeof raw === 'object') saved = { read: raw.read || {}, pinned: raw.pinned || {} };
-  } catch (error) { /* sem armazenamento disponível: segue com o estado do servidor */ }
-  const persist = () => {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(saved)); } catch (error) { /* ignora */ }
-  };
-
-  const icon = (className) => {
-    const node = document.createElement('i');
-    node.className = className;
-    node.setAttribute('aria-hidden', 'true');
-    return node;
-  };
+  const stored = readStoredJson(STORAGE_KEY, {});
+  const saved = { read: stored.read || {}, pinned: stored.pinned || {} };
+  const persist = () => storeJson(STORAGE_KEY, saved);
 
   const isRead = (card) => card.dataset.read === 'true';
   const isPinned = (card) => card.dataset.pinned === 'true';
@@ -152,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const read = isRead(card);
     card.classList.toggle('is-unread', !read);
     card.querySelector('[data-action="read"]').replaceChildren(
-      icon(read ? 'bi bi-envelope' : 'bi bi-envelope-open'),
+      createIcon(read ? 'bi bi-envelope' : 'bi bi-envelope-open'),
       document.createTextNode(read ? 'Marcar como não lido' : 'Marcar como lido'),
     );
   };
@@ -269,8 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
     cards.forEach((card) => setRead(card, true));
     touched.clear();
     render();
-    document.getElementById('noticeToastBody').textContent = 'Todos os avisos foram marcados como lidos.';
-    toast.show();
+    showToast('Todos os avisos foram marcados como lidos.');
   });
 
   render();

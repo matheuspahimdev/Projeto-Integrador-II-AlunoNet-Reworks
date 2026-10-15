@@ -1,6 +1,37 @@
+/* Folha de estilos do Alunonet (portal do aluno UNIFIO), sobre o Bootstrap 5.3.
+   Breakpoints (iguais aos do Bootstrap): 575.98px celular, 767.98px celular grande,
+   991.98px tablet, 1199.98px notebook. Cada seção agrupa os media queries no fim.
+
+   Índice:
+   01. TOKENS E TEMAS
+   02. BASE
+   03. LAYOUT DO PORTAL
+   04. COMPONENTES COMPARTILHADOS
+   05. PÁGINA INICIAL
+   06. ACADÊMICO
+   07. FINANCEIRO
+   08. PROTOCOLOS
+   09. AVALIAÇÃO INSTITUCIONAL
+   10. REPOSITÓRIO DO ALUNO
+   11. FEED DE AVISOS
+   12. BIBLIOTECA
+   13. CALENDÁRIO DE EVENTOS
+   14. SUPORTE
+   15. PERFIL
+   16. LOGIN
+   17. ALERT DIALOG
+   18. MOVIMENTO REDUZIDO
+   19. IMPRESSÃO
+*/
+
+/* ======================================================================
+   01. TOKENS E TEMAS
+   Cores da marca, medidas do layout e variáveis do Bootstrap para os temas claro e escuro.
+   ====================================================================== */
+
+/* Marca e medidas usadas pelo portal inteiro. */
 :root {
   --radius: 18px;
-
   --brand-blue: #1B468E;
   --brand-blue-bright: #2f5fb0;
   --brand-orange: #D98B3E;
@@ -8,58 +39,13 @@
   --brand-offwhite: #f5f9ff;
   --brand-ink: #22242A;
   --brand-blue-text: var(--brand-blue);
-  --sidebar-width: 238px;
+  /* Medidas do layout do portal */
+  --sidebar-width: 248px;
+  --topbar-height: 64px;
+  --page-gutter: clamp(16px, 3vw, 32px);
 }
 
-/* ===================== EXTRATO FINANCEIRO ===================== */
-.finance-summary { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin: 4px 4px 1.25rem; }
-.finance-summary-card { display: flex; align-items: center; gap: 18px; min-width: 0; padding: 22px 24px; box-shadow: 0 2px 10px rgba(15, 35, 80, .05); }
-.finance-summary-card__icon { width: 56px; height: 56px; flex: 0 0 56px; display: grid; place-items: center; border-radius: 50%; background: color-mix(in srgb, var(--brand-blue) 14%, transparent); color: var(--brand-blue-text); font-size: 1.5rem; }
-.finance-summary-card__icon--success { background: color-mix(in srgb, var(--brand-green) 18%, transparent); color: #3ccf8e; }
-.finance-summary-card__icon--danger { background: color-mix(in srgb, var(--bs-danger) 16%, transparent); color: var(--bs-danger); }
-.finance-summary-card__label { margin: 0 0 4px; color: var(--bs-secondary-color); font-size: .75rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
-.finance-summary-card__value { margin: 0; color: var(--bs-emphasis-color); font-size: clamp(1.15rem, 2vw, 1.5rem); font-weight: 700; line-height: 1.25; }
-.finance-summary-card__value small { color: var(--bs-secondary-color); font-size: .8rem; font-weight: 500; white-space: nowrap; }
-.finance-summary-card__value--success { color: #3ccf8e; }
-.finance-table-card { margin: 0 4px 24px; padding: 20px 24px 12px; box-shadow: 0 2px 10px rgba(15, 35, 80, .05); }
-.finance-table-card__head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
-.finance-table-card__head h2 { margin: 0; font-size: 1.05rem; font-weight: 700; }
-.finance-table-card__head h2 small { margin-left: 6px; color: var(--bs-secondary-color); font-size: .8rem; font-weight: 500; }
-.finance-table-card__head .form-select { width: auto; min-width: 220px; }
-.finance-ledger { width: 100%; margin: 0; --bs-table-bg: transparent; }
-.finance-ledger thead th { padding: 14px 12px; color: var(--bs-secondary-color); background: var(--bs-tertiary-bg); border-bottom: 1px solid var(--bs-border-color); font-size: .72rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; white-space: nowrap; }
-.finance-ledger td { padding: 16px 12px; vertical-align: middle; border-color: var(--bs-border-color); }
-.finance-ledger__desc strong { display: block; color: var(--bs-emphasis-color); font-size: 1rem; font-weight: 700; }
-.finance-ledger__desc small, .finance-ledger__paid-at { display: block; color: var(--bs-secondary-color); font-size: .8rem; }
-.finance-ledger__paid-at { margin-top: 4px; }
-.finance-ledger__actions { text-align: right; white-space: nowrap; }
-.finance-ledger__empty { margin: 0; padding: 24px 12px; color: var(--bs-secondary-color); text-align: center; }
-.status-pago { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 999px; background: color-mix(in srgb, var(--brand-green) 18%, transparent); color: #3ccf8e; font-size: .8rem; font-weight: 700; }
-[data-bs-theme="light"] .finance-summary-card__value--success,
-[data-bs-theme="light"] .finance-summary-card__icon--success,
-[data-bs-theme="light"] .status-pago { color: var(--brand-green); }
-
-@media (max-width: 760px) {
-  .finance-summary { grid-template-columns: 1fr; }
-  .finance-summary-card { padding: 16px 18px; }
-  .finance-summary-card__icon { width: 46px; height: 46px; flex-basis: 46px; font-size: 1.2rem; }
-  .finance-table-card { padding: 16px; }
-  .finance-table-card__head .form-select { width: 100%; }
-  .finance-ledger thead { display: none; }
-  .finance-ledger, .finance-ledger tbody, .finance-ledger tr, .finance-ledger td { display: block; width: 100%; }
-  .finance-ledger tr { padding: 14px 0; border-bottom: 1px solid var(--bs-border-color); }
-  .finance-ledger tr[hidden] { display: none; }
-  .finance-ledger tr:last-child { border-bottom: 0; }
-  .finance-ledger td { padding: 4px 0; border: 0; }
-  .finance-ledger td[data-label] { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-  .finance-ledger td[data-label]::before { content: attr(data-label); color: var(--bs-secondary-color); font-size: .8rem; font-weight: 600; }
-  .finance-ledger td[data-label="Status"] { flex-wrap: wrap; }
-  .finance-ledger__paid-at { width: 100%; margin-top: 0; text-align: right; }
-  .finance-ledger__desc { margin-bottom: 6px; }
-  .finance-ledger__actions { margin-top: 8px; text-align: left; }
-  .finance-ledger__actions .btn { width: 100%; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
-}
-
+/* Tema escuro (padrão): tons de azul-marinho. */
 [data-bs-theme="dark"] {
   --bs-body-bg: #0b1b33;
   --bs-body-bg-rgb: 11, 27, 51;
@@ -83,6 +69,7 @@
   --brand-blue-text: #8db4f5;
 }
 
+/* Tema claro: fundo off-white e textos em azul da marca. */
 [data-bs-theme="light"] {
   --bs-body-bg: var(--brand-offwhite);
   --bs-body-bg-rgb: 245, 249, 255;
@@ -102,6 +89,7 @@
   --brand-blue-text: var(--brand-blue);
 }
 
+/* Bordas de formulário mais visíveis no tema escuro. */
 [data-bs-theme="dark"] .form-control,
 [data-bs-theme="dark"] .form-select,
 [data-bs-theme="dark"] .form-check-input {
@@ -111,6 +99,11 @@
 [data-bs-theme="dark"] .form-check-input:checked {
   border-color: var(--bs-primary);
 }
+
+/* ======================================================================
+   02. BASE
+   Estilos globais: corpo da página, logo, botões de ícone e utilitários usados em todo o portal.
+   ====================================================================== */
 
 html,
 body {
@@ -124,21 +117,7 @@ body {
   transition: background .2s ease, color .2s ease;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    transition-duration: .01ms !important;
-    scroll-behavior: auto !important;
-  }
-
-  .dashboard-card:hover,
-  .quick-access__item:hover {
-    transform: none;
-  }
-}
-
-/* App shell e navegação */
+/* Link "Pular para o conteúdo": invisível até receber foco pelo teclado. */
 .skip-link {
   position: fixed;
   top: 12px;
@@ -152,23 +131,7 @@ body {
   text-decoration: none;
 }
 
-.page-content:focus {
-  outline: none;
-}
-
-.app-shell {
-  min-height: 100dvh;
-  padding-left: 238px;
-}
-
-.page-content {
-  padding: 0 32px 40px;
-  max-width: 1400px;
-  width: 100%;
-  margin: 0 auto;
-  min-height: 100vh;
-}
-
+/* Logo da UNIFIO: troca entre a versão branca (tema escuro) e a azul (tema claro). */
 .brand-logo {
   max-width: 116px;
   max-height: 32px;
@@ -187,51 +150,316 @@ html[data-bs-theme="light"] .brand-logo--light-theme {
   display: block;
 }
 
+/* Botão redondo só com ícone (ex.: alternar tema). */
+.icon-btn {
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid var(--bs-border-color);
+  background: transparent;
+  color: var(--bs-secondary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background .15s ease, color .15s ease;
+}
+
+.icon-btn:hover {
+  background: var(--bs-secondary-bg);
+  color: var(--bs-body-color);
+}
+
+.icon-btn i {
+  font-size: 16px;
+}
+
+/* Alternador de tema: mostra o sol no tema claro e a lua no escuro. */
+.theme-toggle .icon-sun {
+  display: none;
+}
+
+.theme-toggle .icon-moon {
+  display: inline-block;
+}
+
+html[data-bs-theme="light"] .theme-toggle .icon-sun {
+  display: inline-block;
+}
+
+html[data-bs-theme="light"] .theme-toggle .icon-moon {
+  display: none;
+}
+
+/* Bolinha verde de "ativo" (matrícula ativa). */
+.status-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--bs-success);
+  margin-right: 5px;
+}
+
+/* Variante laranja de botão do Bootstrap, para ações de destaque. */
+.btn-accent {
+  --bs-btn-color: var(--brand-ink);
+  --bs-btn-bg: var(--brand-orange);
+  --bs-btn-border-color: var(--brand-orange);
+  --bs-btn-hover-color: var(--brand-ink);
+  --bs-btn-hover-bg: color-mix(in srgb, var(--brand-orange) 88%, #fff);
+  --bs-btn-hover-border-color: color-mix(in srgb, var(--brand-orange) 88%, #fff);
+  --bs-btn-active-color: var(--brand-ink);
+  --bs-btn-active-bg: color-mix(in srgb, var(--brand-orange) 80%, #000);
+  --bs-btn-active-border-color: color-mix(in srgb, var(--brand-orange) 80%, #000);
+  --bs-btn-focus-shadow-rgb: 217, 139, 62;
+  font-weight: 600;
+}
+
+/* ======================================================================
+   03. LAYOUT DO PORTAL
+   Estrutura das páginas logadas: topbar, sidebar, breadcrumb e área de conteúdo.
+   ====================================================================== */
+
+/* Grade da página: topbar em cima (largura total), sidebar à esquerda e conteúdo à direita.
+   Tudo faz parte do fluxo; nada usa position: fixed no desktop. */
+.app-shell {
+  display: grid;
+  grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
+  grid-template-areas:
+    "topbar topbar"
+    "sidebar content";
+  min-height: 100dvh;
+}
+
+/* Conteúdo da página, centralizado e com respiro lateral que acompanha a largura da tela. */
+.page-content {
+  grid-area: content;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 24px var(--page-gutter) 40px;
+}
+
+.page-content:focus {
+  outline: none;
+}
+
+/* Topbar: mesma linguagem visual do login (fundo translúcido com desfoque), presa no topo ao rolar.
+   Colunas: marca (mesma largura do sidebar), breadcrumb, curso e perfil. */
+.portal-topbar {
+  grid-area: topbar;
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+  display: grid;
+  grid-template-columns: calc(var(--sidebar-width) - var(--page-gutter)) minmax(0, 1fr) auto auto;
+  grid-template-areas: "start breadcrumb course profile";
+  align-items: center;
+  gap: 12px;
+  min-height: var(--topbar-height);
+  padding: 0 var(--page-gutter);
+  border-bottom: 1px solid var(--bs-border-color);
+  background: color-mix(in srgb, var(--bs-body-bg) 82%, transparent);
+  backdrop-filter: blur(10px);
+}
+
+/* Botão do menu (só aparece no celular/tablet) + logo. */
+.portal-topbar__start {
+  grid-area: start;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.portal-topbar__menu {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  margin-left: -8px;
+  padding: 0;
+  color: var(--bs-body-color);
+  font-size: 1.45rem;
+  line-height: 1;
+}
+
+.portal-topbar__brand {
+  display: flex;
+  align-items: center;
+  border-radius: 8px;
+}
+
+.portal-topbar__course {
+  grid-area: course;
+  max-width: 245px;
+  height: 34px;
+  padding: 0 30px 0 10px;
+  border: 1px solid var(--bs-border-color);
+  border-radius: 8px;
+  background-color: var(--bs-tertiary-bg);
+  color: var(--bs-secondary-color);
+  font: inherit;
+  font-size: .72rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Tema, nome/RA e avatar com link para o perfil. */
+.portal-topbar__profile {
+  grid-area: profile;
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.portal-topbar__profile .theme-toggle {
+  width: 34px;
+  height: 34px;
+}
+
+.portal-topbar__profile-text {
+  display: grid;
+  text-align: right;
+  font-size: .76rem;
+  line-height: 1.2;
+}
+
+.portal-topbar__profile-text small {
+  color: var(--bs-secondary-color);
+}
+
+.portal-topbar__avatar-link {
+  border-radius: 50%;
+  line-height: 0;
+  text-decoration: none;
+}
+
+.portal-topbar__avatar {
+  width: 35px;
+  height: 35px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--brand-blue);
+  color: #fff;
+  font-size: .72rem;
+  font-weight: 700;
+  transition: filter .15s ease;
+}
+
+.portal-topbar__avatar-link:hover .portal-topbar__avatar {
+  filter: brightness(1.1);
+}
+
+/* Breadcrumb: Início › seção › página. */
+.portal-breadcrumb {
+  grid-area: breadcrumb;
+  min-width: 0;
+}
+
+.portal-breadcrumb__list {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--bs-secondary-color);
+  font-size: .875rem;
+  white-space: nowrap;
+}
+
+.portal-breadcrumb__item {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.portal-breadcrumb__link,
+.portal-breadcrumb__text,
+.portal-breadcrumb__page {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.portal-breadcrumb__link {
+  border-radius: 6px;
+  color: inherit;
+  text-decoration: none;
+  transition: color .15s ease;
+}
+
+.portal-breadcrumb__link:hover {
+  color: var(--bs-emphasis-color);
+}
+
+.portal-breadcrumb__page {
+  color: var(--bs-emphasis-color);
+  font-weight: 600;
+}
+
+/* Rótulos longos são cortados com reticências em vez de quebrar a linha. */
+.portal-breadcrumb__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.portal-breadcrumb__separator {
+  display: inline-flex;
+  font-size: .7rem;
+}
+
+/* "…" que substitui os itens do meio no celular. */
+.portal-breadcrumb__ellipsis {
+  display: none;
+}
+
+/* Sidebar: coluna da grade logo abaixo da topbar. Fica visível enquanto a página rola
+   (sticky) e tem rolagem própria quando o menu é maior que a tela. */
 .sidebar-nav {
-  position: fixed;
-  inset: 0 auto 0 0;
-  z-index: 1040;
-  width: 238px;
-  padding: 24px 12px 16px;
+  grid-area: sidebar;
+  position: sticky;
+  top: var(--topbar-height);
+  z-index: 1020;
+  height: calc(100dvh - var(--topbar-height));
   display: flex;
   flex-direction: column;
+  padding: 16px 12px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   background: var(--bs-secondary-bg);
   border-right: 1px solid var(--bs-border-color);
 }
 
-.sidebar-nav__brand {
-  display: flex;
-  align-items: center;
-  min-height: 40px;
-  padding: 0 12px 20px;
-  border-bottom: 1px solid var(--bs-border-color);
-}
-
-.sidebar-nav__content {
-  overflow-y: auto;
-  padding: 18px 0;
-}
-
 .sidebar-nav__list,
 .sidebar-nav__submenu {
-  list-style: none;
   margin: 0;
   padding: 0;
+  list-style: none;
 }
 
-.sidebar-nav__item+.sidebar-nav__item {
+.sidebar-nav__item + .sidebar-nav__item {
   margin-top: 3px;
 }
 
+/* Item principal do menu (link ou botão que abre submenu). */
 .sidebar-nav__link {
   width: 100%;
   min-height: 42px;
-  padding: 10px 12px;
-  border: 0;
-  border-radius: 10px;
   display: flex;
   align-items: center;
   gap: 12px;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 10px;
   background: transparent;
   color: var(--bs-secondary-color);
   font: inherit;
@@ -248,38 +476,8 @@ html[data-bs-theme="light"] .brand-logo--light-theme {
   color: var(--bs-body-color);
 }
 
-.sidebar-nav__link:focus-visible,
-.sidebar-nav__sublink:focus-visible,
-.sidebar-nav__brand:focus-visible,
-.portal-topbar__menu:focus-visible,
-.theme-toggle:focus-visible {
-  outline: 2px solid var(--brand-blue-text);
-  outline-offset: 2px;
-}
-
 .sidebar-nav__link.is-active {
   background: var(--brand-blue);
-  color: #fff;
-}
-
-.sidebar-nav__link--accent {
-  color: var(--brand-orange);
-}
-
-.sidebar-nav__link--danger {
-  margin-top: 0.75rem;
-  border: 1px solid rgba(var(--bs-danger-rgb), 0.45);
-  border-radius: 999px;
-  padding: 0.45rem 0.9rem;
-  color: var(--bs-danger);
-  background: rgba(var(--bs-danger-rgb), 0.08);
-  justify-content: center;
-  transition: background 0.2s ease, color 0.2s ease;
-}
-
-.sidebar-nav__link--danger:hover,
-.sidebar-nav__link--danger:focus-visible {
-  background: var(--bs-danger);
   color: #fff;
 }
 
@@ -289,12 +487,35 @@ html[data-bs-theme="light"] .brand-logo--light-theme {
   text-align: center;
 }
 
+/* Item de destaque (Suporte). */
+.sidebar-nav__link--accent {
+  color: var(--brand-orange);
+}
+
+/* Botão "Sair" em formato de pílula vermelha. */
+.sidebar-nav__link--danger {
+  justify-content: center;
+  margin-top: .75rem;
+  padding: .45rem .9rem;
+  border: 1px solid rgba(var(--bs-danger-rgb), .45);
+  border-radius: 999px;
+  background: rgba(var(--bs-danger-rgb), .08);
+  color: var(--bs-danger);
+}
+
+.sidebar-nav__link--danger:hover,
+.sidebar-nav__link--danger:focus-visible {
+  background: var(--bs-danger);
+  color: #fff;
+}
+
 .sidebar-nav__chevron {
   margin-left: auto;
   font-size: .7rem;
   transition: transform .18s ease;
 }
 
+/* Submenu animado: a altura real vem do JS na variável --submenu-height. */
 .sidebar-nav__submenu {
   max-height: 0;
   overflow: hidden;
@@ -321,12 +542,19 @@ html[data-bs-theme="light"] .brand-logo--light-theme {
   text-decoration: none;
 }
 
+.sidebar-nav__sublink:hover,
+.sidebar-nav__sublink:focus-visible {
+  color: var(--bs-emphasis-color);
+  text-decoration: underline;
+}
+
 .sidebar-nav__sublink.is-active {
   background: color-mix(in srgb, var(--brand-blue) 22%, transparent);
   color: var(--bs-emphasis-color);
   font-weight: 650;
 }
 
+/* Barrinha laranja à esquerda do subitem ativo. */
 .sidebar-nav__sublink.is-active::before {
   content: '';
   position: absolute;
@@ -338,143 +566,123 @@ html[data-bs-theme="light"] .brand-logo--light-theme {
   background: var(--brand-orange);
 }
 
-.sidebar-nav__sublink:hover,
-.sidebar-nav__sublink:focus-visible {
-  color: var(--bs-emphasis-color);
-  text-decoration: underline;
-}
-
-.icon-btn {
-  width: 38px;
-  height: 38px;
-  padding: 0;
-  border-radius: 50%;
-  border: 1px solid var(--bs-border-color);
-  background: transparent;
-  color: var(--bs-secondary-color);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: background .15s ease, color .15s ease;
-}
-
-.icon-btn:hover {
-  background: var(--bs-secondary-bg);
-  color: var(--bs-body-color);
-}
-
-.icon-btn i {
-  font-size: 16px;
-}
-
-.theme-toggle .icon-sun {
-  display: none;
-}
-
-.theme-toggle .icon-moon {
-  display: inline-block;
-}
-
-html[data-bs-theme="light"] .theme-toggle .icon-sun {
-  display: inline-block;
-}
-
-html[data-bs-theme="light"] .theme-toggle .icon-moon {
-  display: none;
-}
-
-/* Cabeçalho do portal */
-.portal-topbar {
-  position: sticky;
-  top: 0;
-  z-index: 1020;                      
-  height: 64px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: var(--bs-body-bg);      
-  border-bottom: 1px solid var(--bs-border-color);
-  margin-bottom: 1.15rem;
-}
-
-.portal-topbar__menu {
-  display: none;
-  color: var(--bs-body-color);
-  font-size: 1.45rem;
-  line-height: 1;
-}
-
-.portal-topbar__title {
-  font-size: 1rem;
-  font-weight: 700;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  min-width: 0;
-}
-
-.portal-topbar__profile {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.portal-topbar__profile .theme-toggle {
-  width: 34px;
-  height: 34px;
-}
-
-.portal-topbar__course {
-  max-width: 245px;
-  height: 34px;
-  padding: 0 30px 0 10px;
-  border: 1px solid var(--bs-border-color);
-  border-radius: 8px;
-  background-color: var(--bs-tertiary-bg);
-  color: var(--bs-secondary-color);
-  font: inherit;
-  font-size: .72rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.portal-topbar__course:focus-visible {
-  outline: 2px solid var(--brand-blue);
+/* Contorno de foco do teclado, igual em todos os controles do layout. */
+.sidebar-nav__link:focus-visible,
+.sidebar-nav__sublink:focus-visible,
+.portal-topbar__brand:focus-visible,
+.portal-topbar__menu:focus-visible,
+.portal-topbar__course:focus-visible,
+.portal-topbar__avatar-link:focus-visible,
+.portal-breadcrumb__link:focus-visible,
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--brand-blue-text);
   outline-offset: 2px;
 }
 
-.portal-topbar__profile-text {
-  display: grid;
-  text-align: right;
-  font-size: .76rem;
-  line-height: 1.2;
+/* Fundo escuro atrás da gaveta do menu (só no celular/tablet). */
+.sidebar-backdrop {
+  display: none;
 }
 
-.portal-topbar__profile-text small {
-  color: var(--bs-secondary-color);
+/* Tablet e celular: o sidebar sai da grade e vira gaveta lateral aberta pelo botão de menu.
+   A topbar ganha uma segunda linha para o breadcrumb. */
+@media (max-width: 991.98px) {
+  .app-shell {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "topbar"
+      "content";
+  }
+
+  .portal-topbar {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      "start course profile"
+      "breadcrumb breadcrumb breadcrumb";
+    row-gap: 4px;
+    padding-top: 10px;
+    padding-bottom: 8px;
+  }
+
+  .portal-topbar__menu {
+    display: inline-flex;
+  }
+
+  .portal-topbar__course {
+    justify-self: end;
+  }
+
+  .sidebar-nav {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 1050;
+    width: min(288px, calc(100vw - 54px));
+    height: 100dvh;
+    padding-top: 20px;
+    box-shadow: 10px 0 30px rgba(0, 0, 0, .2);
+    transform: translateX(-105%);
+    visibility: hidden;
+    transition: transform .22s ease, visibility 0s linear .22s;
+  }
+
+  .sidebar-is-open .sidebar-nav {
+    transform: translateX(0);
+    visibility: visible;
+    transition: transform .22s ease;
+  }
+
+  .sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 1045;
+    background: rgba(0, 0, 0, .42);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .22s ease;
+  }
+
+  .sidebar-is-open .sidebar-backdrop {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .page-content {
+    padding-top: 20px;
+  }
 }
 
-.portal-topbar__avatar-link {
-  text-decoration: none;
-  line-height: 0;
-}
-.portal-topbar__avatar:hover,
-.portal-topbar__avatar-link:hover .portal-topbar__avatar {
-  filter: brightness(1.1);
-}
-.portal-topbar__avatar {
-  width: 35px;
-  height: 35px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  background: var(--brand-blue);
-  color: #fff;
-  font-size: .72rem;
-  font-weight: 700;
+/* Celular: some o nome/RA (fica só o avatar), o curso divide a 2ª linha com o breadcrumb
+   e o breadcrumb esconde os itens do meio. */
+@media (max-width: 575.98px) {
+  .portal-topbar {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      "start . profile"
+      "breadcrumb breadcrumb course";
+  }
+
+  .portal-topbar__course {
+    max-width: 150px;
+  }
+
+  .portal-topbar__profile-text,
+  .portal-breadcrumb__item--middle,
+  .portal-breadcrumb__item:first-child .portal-breadcrumb__label {
+    display: none;
+  }
+
+  .portal-breadcrumb__ellipsis {
+    display: inline-flex;
+  }
 }
 
+/* ======================================================================
+   04. COMPONENTES COMPARTILHADOS
+   Peças reutilizadas por várias páginas: cabeçalho, cartões, grades, listas, avisos e filtros.
+   ====================================================================== */
+
+/* Cabeçalho das páginas internas: título, subtítulo e botões de ação à direita. */
 .hero-header-pages {
   padding: 5px 4px 6px;
   flex-shrink: 0;
@@ -485,7 +693,7 @@ html[data-bs-theme="light"] .theme-toggle .icon-moon {
   font-size: 20px;
 }
 
-/* Grid personalizado */
+/* Grade de 4 colunas usada nos painéis; os g-col-* definem quantas colunas cada caixa ocupa. */
 .grid-mesh {
   flex: 1;
   min-height: 0;
@@ -502,11 +710,13 @@ html[data-bs-theme="light"] .theme-toggle .icon-moon {
   grid-auto-rows: minmax(250px, auto);
 }
 
+/* Caixa dentro da grade (grid-mesh). */
 .g-box {
   min-width: 0;
   overflow: hidden;
 }
 
+/* Quantas colunas da grade a caixa ocupa. */
 .g-col-1 {
   grid-column: span 1;
 }
@@ -515,14 +725,11 @@ html[data-bs-theme="light"] .theme-toggle .icon-moon {
   grid-column: span 2;
 }
 
-.g-col-3 {
-  grid-column: span 3;
-}
-
 .g-col-4 {
   grid-column: span 4;
 }
 
+/* Conteúdo centralizado dentro de uma caixa da grade. */
 .box-content {
   position: relative;
   width: 100%;
@@ -538,7 +745,595 @@ html[data-bs-theme="light"] .theme-toggle .icon-moon {
   width: 100%;
 }
 
-/* Cards da página inicial */
+/* Grade de 4 colunas usada nos painéis; os g-col-* definem quantas colunas cada caixa ocupa. */
+.grid-mesh--academic {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-auto-rows: minmax(220px, auto);
+}
+
+/* Grade de 3 colunas das páginas acadêmicas (cartão largo + cartão lateral). */
+.academic-page-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  padding: 0 4px 24px;
+}
+
+/* Cartão padrão do portal: cabeçalho com ícone, título e corpo. */
+.grid-card {
+  border: 1px solid var(--bs-border-color);
+  border-radius: 16px;
+  background: var(--bs-secondary-bg);
+  overflow: hidden;
+  min-width: 0;
+}
+
+.grid-card--wide {
+  grid-column: span 2;
+}
+
+.grid-card__head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--bs-border-color);
+}
+
+.grid-card__head h2 {
+  font-size: .88rem;
+  margin: 0;
+  font-weight: 750;
+}
+
+.grid-card__subtitle {
+  margin: 4px 0 0;
+  color: var(--bs-secondary-color);
+  font-size: .72rem;
+}
+
+.grid-card__icon {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--brand-blue) 10%, transparent);
+  color: var(--brand-blue-text);
+}
+
+.grid-card__body {
+  padding: 20px;
+}
+
+/* Lista de itens com título, detalhe e selo à direita. */
+.academic-list {
+  display: grid;
+  gap: 9px;
+}
+
+.academic-list__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--bs-border-color);
+}
+
+.academic-list__item:last-child {
+  border-bottom: 0;
+}
+
+.academic-list__item strong {
+  display: block;
+  font-size: .78rem;
+}
+
+.academic-list__item small {
+  display: block;
+  color: var(--bs-secondary-color);
+  font-size: .72rem;
+  margin-top: 4px;
+}
+
+/* Tabela compacta das páginas acadêmicas e financeiras. */
+.academic-table {
+  font-size: .75rem;
+  margin-bottom: 0;
+}
+
+.academic-table th {
+  font-size: .72rem;
+  color: var(--bs-secondary-color);
+  font-weight: 700;
+}
+
+.academic-table td,
+.academic-table th {
+  padding: .7rem .6rem;
+}
+
+/* Números em destaque lado a lado (média, presenças...). Quebram linha quando o cartão é estreito. */
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+  gap: 10px;
+}
+
+.metric-grid > div {
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid var(--bs-border-color);
+  border-radius: 11px;
+  background: var(--bs-tertiary-bg);
+}
+
+.metric-grid span {
+  display: block;
+  color: var(--bs-secondary-color);
+  font-size: .72rem;
+  margin-bottom: 6px;
+}
+
+.metric-grid strong {
+  font-size: 1.2rem;
+}
+
+/* Caixinha de observação com ícone azul. */
+.notice-box {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 12px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--brand-blue) 7%, var(--bs-secondary-bg));
+  color: var(--bs-secondary-color);
+  font-size: .72rem;
+  line-height: 1.5;
+}
+
+.notice-box i {
+  color: var(--brand-blue-text);
+  font-size: 1rem;
+}
+
+/* Lista de rótulo + valor em duas colunas (dados cadastrais, matrícula). */
+.data-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0 18px;
+  margin: 0;
+}
+
+.data-grid--single {
+  grid-template-columns: 1fr;
+}
+
+.data-grid > div {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--bs-border-color);
+}
+
+.data-grid dt {
+  font-size: .72rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--bs-secondary-color);
+  margin-bottom: 4px;
+}
+
+.data-grid dd {
+  font-size: .76rem;
+  margin: 0;
+  font-weight: 650;
+}
+
+/* Formulários das páginas internas, com rótulos e campos menores. */
+.academic-form .form-label {
+  font-size: .7rem;
+  color: var(--bs-secondary-color);
+  font-weight: 650;
+}
+
+.academic-form .form-control {
+  font-size: .78rem;
+}
+
+/* Faixa verde de confirmação (ex.: matrícula confirmada). */
+.status-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 15px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--bs-success) 8%, var(--bs-secondary-bg));
+}
+
+.status-card > i {
+  font-size: 1.7rem;
+  color: var(--bs-success);
+}
+
+.status-card strong {
+  display: block;
+  font-size: .82rem;
+}
+
+.status-card span {
+  display: block;
+  color: var(--bs-secondary-color);
+  font-size: .72rem;
+  margin-top: 3px;
+}
+
+/* Barras de progresso dentro dos cartões. */
+.progress-summary .progress,
+.grid-card .progress {
+  height: 12px;
+  background: var(--bs-tertiary-bg);
+}
+
+/* Texto dentro da barra de progresso. */
+.progress-bar {
+  font-size: .72rem;
+  font-weight: 700;
+}
+
+/* Lista sem marcadores com divisórias entre os itens. */
+.clean-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0;
+}
+
+.clean-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--bs-border-color);
+  font-size: .72rem;
+}
+
+.clean-list li span strong,
+.clean-list li span small {
+  display: block;
+}
+
+.clean-list li span small {
+  margin-top: 4px;
+  color: var(--bs-secondary-color);
+  font-size: .72rem;
+}
+
+.clean-list li:last-child {
+  border-bottom: 0;
+}
+
+.clean-list strong {
+  font-size: .7rem;
+}
+
+/* Grade de 4 colunas usada nos painéis; os g-col-* definem quantas colunas cada caixa ocupa. */
+.grid-mesh--auto {
+  grid-auto-rows: auto;
+}
+
+/* Subtítulo de seção dentro da página. */
+.section-title {
+  margin: 4px 4px 12px;
+  font-size: .92rem;
+  font-weight: 700;
+  color: var(--bs-secondary-color);
+}
+
+/* Faixa informativa com borda colorida à esquerda (variante --success em verde). */
+.info-banner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 4px 22px;
+  padding: 14px 18px;
+  border: 1px solid var(--bs-border-color);
+  border-left: 4px solid var(--brand-blue);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--brand-blue) 7%, var(--bs-secondary-bg));
+}
+
+.info-banner__icon {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--brand-blue) 14%, transparent);
+  color: var(--brand-blue-text);
+  font-size: 1.05rem;
+}
+
+.info-banner strong {
+  display: block;
+  font-size: .84rem;
+}
+
+.info-banner span {
+  display: block;
+  color: var(--bs-secondary-color);
+  font-size: .76rem;
+  line-height: 1.5;
+}
+
+/* Formulários das páginas internas, com rótulos e campos menores. */
+.academic-form .form-select {
+  font-size: .78rem;
+}
+
+/* Faixa informativa com borda colorida à esquerda (variante --success em verde). */
+.info-banner--success {
+  border-left-color: var(--brand-green);
+  background: color-mix(in srgb, var(--brand-green) 8%, var(--bs-secondary-bg));
+}
+
+.info-banner--success .info-banner__icon {
+  background: var(--brand-green);
+  color: #fff;
+}
+
+.info-banner--success strong {
+  color: color-mix(in srgb, var(--brand-green) 70%, var(--bs-emphasis-color));
+}
+
+/* Conteúdo que só aparece na impressão. */
+.print-only {
+  display: none;
+}
+
+/* Tabela compacta das páginas acadêmicas e financeiras. */
+.academic-table tfoot th {
+  padding-top: .9rem;
+  padding-bottom: .9rem;
+  font-size: .78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+/* Filtros em pílula usados em avisos, empréstimos e chamados. */
+.notice-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* Pílula de filtro; .active marca a selecionada. */
+.notice-filter {
+  padding: 6px 14px;
+  border: 1px solid var(--bs-border-color);
+  border-radius: 999px;
+  background: var(--bs-secondary-bg);
+  color: var(--bs-body-color);
+  font-size: .78rem;
+  font-weight: 600;
+}
+
+.notice-filter:hover {
+  border-color: var(--bs-primary);
+}
+
+.notice-filter.active {
+  border-color: var(--bs-primary);
+  background: color-mix(in srgb, var(--bs-primary) 12%, var(--bs-secondary-bg));
+  color: var(--brand-blue-text);
+}
+
+.notice-filter .badge {
+  margin-left: 4px;
+}
+
+/* Estado vazio de listas ("nenhum item encontrado"). */
+.notice-empty {
+  padding: 56px 16px;
+  color: var(--bs-secondary-color);
+  text-align: center;
+}
+
+.notice-empty i {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 2.6rem;
+}
+
+/* Contadores no topo de empréstimos e chamados. */
+.loan-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 12px;
+  margin: 4px 0 18px;
+}
+
+/* Contador individual (número grande + rótulo). */
+.loan-stat {
+  padding: 14px 16px;
+  border: 1px solid var(--bs-border-color);
+  border-radius: 12px;
+  background: var(--bs-secondary-bg);
+}
+
+.loan-stat strong {
+  display: block;
+  font-size: 1.6rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.loan-stat span {
+  color: var(--bs-secondary-color);
+  font-size: .76rem;
+}
+
+.loan-stat--danger strong {
+  color: var(--bs-danger);
+}
+
+/* Lista de cartões de empréstimo/chamado. */
+.loan-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+/* Cartão de empréstimo ou chamado; a barra colorida à esquerda indica o estado. */
+.loan-card {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 18px 16px 26px;
+  border: 1px solid var(--bs-border-color);
+  border-radius: 14px;
+  background: var(--bs-secondary-bg);
+}
+
+.loan-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 5px;
+  border-radius: 14px 0 0 14px;
+  background: var(--bs-border-color);
+}
+
+.loan-card--com-voce::before {
+  background: var(--bs-success);
+}
+
+.loan-card--vencido::before {
+  background: var(--bs-danger);
+}
+
+.loan-card--analise::before {
+  background: var(--bs-warning);
+}
+
+.loan-card__info {
+  flex: 1 1 260px;
+  min-width: 0;
+}
+
+.loan-card__title {
+  margin: 0;
+  font-size: .98rem;
+  font-weight: 700;
+}
+
+.loan-card__author {
+  margin: 2px 0 8px;
+  color: var(--bs-secondary-color);
+  font-size: .8rem;
+}
+
+.loan-card__dates {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+  font-size: .76rem;
+}
+
+.loan-card__note {
+  margin: 8px 0 0;
+  font-size: .78rem;
+  font-weight: 600;
+}
+
+.loan-card__note--danger {
+  color: var(--bs-danger);
+}
+
+.loan-card__side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.loan-card--aberto::before {
+  background: var(--bs-info);
+}
+
+.loan-card--andamento::before {
+  background: var(--bs-primary);
+}
+
+.loan-card--aguardando::before {
+  background: var(--bs-warning);
+}
+
+.loan-card--resolvido::before {
+  background: var(--bs-success);
+}
+
+@media (max-width: 991.98px) {
+  .grid-mesh--academic {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .academic-page-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .grid-card--wide {
+    grid-column: span 2;
+  }
+
+  .grid-mesh--academic .g-col-4 {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .grid-mesh--static {
+    grid-auto-rows: minmax(0, auto);
+  }
+
+  .academic-page-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .grid-mesh--academic > * {
+    grid-column: 1 / -1;
+  }
+
+  .grid-card--wide {
+    grid-column: span 1;
+  }
+
+  .metric-grid,
+  .data-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .academic-table {
+    min-width: 700px;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .loan-card__side {
+    align-items: flex-start;
+  }
+}
+
+/* ======================================================================
+   05. PÁGINA INICIAL
+   Boas-vindas, resumo, destaques (semana, boleto, prova, avisos, evento) e acesso rápido.
+   ====================================================================== */
+
+/* Boas-vindas com o nome do aluno e a situação da matrícula. */
 .dashboard-hero {
   display: flex;
   align-items: flex-end;
@@ -606,6 +1401,7 @@ html[data-bs-theme="light"] .theme-toggle .icon-moon {
   font-size: .72rem;
 }
 
+/* Faixa com próxima avaliação, média, frequência e atalho para o calendário. */
 .dashboard-overview {
   display: grid;
   grid-template-columns: repeat(3, 1fr) 1.25fr;
@@ -653,6 +1449,7 @@ html[data-bs-theme="light"] .theme-toggle .icon-moon {
   color: var(--brand-blue-text);
 }
 
+/* Título de seção da página inicial com link à direita. */
 .dashboard-section {
   margin-bottom: 4px;
 }
@@ -682,12 +1479,14 @@ html[data-bs-theme="light"] .theme-toggle .icon-moon {
   text-decoration: none;
 }
 
+/* Grade dos cartões de destaque. */
 .dashboard-grid {
   grid-template-columns: repeat(4, minmax(0, 1fr));
   padding: 0;
   gap: 20px;
 }
 
+/* Cartão de destaque; as variantes mudam a cor da borda superior e do ícone. */
 .dashboard-card {
   min-height: 270px;
   background: var(--bs-secondary-bg);
@@ -701,11 +1500,6 @@ html[data-bs-theme="light"] .theme-toggle .icon-moon {
   border-color: color-mix(in srgb, var(--brand-blue) 35%, var(--bs-border-color));
   box-shadow: 0 12px 28px rgba(13, 27, 52, .1);
   transform: translateY(-3px);
-}
-
-.dashboard-card--notice {
-  border-top: 4px solid var(--brand-orange);
-  background: color-mix(in srgb, var(--brand-orange) 5%, var(--bs-secondary-bg));
 }
 
 .dashboard-card .box-content {
@@ -737,11 +1531,6 @@ html[data-bs-theme="light"] .theme-toggle .icon-moon {
   background: color-mix(in srgb, var(--brand-blue) 10%, transparent);
 }
 
-.dashboard-card--notice .dashboard-card__icon {
-  color: var(--brand-orange);
-  background: color-mix(in srgb, var(--brand-orange) 12%, transparent);
-}
-
 .dashboard-card h3 {
   margin: 0 0 9px;
   font-size: 1rem;
@@ -766,6 +1555,7 @@ html[data-bs-theme="light"] .theme-toggle .icon-moon {
   font-weight: 700;
 }
 
+/* Atalhos de acesso rápido no fim da página. */
 .quick-access {
   margin-top: 30px;
 }
@@ -818,3074 +1608,7 @@ html[data-bs-theme="light"] .theme-toggle .icon-moon {
   opacity: .65;
 }
 
-/* Quadro de horários */
-.class-schedule {
-  width: 100%;
-  min-width: 0;
-  overflow-x: auto;
-  overflow-y: hidden;
-  -webkit-overflow-scrolling: touch;
-}
-
-.class-schedule__table {
-  width: 100%;
-  min-width: 1080px;
-  border-collapse: separate;
-  border-spacing: 3px;
-  table-layout: fixed;
-  font-size: clamp(.65rem, 1vw, .9rem);
-}
-
-.class-schedule__table th,
-.schedule-cell {
-  border: 1px solid var(--bs-border-color);
-  border-radius: 8px;
-}
-
-.class-schedule__table th {
-  padding: .45rem;
-  text-align: center;
-  vertical-align: middle;
-}
-
-.class-schedule__table thead th {
-  background: var(--bs-tertiary-bg);
-  color: var(--bs-body-color);
-  font-weight: 700;
-}
-
-.class-schedule__time-header,
-.class-schedule__table tbody th {
-  width: 88px;
-}
-
-.class-schedule__table tbody th {
-  background: var(--bs-secondary-bg);
-  color: var(--bs-secondary-color);
-  font-weight: 600;
-  line-height: 1.35;
-}
-
-.schedule-cell {
-  padding: .55rem .6rem;
-  background: var(--bs-secondary-bg);
-  color: var(--bs-body-color);
-  font-weight: 600;
-  line-height: 1.2;
-  text-align: left;
-  vertical-align: top;
-  overflow-wrap: anywhere;
-}
-
-.schedule-cell strong,
-.schedule-cell span,
-.schedule-cell small {
-  display: block;
-}
-
-.schedule-cell strong {
-  margin-bottom: .2rem;
-  font-size: .72rem;
-  line-height: 1.25;
-}
-
-.schedule-cell span {
-  font-size: .78rem;
-  line-height: 1.3;
-}
-
-.schedule-cell small {
-  margin-top: .55rem;
-  color: inherit;
-  opacity: .8;
-  font-size: .72rem;
-  font-weight: 600;
-}
-
-.schedule-cell--online {
-  border-style: dashed;
-}
-
-.schedule-cell--empty {
-  text-align: center;
-  vertical-align: middle;
-  color: var(--bs-secondary-color);
-  background: transparent;
-}
-
-.schedule-cell--green {
-  background: #80c99a;
-  color: #10281a;
-}
-
-.schedule-cell--blue {
-  background: #4d91d0;
-  color: #fff;
-}
-
-.schedule-cell--soft-blue {
-  background: #b8cde8;
-  color: #182638;
-}
-
-.schedule-cell--orange {
-  background: #c95d10;
-  color: #fff;
-}
-
-.schedule-cell--purple {
-  background: #c65ac7;
-  color: #241126;
-}
-
-/* Responsivo */
-@media (max-width: 980px) {
-  .dashboard-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .dashboard-grid > .g-col-2 {
-    grid-column: span 2;
-  }
-
-  .quick-access__grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 991.98px) {
-  .app-shell {
-    padding-left: 0;
-  }
-
-  .page-content {
-    padding: 0 24px 32px;
-  }
-
-  .portal-topbar {
-    height: 58px;
-    gap: 12px;
-    margin-bottom: 20px;
-  }
-
-  .portal-topbar__menu {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    margin-left: -10px;
-    padding: 0;
-  }
-
-  .portal-topbar__title {
-    flex: 1;
-  }
-
-  .sidebar-nav {
-    width: min(288px, calc(100vw - 54px));
-    transform: translateX(-105%);
-    visibility: hidden;
-    transition: transform .22s ease, visibility 0s linear .22s;
-    box-shadow: 10px 0 30px rgba(0, 0, 0, .2);
-  }
-
-  .sidebar-is-open .sidebar-nav {
-    transform: translateX(0);
-    visibility: visible;
-    transition: transform .22s ease;
-  }
-
-  .sidebar-backdrop {
-    position: fixed;
-    inset: 0;
-    z-index: 1035;
-    background: rgba(0, 0, 0, .42);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity .22s ease;
-  }
-
-  .sidebar-is-open .sidebar-backdrop {
-    opacity: 1;
-    pointer-events: auto;
-  }
-}
-
-@media (max-width: 576px) {
-  .page-content {
-    padding: 0 16px 32px;
-  }
-
-  .portal-topbar__title,
-  .portal-topbar__profile-text {
-    display: none;
-  }
-
-  .portal-topbar__profile {
-    flex: 1;
-    min-width: 0;
-    justify-content: flex-end;
-  }
-
-  .portal-topbar__course {
-    flex: 1;
-    min-width: 0;
-    max-width: none;
-  }
-}
-
-@media (max-width: 760px) {
-
-  .dashboard-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .quick-access__grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
-  }
-
-  .dashboard-grid > .g-col-2,
-  .dashboard-grid>* {
-    grid-column: 1 / -1;
-    grid-row: auto;
-  }
-
-  .dashboard-card {
-    min-height: 0;
-  }
-
-  .dashboard-card .box-content {
-    padding-top: 1.5rem;
-  }
-
-  .quick-access__item {
-    min-height: 96px;
-  }
-
-  .grid-mesh--static {
-    grid-auto-rows: minmax(0, auto);
-  }
-
-  .quick-access {
-    margin-top: 28px;
-  }
-}
-
-.class-schedule-card {
-  min-width: 0;
-  padding: 1rem;
-}
-
-.class-schedule-card__header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: .75rem;
-}
-
-.class-schedule-card__term {
-  flex-shrink: 0;
-  margin-top: .15rem;
-}
-
-.class-schedule__legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: .65rem 1rem;
-  margin-top: .75rem;
-  padding-top: .75rem;
-  border-top: 1px solid var(--bs-border-color);
-  color: var(--bs-secondary-color);
-  font-size: .75rem;
-}
-
-@media (max-width: 760px) {
-  .class-schedule-card {
-    padding: .75rem;
-  }
-
-  .class-schedule-card__header {
-    align-items: flex-start;
-    gap: .75rem;
-  }
-
-  .class-schedule-card__header h2 {
-    font-size: 1rem;
-  }
-
-  .class-schedule-card__header p {
-    font-size: .72rem;
-  }
-
-  .class-schedule__table {
-    min-width: 900px;
-    font-size: .7rem;
-  }
-
-  .class-schedule__table th,
-  .schedule-cell {
-    padding: .45rem;
-  }
-
-  .class-schedule__time-header,
-  .class-schedule__table tbody th {
-    width: 78px;
-  }
-
-  .schedule-cell strong {
-    font-size: .72rem;
-  }
-
-  .schedule-cell span {
-    font-size: .7rem;
-  }
-
-  .schedule-cell small {
-    font-size: .72rem;
-  }
-
-  .class-schedule__legend {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: .4rem;
-  }
-}
-
-
-/* Central acadêmica e páginas acadêmicas */
-.academic-hero-card {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin: 0 4px 20px;
-  padding: 20px 22px;
-  border: 1px solid var(--bs-border-color);
-  border-radius: 16px;
-  background: var(--bs-secondary-bg);
-  box-shadow: 0 8px 24px rgba(13, 27, 52, .06);
-}
-
-.academic-hero-card__icon {
-  width: 48px;
-  height: 48px;
-  display: grid;
-  place-items: center;
-  border-radius: 14px;
-  background: color-mix(in srgb, var(--brand-blue) 12%, transparent);
-  color: var(--brand-blue-text);
-  font-size: 1.35rem;
-  flex: 0 0 auto;
-}
-
-.academic-hero-card h2 {
-  font-size: 1rem;
-  margin: 0 0 4px;
-  font-weight: 750;
-}
-
-.academic-hero-card p {
-  margin: 0;
-  color: var(--bs-secondary-color);
-  font-size: .78rem;
-}
-
-.academic-hero-card__status {
-  margin-left: auto;
-  flex: 0 0 auto;
-  font-size: .75rem;
-  color: var(--bs-secondary-color);
-  font-weight: 650;
-}
-
-.status-dot {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #28a745;
-  margin-right: 5px;
-}
-
-.academic-links-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
-  padding: 0 4px 24px;
-}
-
-.academic-link-card {
-  min-height: 144px;
-  position: relative;
-  display: flex;
-  align-items: flex-start;
-  gap: 14px;
-  padding: 20px 42px 20px 20px;
-  border: 1px solid var(--bs-border-color);
-  border-radius: 14px;
-  background: var(--bs-secondary-bg);
-  color: var(--bs-body-color);
-  text-decoration: none;
-  transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease;
-}
-
-.academic-link-card:hover {
-  transform: translateY(-2px);
-  border-color: var(--brand-blue);
-  box-shadow: 0 8px 20px rgba(13, 27, 52, .08);
-  color: var(--bs-body-color);
-}
-
-.academic-link-card > i:first-child {
-  width: 40px;
-  height: 40px;
-  display: grid;
-  place-items: center;
-  border-radius: 11px;
-  background: color-mix(in srgb, var(--brand-blue) 10%, transparent);
-  color: var(--brand-blue-text);
-  font-size: 1.2rem;
-  flex: 0 0 auto;
-}
-
-.academic-link-card > div {
-  min-width: 0;
-  padding-top: 1px;
-}
-
-.academic-link-card strong {
-  display: block;
-  font-size: .84rem;
-  line-height: 1.3;
-  margin: 0 0 8px;
-}
-
-.academic-link-card span {
-  display: block;
-  color: var(--bs-secondary-color);
-  font-size: .72rem;
-  line-height: 1.5;
-  overflow-wrap: anywhere;
-}
-
-.academic-link-card .arrow {
-  position: absolute;
-  right: 18px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--bs-secondary-color);
-  font-size: .85rem;
-}
-
-.academic-link-card:hover .arrow {
-  color: var(--brand-blue-text);
-}
-
-.grid-mesh--academic {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  grid-auto-rows: minmax(220px, auto);
-}
-
-.academic-page-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-  padding: 0 4px 24px;
-}
-
-.grid-card {
-  border: 1px solid var(--bs-border-color);
-  border-radius: 16px;
-  background: var(--bs-secondary-bg);
-  overflow: hidden;
-  min-width: 0;
-}
-
-.grid-card--wide {
-  grid-column: span 2;
-}
-
-.grid-card__head {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 18px 20px;
-  border-bottom: 1px solid var(--bs-border-color);
-}
-
-.grid-card__head h2 {
-  font-size: .88rem;
-  margin: 0;
-  font-weight: 750;
-}
-
-.grid-card__subtitle {
-  margin: 4px 0 0;
-  color: var(--bs-secondary-color);
-  font-size: .72rem;
-}
-
-.grid-card__icon {
-  width: 38px;
-  height: 38px;
-  display: grid;
-  place-items: center;
-  border-radius: 10px;
-  background: color-mix(in srgb, var(--brand-blue) 10%, transparent);
-  color: var(--brand-blue-text);
-}
-
-.grid-card__body {
-  padding: 20px;
-}
-
-.academic-list {
-  display: grid;
-  gap: 9px;
-}
-
-.academic-list__item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--bs-border-color);
-}
-
-.academic-list__item:last-child {
-  border-bottom: 0;
-}
-
-.academic-list__item strong {
-  display: block;
-  font-size: .78rem;
-}
-
-.academic-list__item small {
-  display: block;
-  color: var(--bs-secondary-color);
-  font-size: .72rem;
-  margin-top: 4px;
-}
-
-.academic-table {
-  font-size: .75rem;
-  margin-bottom: 0;
-}
-
-.academic-table th {
-  font-size: .72rem;
-  color: var(--bs-secondary-color);
-  font-weight: 700;
-}
-
-.academic-table td,
-.academic-table th {
-  padding: .7rem .6rem;
-}
-
-.metric-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-}
-
-.metric-grid > div {
-  padding: 14px;
-  border: 1px solid var(--bs-border-color);
-  border-radius: 11px;
-  background: var(--bs-tertiary-bg);
-}
-
-.metric-grid span {
-  display: block;
-  color: var(--bs-secondary-color);
-  font-size: .72rem;
-  margin-bottom: 6px;
-}
-
-.metric-grid strong {
-  font-size: 1.2rem;
-}
-
-.notice-box {
-  display: flex;
-  gap: 10px;
-  align-items: flex-start;
-  padding: 12px;
-  border-radius: 10px;
-  background: color-mix(in srgb, var(--brand-blue) 7%, var(--bs-secondary-bg));
-  color: var(--bs-secondary-color);
-  font-size: .72rem;
-  line-height: 1.5;
-}
-
-.notice-box i {
-  color: var(--brand-blue-text);
-  font-size: 1rem;
-}
-
-.data-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0 18px;
-  margin: 0;
-}
-
-.data-grid--single {
-  grid-template-columns: 1fr;
-}
-
-.data-grid > div {
-  padding: 12px 0;
-  border-bottom: 1px solid var(--bs-border-color);
-}
-
-.data-grid dt {
-  font-size: .72rem;
-  text-transform: uppercase;
-  letter-spacing: .04em;
-  color: var(--bs-secondary-color);
-  margin-bottom: 4px;
-}
-
-.data-grid dd {
-  font-size: .76rem;
-  margin: 0;
-  font-weight: 650;
-}
-
-.academic-form .form-label {
-  font-size: .7rem;
-  color: var(--bs-secondary-color);
-  font-weight: 650;
-}
-
-.academic-form .form-control {
-  font-size: .78rem;
-}
-
-.status-card {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 15px;
-  border-radius: 12px;
-  background: color-mix(in srgb, #28a745 8%, var(--bs-secondary-bg));
-}
-
-.status-card > i {
-  font-size: 1.7rem;
-  color: #28a745;
-}
-
-.status-card strong {
-  display: block;
-  font-size: .82rem;
-}
-
-.status-card span {
-  display: block;
-  color: var(--bs-secondary-color);
-  font-size: .72rem;
-  margin-top: 3px;
-}
-
-.progress-summary .progress,
-.grid-card .progress {
-  height: 12px;
-  background: var(--bs-tertiary-bg);
-}
-
-.progress-bar {
-  font-size: .72rem;
-  font-weight: 700;
-}
-
-.clean-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: grid;
-  gap: 0;
-}
-
-.clean-list li {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 13px 0;
-  border-bottom: 1px solid var(--bs-border-color);
-  font-size: .72rem;
-}
-
-.clean-list li span strong,
-.clean-list li span small {
-  display: block;
-}
-
-.clean-list li span small {
-  margin-top: 4px;
-  color: var(--bs-secondary-color);
-  font-size: .72rem;
-}
-
-.academic-calendar-summary {
-  display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(280px, 1fr);
-  gap: 16px;
-  margin: 0 4px 16px;
-  padding: 18px 20px;
-  border: 1px solid var(--bs-border-color);
-  border-radius: 16px;
-  background: var(--bs-secondary-bg);
-}
-
-.academic-calendar-summary__next {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  min-width: 0;
-}
-
-.academic-calendar-summary__icon {
-  display: grid;
-  width: 44px;
-  height: 44px;
-  flex: 0 0 auto;
-  place-items: center;
-  border-radius: 12px;
-  background: color-mix(in srgb, var(--brand-blue) 12%, transparent);
-  color: var(--brand-blue-text);
-  font-size: 1.15rem;
-}
-
-.academic-calendar-summary__next span,
-.academic-calendar-summary__metrics span {
-  display: block;
-  color: var(--bs-secondary-color);
-  font-size: .72rem;
-}
-
-.academic-calendar-summary__next strong {
-  display: block;
-  margin-top: 3px;
-  font-size: .9rem;
-}
-
-.academic-calendar-summary__next small {
-  display: block;
-  margin-top: 3px;
-  color: var(--bs-secondary-color);
-  font-size: .72rem;
-}
-
-.academic-calendar-summary__metrics {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-}
-
-.academic-calendar-summary__metrics > div {
-  padding: 10px 12px;
-  border-left: 1px solid var(--bs-border-color);
-}
-
-.academic-calendar-summary__metrics strong {
-  display: block;
-  margin-top: 4px;
-  color: var(--brand-blue-text);
-  font-size: 1.25rem;
-}
-
-.academic-calendar-list {
-  display: grid;
-  gap: 10px;
-}
-
-.academic-calendar-item {
-  display: flex;
-  gap: 14px;
-  padding: 14px 0;
-  border-bottom: 1px solid var(--bs-border-color);
-}
-
-.academic-calendar-item:last-child {
-  border-bottom: 0;
-  padding-bottom: 0;
-}
-
-.academic-calendar-item__date {
-  width: 76px;
-  flex: 0 0 auto;
-  padding: 9px 6px;
-  border-radius: 10px;
-  background: color-mix(in srgb, var(--brand-blue) 9%, var(--bs-secondary-bg));
-  color: var(--brand-blue-text);
-  text-align: center;
-}
-
-.academic-calendar-item__date strong,
-.academic-calendar-item__date small {
-  display: block;
-}
-
-.academic-calendar-item__date strong {
-  font-size: .75rem;
-}
-
-.academic-calendar-item__date small {
-  margin-top: 3px;
-  color: var(--bs-secondary-color);
-  font-size: .72rem;
-}
-
-.academic-calendar-item__content {
-  min-width: 0;
-  flex: 1;
-}
-
-.academic-calendar-item__title {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.academic-calendar-item__title strong,
-.academic-calendar-item__title small {
-  display: block;
-}
-
-.academic-calendar-item__title strong {
-  font-size: .78rem;
-}
-
-.academic-calendar-item__title small {
-  margin-top: 4px;
-  color: var(--bs-secondary-color);
-  font-size: .72rem;
-}
-
-.academic-calendar-item__details {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px 14px;
-  margin-top: 10px;
-  color: var(--bs-secondary-color);
-  font-size: .72rem;
-}
-
-.academic-calendar-item__details span {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.academic-calendar-item__details i {
-  color: var(--brand-blue-text);
-}
-
-.academic-calendar-checklist li {
-  align-items: center;
-}
-
-.academic-calendar-checklist i {
-  color: #28a745;
-  font-size: .95rem;
-}
-
-.clean-list li:last-child {
-  border-bottom: 0;
-}
-
-.clean-list strong {
-  font-size: .7rem;
-}
-
-.bar-chart {
-  display: grid;
-  gap: 15px;
-}
-
-.bar-row {
-  display: grid;
-  grid-template-columns: 160px 1fr 38px;
-  align-items: center;
-  gap: 10px;
-  font-size: .72rem;
-}
-
-.bar {
-  height: 10px;
-  border-radius: 99px;
-  background: var(--bs-tertiary-bg);
-  overflow: hidden;
-}
-
-.bar i {
-  display: block;
-  height: 100%;
-  border-radius: inherit;
-  background: var(--brand-blue);
-}
-
-.bar-row strong {
-  text-align: right;
-  font-size: .72rem;
-}
-
-.digital-card {
-  max-width: 480px;
-  margin: auto;
-  padding: 22px;
-  border-radius: 18px;
-  background: linear-gradient(135deg, #0c5aa6, #17345f);
-  color: #fff;
-  box-shadow: 0 15px 30px rgba(0, 0, 0, .18);
-  position: relative;
-  overflow: hidden;
-}
-
-.digital-card__brand {
-  font-size: .7rem;
-  font-weight: 800;
-  letter-spacing: .12em;
-}
-
-.digital-card__avatar {
-  width: 64px;
-  height: 64px;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, .18);
-  font-weight: 800;
-  font-size: 1.15rem;
-  margin: 28px 0 14px;
-}
-
-.digital-card__name {
-  font-size: 1rem;
-  font-weight: 800;
-}
-
-.digital-card__course {
-  font-size: .72rem;
-  opacity: .85;
-  margin-top: 4px;
-}
-
-.digital-card__ra {
-  font-size: .7rem;
-  margin-top: 14px;
-}
-
-.digital-card__footer {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 28px;
-  padding-top: 12px;
-  border-top: 1px solid rgba(255, 255, 255, .25);
-  font-size: .72rem;
-  opacity: .85;
-}
-
-.qr-placeholder {
-  width: 150px;
-  height: 150px;
-  margin: auto;
-  display: grid;
-  place-items: center;
-  align-content: center;
-  gap: 7px;
-  border: 1px dashed var(--bs-border-color);
-  border-radius: 12px;
-  color: var(--bs-secondary-color);
-}
-
-.qr-placeholder i {
-  font-size: 4rem;
-}
-
-.qr-placeholder span {
-  font-size: .72rem;
-  letter-spacing: .1em;
-}
-
-.under-construction {
-  max-width: 560px;
-  margin: 8px auto 24px;
-  padding: 40px 28px;
-  text-align: center;
-}
-
-.under-construction__icon {
-  width: 64px;
-  height: 64px;
-  margin: 0 auto 16px;
-  display: grid;
-  place-items: center;
-  border-radius: 18px;
-  background: color-mix(in srgb, var(--brand-blue) 12%, transparent);
-  color: var(--brand-blue-text);
-  font-size: 1.7rem;
-}
-
-.under-construction h2 {
-  margin: 0 0 8px;
-  font-size: 1.1rem;
-  font-weight: 750;
-}
-
-.under-construction p {
-  margin: 0 auto 20px;
-  max-width: 400px;
-  color: var(--bs-secondary-color);
-  font-size: .8rem;
-}
-
-@media (max-width: 980px) {
-  .academic-links-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .grid-mesh--academic {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .academic-page-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .grid-mesh--academic .g-col-3 {
-    grid-column: span 2;
-  }
-
-  .grid-card--wide {
-    grid-column: span 2;
-  }
-}
-
-@media (max-width: 760px) {
-  .dashboard-hero {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 16px;
-    margin-bottom: 14px;
-    padding: 20px 18px;
-  }
-
-  .dashboard-hero__status {
-    width: 100%;
-    white-space: normal;
-  }
-
-  .dashboard-overview {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-    margin-bottom: 24px;
-  }
-
-  .dashboard-section__heading {
-    align-items: flex-start;
-  }
-
-  .dashboard-section__heading > a {
-    padding-top: 15px;
-    white-space: nowrap;
-  }
-
-  .academic-hero-card {
-    align-items: flex-start;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-bottom: 16px;
-    padding: 16px;
-  }
-
-  .academic-hero-card__status {
-    width: calc(100% - 60px);
-    margin-left: 60px;
-    margin-top: -4px;
-  }
-
-  .academic-links-grid,
-  .grid-mesh--academic {
-    grid-template-columns: 1fr;
-  }
-
-  .academic-page-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .academic-links-grid {
-    gap: 10px;
-    padding-inline: 0;
-  }
-
-  .academic-link-card {
-    min-height: 0;
-    padding: 16px 38px 16px 16px;
-  }
-
-  .academic-link-card > i:first-child {
-    width: 36px;
-    height: 36px;
-    font-size: 1rem;
-  }
-
-  .grid-mesh--academic > * {
-    grid-column: 1 / -1;
-  }
-
-  .grid-card--wide {
-    grid-column: span 1;
-  }
-
-  .metric-grid,
-  .data-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .bar-row {
-    grid-template-columns: 110px 1fr 34px;
-  }
-
-  .academic-table {
-    min-width: 700px;
-  }
-
-  .academic-calendar-summary {
-    grid-template-columns: 1fr;
-    gap: 14px;
-    padding: 14px;
-  }
-
-  .academic-calendar-summary__metrics > div {
-    border-top: 1px solid var(--bs-border-color);
-    border-left: 0;
-    padding: 10px 6px 0;
-  }
-
-  .academic-calendar-item {
-    gap: 10px;
-  }
-
-  .academic-calendar-item__date {
-    width: 68px;
-  }
-
-  .academic-calendar-item__title {
-    display: block;
-  }
-
-  .academic-calendar-item__title .badge {
-    display: inline-block;
-    margin-top: 8px;
-  }
-}
-
-/* ===================== REQUERIMENTOS ===================== */
-.grid-mesh--auto {
-  grid-auto-rows: auto;
-}
-
-.section-title {
-  margin: 4px 4px 12px;
-  font-size: .92rem;
-  font-weight: 700;
-  color: var(--bs-secondary-color);
-}
-
-.info-banner {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin: 0 4px 22px;
-  padding: 14px 18px;
-  border: 1px solid var(--bs-border-color);
-  border-left: 4px solid var(--brand-blue);
-  border-radius: 12px;
-  background: color-mix(in srgb, var(--brand-blue) 7%, var(--bs-secondary-bg));
-}
-
-.info-banner__icon {
-  width: 36px;
-  height: 36px;
-  flex: 0 0 36px;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  background: color-mix(in srgb, var(--brand-blue) 14%, transparent);
-  color: var(--brand-blue-text);
-  font-size: 1.05rem;
-}
-
-.info-banner strong {
-  display: block;
-  font-size: .84rem;
-}
-
-.info-banner span {
-  display: block;
-  color: var(--bs-secondary-color);
-  font-size: .76rem;
-  line-height: 1.5;
-}
-
-.request-card {
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-}
-
-.request-card__icon {
-  width: 40px;
-  height: 40px;
-  display: grid;
-  place-items: center;
-  border-radius: 11px;
-  background: color-mix(in srgb, var(--brand-blue) 10%, transparent);
-  color: var(--brand-blue-text);
-  font-size: 1.2rem;
-}
-
-.request-card h3 {
-  margin: 16px 0 6px;
-  font-size: .95rem;
-  font-weight: 700;
-}
-
-.request-card p {
-  margin: 0 0 20px;
-  color: var(--bs-secondary-color);
-  font-size: .76rem;
-  line-height: 1.5;
-}
-
-.request-card .btn {
-  margin-top: auto;
-}
-
-.btn-accent {
-  --bs-btn-color: var(--brand-ink);
-  --bs-btn-bg: var(--brand-orange);
-  --bs-btn-border-color: var(--brand-orange);
-  --bs-btn-hover-color: var(--brand-ink);
-  --bs-btn-hover-bg: color-mix(in srgb, var(--brand-orange) 88%, #fff);
-  --bs-btn-hover-border-color: color-mix(in srgb, var(--brand-orange) 88%, #fff);
-  --bs-btn-active-color: var(--brand-ink);
-  --bs-btn-active-bg: color-mix(in srgb, var(--brand-orange) 80%, #000);
-  --bs-btn-active-border-color: color-mix(in srgb, var(--brand-orange) 80%, #000);
-  --bs-btn-focus-shadow-rgb: 217, 139, 62;
-  font-weight: 600;
-}
-
-.academic-form .form-select {
-  font-size: .78rem;
-}
-
-@media (max-width: 980px) {
-  .grid-mesh--academic .g-col-4 {
-    grid-column: 1 / -1;
-  }
-}
-
-/* ===================== BOLETO ONLINE ===================== */
-.info-banner--success {
-  border-left-color: var(--brand-green);
-  background: color-mix(in srgb, var(--brand-green) 8%, var(--bs-secondary-bg));
-}
-
-.info-banner--success .info-banner__icon {
-  background: var(--brand-green);
-  color: #fff;
-}
-
-.info-banner--success strong {
-  color: color-mix(in srgb, var(--brand-green) 70%, var(--bs-emphasis-color));
-}
-
-.invoice-card {
-  margin: 0 4px 24px;
-  padding: 22px 24px 22px 30px;
-  border: 2px solid var(--bs-primary);
-  border-radius: 16px;
-  background: var(--bs-secondary-bg);
-  box-shadow: inset 6px 0 0 var(--brand-orange);
-}
-
-.invoice-card__top {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 18px;
-  padding-bottom: 18px;
-  border-bottom: 1px solid var(--bs-border-color);
-}
-
-.invoice-card__title {
-  margin: 10px 0 4px;
-  font-size: 1.2rem;
-  font-weight: 700;
-}
-
-.invoice-card__meta {
-  margin: 0;
-  color: var(--bs-secondary-color);
-  font-size: .76rem;
-}
-
-.invoice-card__amount {
-  text-align: right;
-}
-
-.invoice-card__amount small {
-  display: block;
-  color: var(--bs-secondary-color);
-  font-size: .72rem;
-  font-weight: 700;
-  letter-spacing: .03em;
-  text-transform: uppercase;
-}
-
-.invoice-card__value {
-  display: block;
-  font-size: 1.9rem;
-  font-weight: 800;
-  line-height: 1.15;
-}
-
-.invoice-card__due {
-  font-size: .78rem;
-  font-weight: 700;
-}
-
-.pix-qr {
-  width: 168px;
-  height: 168px;
-  margin: 0 auto 14px;
-  display: grid;
-  place-items: center;
-  border: 1px dashed var(--bs-border-color);
-  border-radius: 14px;
-  color: var(--bs-secondary-color);
-  font-size: 5.5rem;
-}
-
-@media (max-width: 760px) {
-  .invoice-card {
-    padding: 18px 16px 18px 22px;
-  }
-
-  .invoice-card__amount {
-    text-align: left;
-  }
-}
-
-/* ===================== CONSULTA DE CONTRATO ===================== */
-.contract-paper {
-  max-width: 900px;
-  margin: 8px auto 32px;
-  padding: 56px 64px;
-  border-radius: 14px;
-  background: #fff;
-  box-shadow: 0 10px 30px rgba(15, 23, 42, .14);
-  color: #000;
-  font-family: "Times New Roman", Times, serif;
-  font-size: .95rem;
-  line-height: 1.5;
-}
-
-.contract-paper h2 {
-  margin: 0 0 28px;
-  padding-bottom: 18px;
-  border-bottom: 2px solid #000;
-  font-size: 1.1rem;
-  font-weight: 700;
-  text-align: center;
-  text-transform: uppercase;
-}
-
-.contract-paper p {
-  margin: 0 0 8px;
-}
-
-.contract-section {
-  margin: 30px 0 14px;
-  font-weight: 700;
-  text-decoration: underline;
-  text-transform: uppercase;
-}
-
-.contract-line {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2px 22px;
-  margin-bottom: 10px;
-}
-
-.contract-cols {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0 24px;
-}
-
-.contract-clauses p {
-  margin-bottom: 14px;
-  font-size: .82rem;
-  text-align: justify;
-}
-
-.contract-date {
-  margin: 22px 0;
-  text-align: right;
-}
-
-.contract-signatures {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 28px;
-  margin-top: 52px;
-  font-size: .72rem;
-  text-align: center;
-}
-
-.contract-signature {
-  padding-top: 4px;
-  border-top: 1px solid #000;
-}
-
-.contract-divider {
-  margin: 36px 0 20px;
-  border: 0;
-  border-top: 1px dashed #9ca3af;
-  opacity: 1;
-}
-
-@media (max-width: 760px) {
-  .contract-paper {
-    padding: 28px 20px;
-  }
-
-  .contract-cols,
-  .contract-signatures {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media print {
-  @page {
-    size: A4;
-    margin: 14mm;
-  }
-
-  html,
-  body {
-    background: #fff !important;
-  }
-
-  .sidebar-nav,
-  .sidebar-backdrop,
-  .portal-topbar,
-  .skip-link,
-  .no-print {
-    display: none !important;
-  }
-
-  .app-shell {
-    padding-left: 0 !important;
-  }
-
-  .page-content {
-    max-width: none !important;
-    min-height: 0 !important;
-    padding: 0 !important;
-  }
-
-  .contract-paper {
-    max-width: none;
-    margin: 0;
-    padding: 0;
-    border-radius: 0;
-    box-shadow: none;
-    font-size: 10.5pt;
-  }
-
-  .contract-clauses p,
-  .contract-signatures,
-  .contract-cols,
-  .contract-line {
-    break-inside: avoid;
-  }
-
-  .contract-cols,
-  .contract-signatures {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-/* ===================== COMPROVANTE IR ===================== */
-.print-only {
-  display: none;
-}
-
-.irpf-summary {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 20px;
-}
-
-.irpf-summary small {
-  display: block;
-  color: var(--bs-secondary-color);
-  font-size: .76rem;
-}
-
-.irpf-total {
-  display: block;
-  font-size: 2rem;
-  font-weight: 800;
-  line-height: 1.2;
-}
-
-.irpf-beneficiary {
-  text-align: right;
-}
-
-.irpf-beneficiary strong {
-  display: block;
-  font-size: 1rem;
-  text-transform: uppercase;
-}
-
-.academic-table tfoot th {
-  padding-top: .9rem;
-  padding-bottom: .9rem;
-  font-size: .78rem;
-  font-weight: 700;
-  text-transform: uppercase;
-}
-
-@media (max-width: 760px) {
-  .irpf-beneficiary {
-    text-align: left;
-  }
-}
-
-@media print {
-  .print-only {
-    display: block !important;
-    margin-bottom: 18px;
-  }
-
-  .print-only h1 {
-    margin: 0;
-    font-size: 16pt;
-    font-weight: 700;
-  }
-
-  .print-only p {
-    margin: 0;
-    font-size: 10pt;
-  }
-
-  .irpf-report {
-    --bs-body-color: #000;
-    --bs-body-bg: #fff;
-    --bs-emphasis-color: #000;
-    --bs-secondary-color: #4b5563;
-    --bs-secondary-bg: #fff;
-    --bs-tertiary-bg: #f3f4f6;
-    --bs-border-color: #d1d5db;
-    color: #000;
-  }
-
-  .irpf-report .grid-card {
-    box-shadow: none;
-    break-inside: avoid;
-  }
-
-  .irpf-report tr {
-    break-inside: avoid;
-  }
-}
-
-/* ===================== AVALIAÇÃO INSTITUCIONAL ===================== */
-.rating-section + .rating-section {
-  margin-top: 28px;
-  padding-top: 28px;
-  border-top: 1px solid var(--bs-border-color);
-}
-
-.rating-section__title {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 0 0 10px;
-  font-size: 1.05rem;
-  font-weight: 700;
-}
-
-.rating-section__title i {
-  color: var(--brand-blue-text);
-}
-
-.rating-group {
-  min-width: 0;
-  margin: 0;
-  padding: 0;
-  border: 0;
-}
-
-.rating-group legend {
-  float: none;
-  width: auto;
-  margin: 0 0 14px;
-  padding: 0;
-  color: var(--bs-secondary-color);
-  font-size: .84rem;
-  font-weight: 400;
-}
-
-.rating-scale {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.rating-option {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  padding: 18px 8px 14px;
-  border: 1px solid var(--bs-border-color);
-  border-radius: 12px;
-  background: var(--bs-tertiary-bg);
-  cursor: pointer;
-  text-align: center;
-  transition: border-color .15s ease, background-color .15s ease;
-}
-
-.rating-option .form-check-input {
-  width: 1.1rem;
-  height: 1.1rem;
-  margin: 0 0 8px;
-  cursor: pointer;
-}
-
-.rating-option strong {
-  font-size: .9rem;
-}
-
-.rating-option span {
-  color: var(--bs-secondary-color);
-  font-size: .72rem;
-}
-
-.rating-option:hover {
-  border-color: var(--bs-primary);
-}
-
-.rating-option:has(input:checked) {
-  border-color: var(--bs-primary);
-  background: color-mix(in srgb, var(--bs-primary) 10%, var(--bs-secondary-bg));
-}
-
-.rating-option:has(input:focus-visible) {
-  outline: 2px solid var(--bs-primary);
-  outline-offset: 2px;
-}
-
-.rating-group .invalid-feedback {
-  display: none;
-  margin-top: 8px;
-}
-
-.rating-group.is-invalid .invalid-feedback {
-  display: block;
-}
-
-.rating-group.is-invalid .rating-option {
-  border-color: var(--bs-danger);
-}
-
-@media (max-width: 576px) {
-  .rating-scale {
-    gap: 8px;
-  }
-
-  .rating-option {
-    padding: 12px 4px;
-  }
-
-  .rating-option span {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    white-space: nowrap;
-  }
-}
-
-/* ===================== REPOSITÓRIO DO ALUNO ===================== */
-.repo-layout {
-  display: grid;
-  grid-template-columns: 250px minmax(0, 1fr);
-  gap: 16px;
-  align-items: start;
-}
-
-.repo-side {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  padding: 18px;
-  overflow: visible;
-}
-
-.repo-nav {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.repo-nav__item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  padding: 9px 12px;
-  border: 0;
-  border-radius: 10px;
-  background: transparent;
-  color: var(--bs-body-color);
-  font-size: .82rem;
-  font-weight: 600;
-  text-align: left;
-}
-
-.repo-nav__item:hover {
-  background: var(--bs-tertiary-bg);
-}
-
-.repo-nav__item.active {
-  background: color-mix(in srgb, var(--bs-primary) 12%, transparent);
-  color: var(--brand-blue-text);
-}
-
-.repo-storage small {
-  color: var(--bs-secondary-color);
-  font-size: .72rem;
-}
-
-.repo-storage .progress {
-  height: 6px;
-  margin-bottom: 6px;
-}
-
-.repo-main {
-  min-height: 480px;
-  padding: 18px 20px 24px;
-}
-
-.repo-main.is-dragging {
-  outline: 2px dashed var(--bs-primary);
-  outline-offset: -8px;
-}
-
-.repo-toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px;
-}
-
-.repo-search {
-  flex: 1 1 240px;
-  width: auto;
-}
-
-.repo-sort {
-  flex: 0 0 auto;
-  width: auto;
-}
-
-.repo-crumbs {
-  margin: 16px 0 6px;
-  font-size: .86rem;
-}
-
-.repo-crumb {
-  padding: 0;
-  border: 0;
-  background: none;
-  color: var(--brand-blue-text);
-  font: inherit;
-}
-
-.repo-crumb:hover {
-  text-decoration: underline;
-}
-
-.repo-section-title {
-  margin: 18px 0 10px;
-  color: var(--bs-secondary-color);
-  font-size: .76rem;
-  font-weight: 700;
-}
-
-.repo-folders {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-  gap: 12px;
-}
-
-.repo-folder,
-.repo-file {
-  border: 1px solid var(--bs-border-color);
-  border-radius: 12px;
-  transition: border-color .15s ease;
-}
-
-.repo-folder:hover,
-.repo-file:hover {
-  border-color: var(--bs-primary);
-}
-
-.repo-folder {
-  background: var(--bs-tertiary-bg);
-}
-
-.repo-folder__open {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-  min-width: 0;
-  padding: 12px 14px;
-  border: 0;
-  background: none;
-  color: inherit;
-  font-size: .82rem;
-  font-weight: 600;
-  text-align: left;
-}
-
-.repo-folder__open span {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.repo-files {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 14px;
-}
-
-.repo-file {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  background: var(--bs-secondary-bg);
-}
-
-.repo-file__thumb {
-  display: grid;
-  place-items: center;
-  height: 128px;
-  border: 0;
-  border-bottom: 1px solid var(--bs-border-color);
-  background: var(--bs-tertiary-bg);
-  font-size: 3.4rem;
-}
-
-.repo-file__foot {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 6px 10px 12px;
-}
-
-.repo-file__info {
-  flex: 1;
-  min-width: 0;
-}
-
-.repo-file__name {
-  display: block;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: .8rem;
-  font-weight: 600;
-}
-
-.repo-file__meta {
-  display: block;
-  color: var(--bs-secondary-color);
-  font-size: .7rem;
-}
-
-.repo-icon-btn {
-  display: grid;
-  place-items: center;
-  flex: 0 0 auto;
-  width: 30px;
-  height: 30px;
-  border: 0;
-  border-radius: 50%;
-  background: transparent;
-  color: var(--bs-secondary-color);
-}
-
-.repo-icon-btn:hover {
-  background: var(--bs-tertiary-bg);
-  color: var(--bs-body-color);
-}
-
-.repo-icon-btn.is-starred {
-  color: #f0b429;
-}
-
-.repo-name-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: inherit;
-  font-weight: 600;
-  text-align: left;
-}
-
-.repo-path {
-  display: block;
-  margin: 2px 0 0 30px;
-  color: var(--bs-secondary-color);
-  font-size: .72rem;
-}
-
-.repo-empty {
-  padding: 56px 16px;
-  color: var(--bs-secondary-color);
-  text-align: center;
-}
-
-.repo-empty i {
-  display: block;
-  margin-bottom: 10px;
-  font-size: 2.6rem;
-}
-
-.repo-preview {
-  display: grid;
-  place-items: center;
-  height: 140px;
-  margin-bottom: 16px;
-  border-radius: 12px;
-  background: var(--bs-tertiary-bg);
-  font-size: 4rem;
-}
-
-.file-icon--folder { color: #f0b429; }
-.file-icon--pdf { color: #d93025; }
-.file-icon--doc { color: #1a73e8; }
-.file-icon--ppt { color: #e8710a; }
-.file-icon--xls { color: #188038; }
-.file-icon--zip { color: #8d6e63; }
-.file-icon--img { color: #a142f4; }
-.file-icon--video { color: #c2185b; }
-.file-icon--code,
-.file-icon--other { color: #6b7280; }
-
-@media (max-width: 900px) {
-  .repo-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .repo-side {
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: center;
-  }
-
-  .repo-nav {
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
-
-  .repo-nav__item {
-    width: auto;
-  }
-
-  .repo-storage {
-    flex: 1 1 200px;
-  }
-}
-
-/* ===================== FEED DE AVISOS ===================== */
-.notice-wrap {
-  max-width: 100%;
-  margin: 0 auto;
-}
-
-.notice-toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin: 4px 0 18px;
-}
-
-.notice-filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.notice-filter {
-  padding: 6px 14px;
-  border: 1px solid var(--bs-border-color);
-  border-radius: 999px;
-  background: var(--bs-secondary-bg);
-  color: var(--bs-body-color);
-  font-size: .78rem;
-  font-weight: 600;
-}
-
-.notice-filter:hover {
-  border-color: var(--bs-primary);
-}
-
-.notice-filter.active {
-  border-color: var(--bs-primary);
-  background: color-mix(in srgb, var(--bs-primary) 12%, var(--bs-secondary-bg));
-  color: var(--brand-blue-text);
-}
-
-.notice-filter .badge {
-  margin-left: 4px;
-}
-
-.notice-search {
-  width: 240px;
-  max-width: 100%;
-}
-
-.notice-feed {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.notice-card {
-  position: relative;
-  padding: 18px 20px 12px 26px;
-  border: 1px solid var(--bs-border-color);
-  border-radius: 14px;
-  background: var(--bs-secondary-bg);
-}
-
-.notice-card::before {
-  content: "";
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: 5px;
-  border-radius: 14px 0 0 14px;
-  background: var(--bs-border-color);
-}
-
-.notice-card--urgente::before {
-  background: var(--bs-danger);
-}
-
-.notice-card--importante::before {
-  background: var(--brand-orange);
-}
-
-.notice-card.is-unread {
-  border-color: color-mix(in srgb, var(--bs-primary) 45%, var(--bs-border-color));
-}
-
-.notice-card__head {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.notice-card__avatar {
-  display: grid;
-  place-items: center;
-  flex: 0 0 40px;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: color-mix(in srgb, var(--brand-blue) 12%, transparent);
-  color: var(--brand-blue-text);
-  font-size: 1.1rem;
-}
-
-.notice-card__meta {
-  flex: 1;
-  min-width: 0;
-}
-
-.notice-card__meta strong {
-  display: block;
-  font-size: .84rem;
-}
-
-.notice-card__meta time {
-  color: var(--bs-secondary-color);
-  font-size: .72rem;
-}
-
-.notice-card__tags {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 6px;
-}
-
-.notice-dot {
-  display: none;
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: var(--bs-primary);
-}
-
-.notice-card.is-unread .notice-dot {
-  display: inline-block;
-}
-
-.notice-card__title {
-  margin: 14px 0 6px;
-  font-size: 1.05rem;
-  font-weight: 700;
-}
-
-.notice-card__text {
-  display: -webkit-box;
-  overflow: hidden;
-  margin: 0;
-  font-size: .84rem;
-  line-height: 1.6;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
-}
-
-.notice-card.is-expanded .notice-card__text {
-  display: block;
-  overflow: visible;
-}
-
-.notice-card__more {
-  display: none;
-  margin-top: 12px;
-}
-
-.notice-card.is-expanded .notice-card__more {
-  display: block;
-}
-
-.notice-attachments {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 10px;
-}
-
-.notice-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 12px;
-  border: 1px solid var(--bs-border-color);
-  border-radius: 10px;
-  background: var(--bs-tertiary-bg);
-  color: var(--bs-body-color);
-  font-size: .76rem;
-  text-decoration: none;
-}
-
-.notice-chip small {
-  color: var(--bs-secondary-color);
-}
-
-.notice-card__foot {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 4px;
-  margin-top: 12px;
-  padding-top: 8px;
-  border-top: 1px solid var(--bs-border-color);
-}
-
-.notice-action {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 10px;
-  border: 0;
-  border-radius: 8px;
-  background: none;
-  color: var(--bs-secondary-color);
-  font-size: .76rem;
-  font-weight: 600;
-}
-
-.notice-action:hover {
-  background: var(--bs-tertiary-bg);
-  color: var(--bs-body-color);
-}
-
-.notice-action.is-pinned {
-  color: var(--brand-blue-text);
-}
-
-.notice-empty {
-  padding: 56px 16px;
-  color: var(--bs-secondary-color);
-  text-align: center;
-}
-
-.notice-empty i {
-  display: block;
-  margin-bottom: 10px;
-  font-size: 2.6rem;
-}
-
-/* ===================== BIBLIOTECA ===================== */
-.library-toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px;
-  margin: 4px 0 14px;
-}
-
-.library-search {
-  flex: 1 1 280px;
-  width: auto;
-}
-
-.library-toolbar .form-select {
-  flex: 0 0 auto;
-  width: auto;
-}
-
-.library-count {
-  margin: 0 0 12px;
-  color: var(--bs-secondary-color);
-  font-size: .8rem;
-}
-
-.book-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-  gap: 16px;
-  margin-bottom: 24px;
-}
-
-.book-card {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  border: 1px solid var(--bs-border-color);
-  border-radius: 14px;
-  background: var(--bs-secondary-bg);
-}
-
-.book-cover {
-  --cover: #3b5b92;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  height: 140px;
-  background: linear-gradient(135deg, var(--cover), color-mix(in srgb, var(--cover) 60%, #000));
-  color: #fff;
-  font-size: .7rem;
-  font-weight: 700;
-  letter-spacing: .05em;
-  text-transform: uppercase;
-}
-
-.book-cover i {
-  font-size: 2.4rem;
-}
-
-.book-cover--computacao { --cover: #2f5fa7; }
-.book-cover--direito { --cover: #8e3b46; }
-.book-cover--matematica { --cover: #1f7a74; }
-.book-cover--literatura { --cover: #b7791f; }
-.book-cover--metodologia { --cover: #5b6470; }
-
-.book-cover--mini {
-  flex: 0 0 56px;
-  width: 56px;
-  height: 76px;
-  border-radius: 8px;
-  font-size: 0;
-}
-
-.book-cover--mini i {
-  font-size: 1.5rem;
-}
-
-.book-card__body {
-  flex: 1;
-  padding: 14px 16px 8px;
-}
-
-.book-card__title {
-  margin: 0 0 4px;
-  font-size: .95rem;
-  font-weight: 700;
-  line-height: 1.3;
-}
-
-.book-card__author {
-  margin: 0 0 6px;
-  color: var(--bs-secondary-color);
-  font-size: .8rem;
-}
-
-.book-card__meta,
-.book-card__where {
-  margin: 0;
-  color: var(--bs-secondary-color);
-  font-size: .72rem;
-}
-
-.book-card__availability {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px;
-  margin: 10px 0 6px;
-  font-size: .74rem;
-}
-
-.book-card__foot {
-  padding: 8px 16px 16px;
-}
-
-.loan-summary {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-  gap: 12px;
-  margin: 4px 0 18px;
-}
-
-.loan-stat {
-  padding: 14px 16px;
-  border: 1px solid var(--bs-border-color);
-  border-radius: 12px;
-  background: var(--bs-secondary-bg);
-}
-
-.loan-stat strong {
-  display: block;
-  font-size: 1.6rem;
-  font-weight: 800;
-  line-height: 1.2;
-}
-
-.loan-stat span {
-  color: var(--bs-secondary-color);
-  font-size: .76rem;
-}
-
-.loan-stat--danger strong {
-  color: var(--bs-danger);
-}
-
-.loan-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 24px;
-}
-
-.loan-card {
-  position: relative;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 16px;
-  padding: 16px 18px 16px 26px;
-  border: 1px solid var(--bs-border-color);
-  border-radius: 14px;
-  background: var(--bs-secondary-bg);
-}
-
-.loan-card::before {
-  content: "";
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: 5px;
-  border-radius: 14px 0 0 14px;
-  background: var(--bs-border-color);
-}
-
-.loan-card--com-voce::before { background: var(--bs-success); }
-.loan-card--vencido::before { background: var(--bs-danger); }
-.loan-card--analise::before { background: var(--bs-warning); }
-
-.loan-card__info {
-  flex: 1 1 260px;
-  min-width: 0;
-}
-
-.loan-card__title {
-  margin: 0;
-  font-size: .98rem;
-  font-weight: 700;
-}
-
-.loan-card__author {
-  margin: 2px 0 8px;
-  color: var(--bs-secondary-color);
-  font-size: .8rem;
-}
-
-.loan-card__dates {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 20px;
-  font-size: .76rem;
-}
-
-.loan-card__note {
-  margin: 8px 0 0;
-  font-size: .78rem;
-  font-weight: 600;
-}
-
-.loan-card__note--danger {
-  color: var(--bs-danger);
-}
-
-.loan-card__side {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 8px;
-}
-
-@media (max-width: 576px) {
-  .loan-card__side {
-    align-items: flex-start;
-  }
-}
-
-/* ===================== CALENDÁRIO DE EVENTOS ===================== */
-.cat--prova { --cat: #d93025; }
-.cat--apresentacao { --cat: #7e57c2; }
-.cat--feriado { --cat: #188038; }
-.cat--palestra { --cat: #1a73e8; }
-.cat--oficina { --cat: #e8710a; }
-.cat--prazo { --cat: #0f9aa8; }
-
-.cal-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 300px;
-  gap: 16px;
-  align-items: start;
-}
-
-.cal-card {
-  padding: 18px 20px 20px;
-}
-
-.cal-toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 14px;
-}
-
-.cal-title {
-  flex: 1 1 auto;
-  margin: 0;
-  font-size: 1.15rem;
-  font-weight: 700;
-}
-
-.cal-legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px 8px;
-  margin-bottom: 14px;
-}
-
-.cal-legend__item {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 5px 12px;
-  border: 1px solid var(--bs-border-color);
-  border-radius: 999px;
-  background: transparent;
-  color: var(--bs-body-color);
-  font-size: .74rem;
-  font-weight: 600;
-}
-
-.cal-legend__item.is-off {
-  opacity: .45;
-  text-decoration: line-through;
-}
-
-.cal-dot {
-  flex: 0 0 10px;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--cat);
-}
-
-.cal-weekdays,
-.cal-grid {
-  display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-}
-
-.cal-weekdays span {
-  padding: 8px 4px;
-  color: var(--bs-secondary-color);
-  font-size: .72rem;
-  font-weight: 700;
-  text-align: center;
-  text-transform: uppercase;
-}
-
-.cal-grid {
-  border-top: 1px solid var(--bs-border-color);
-  border-left: 1px solid var(--bs-border-color);
-}
-
-.cal-day {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 4px;
-  min-width: 0;
-  min-height: 108px;
-  padding: 6px;
-  border: 0;
-  border-right: 1px solid var(--bs-border-color);
-  border-bottom: 1px solid var(--bs-border-color);
-  background: transparent;
-  color: inherit;
-  text-align: left;
-}
-
-.cal-day:disabled {
-  color: inherit;
-  cursor: default;
-  opacity: 1;
-}
-
-.cal-day:not(:disabled):hover {
-  background: var(--bs-tertiary-bg);
-}
-
-.cal-day:focus-visible {
-  outline: 2px solid var(--bs-primary);
-  outline-offset: -2px;
-}
-
-.cal-day.is-weekend {
-  background: color-mix(in srgb, var(--bs-tertiary-bg) 40%, transparent);
-}
-
-.cal-day.is-outside {
-  background: color-mix(in srgb, var(--bs-tertiary-bg) 60%, transparent);
-  color: var(--bs-secondary-color);
-}
-
-.cal-day.has-holiday {
-  background: color-mix(in srgb, #188038 10%, transparent);
-}
-
-.cal-day__num {
-  display: inline-grid;
-  place-items: center;
-  align-self: flex-start;
-  min-width: 24px;
-  height: 24px;
-  padding: 0 4px;
-  border-radius: 50%;
-  font-size: .78rem;
-  font-weight: 600;
-}
-
-.cal-day.is-today .cal-day__num {
-  background: var(--bs-primary);
-  color: #fff;
-}
-
-.cal-day__chips {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  min-width: 0;
-}
-
-.cal-chip {
-  display: block;
-  overflow: hidden;
-  padding: 2px 6px;
-  border-left: 3px solid var(--cat);
-  border-radius: 4px;
-  background: color-mix(in srgb, var(--cat) 16%, transparent);
-  color: color-mix(in srgb, var(--cat) 60%, var(--bs-emphasis-color));
-  font-size: .72rem;
-  font-weight: 600;
-  line-height: 1.4;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.cal-more {
-  color: var(--bs-secondary-color);
-  font-size: .72rem;
-  font-weight: 600;
-}
-
-.cal-side {
-  padding: 18px;
-}
-
-.cal-side h2 {
-  margin: 0 0 12px;
-  font-size: .95rem;
-  font-weight: 700;
-}
-
-.cal-upcoming {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.cal-upcoming__item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-  padding: 8px;
-  border: 1px solid var(--bs-border-color);
-  border-radius: 12px;
-  background: var(--bs-secondary-bg);
-  color: inherit;
-  text-align: left;
-}
-
-.cal-upcoming__item:hover {
-  border-color: var(--bs-primary);
-}
-
-.cal-upcoming__date {
-  display: flex;
-  flex: 0 0 46px;
-  flex-direction: column;
-  align-items: center;
-  padding: 6px 0;
-  border-radius: 10px;
-  background: color-mix(in srgb, var(--cat) 14%, transparent);
-  color: color-mix(in srgb, var(--cat) 60%, var(--bs-emphasis-color));
-  line-height: 1.1;
-}
-
-.cal-upcoming__date strong {
-  font-size: 1.15rem;
-}
-
-.cal-upcoming__date span {
-  font-size: .72rem;
-  font-weight: 700;
-  text-transform: uppercase;
-}
-
-.cal-upcoming__title {
-  display: block;
-  font-size: .8rem;
-  font-weight: 600;
-}
-
-.cal-upcoming__meta {
-  display: block;
-  color: var(--bs-secondary-color);
-  font-size: .7rem;
-}
-
-.cal-detail {
-  padding: 12px 14px;
-  border: 1px solid var(--bs-border-color);
-  border-left: 4px solid var(--cat);
-  border-radius: 10px;
-  background: var(--bs-secondary-bg);
-}
-
-.cal-detail + .cal-detail {
-  margin-top: 10px;
-}
-
-.cal-detail h3 {
-  margin: 0 0 6px;
-  font-size: .95rem;
-  font-weight: 700;
-}
-
-.cal-badge {
-  display: inline-block;
-  padding: 2px 10px;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--cat) 16%, transparent);
-  color: color-mix(in srgb, var(--cat) 60%, var(--bs-emphasis-color));
-  font-size: .72rem;
-  font-weight: 700;
-}
-
-.cal-detail__meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 16px;
-  margin: 8px 0 0;
-  color: var(--bs-secondary-color);
-  font-size: .76rem;
-}
-
-.cal-detail p {
-  margin: 8px 0 0;
-  font-size: .8rem;
-}
-
-@media (max-width: 1100px) {
-  .cal-layout {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 576px) {
-  .cal-card {
-    padding: 14px 10px 16px;
-  }
-
-  .cal-day {
-    min-height: 58px;
-    padding: 4px;
-  }
-
-  .cal-day__chips {
-    flex-flow: row wrap;
-    gap: 3px;
-  }
-
-  .cal-chip {
-    width: 8px;
-    height: 8px;
-    padding: 0;
-    border: 0;
-    border-radius: 50%;
-    background: var(--cat);
-    font-size: 0;
-  }
-
-  .cal-more {
-    display: none;
-  }
-}
-
-/* ===================== CHAMADOS ===================== */
-.ticket-step {
-  margin-bottom: 26px;
-}
-
-.ticket-step__title {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 0 0 12px;
-  font-size: 1rem;
-  font-weight: 700;
-}
-
-.ticket-step__num {
-  display: inline-grid;
-  place-items: center;
-  flex: 0 0 26px;
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  background: var(--bs-primary);
-  color: #fff;
-  font-size: .8rem;
-}
-
-.ticket-step__error {
-  display: none;
-  margin-top: 8px;
-  color: var(--bs-danger);
-  font-size: .78rem;
-}
-
-.ticket-step.is-invalid .ticket-step__error {
-  display: block;
-}
-
-.choice-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-  gap: 12px;
-}
-
-.choice-grid--compact {
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-}
-
-.choice-card {
-  position: relative;
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 14px 16px;
-  border: 1px solid var(--bs-border-color);
-  border-radius: 12px;
-  background: var(--bs-secondary-bg);
-  cursor: pointer;
-  transition: border-color .15s ease, background-color .15s ease;
-}
-
-.choice-card:hover {
-  border-color: var(--bs-primary);
-}
-
-.choice-card:has(input:checked) {
-  border-color: var(--bs-primary);
-  background: color-mix(in srgb, var(--bs-primary) 10%, var(--bs-secondary-bg));
-}
-
-.choice-card:has(input:focus-visible) {
-  outline: 2px solid var(--bs-primary);
-  outline-offset: 2px;
-}
-
-.choice-card input {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.choice-card strong {
-  display: block;
-  font-size: .86rem;
-}
-
-.choice-card__icon,
-.ticket-icon {
-  display: grid;
-  place-items: center;
-  flex: 0 0 38px;
-  width: 38px;
-  height: 38px;
-  border-radius: 10px;
-  background: color-mix(in srgb, var(--brand-blue) 12%, transparent);
-  color: var(--brand-blue-text);
-  font-size: 1.15rem;
-}
-
-.choice-card:has(input:checked) .choice-card__icon {
-  background: var(--bs-primary);
-  color: #fff;
-}
-
-.choice-card__desc {
-  display: block;
-  margin-top: 2px;
-  color: var(--bs-secondary-color);
-  font-size: .74rem;
-  line-height: 1.4;
-}
-
-.loan-card--aberto::before { background: var(--bs-info); }
-.loan-card--andamento::before { background: var(--bs-primary); }
-.loan-card--aguardando::before { background: var(--bs-warning); }
-.loan-card--resolvido::before { background: var(--bs-success); }
-
-.ticket-timeline {
-  flex: 0 0 100%;
-  margin: 0;
-  padding: 4px 0 0 14px;
-  border-left: 2px solid var(--bs-border-color);
-  list-style: none;
-}
-
-.ticket-timeline li {
-  position: relative;
-  padding: 0 0 12px 14px;
-  font-size: .78rem;
-}
-
-.ticket-timeline li::before {
-  content: "";
-  position: absolute;
-  top: 4px;
-  left: -21px;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--bs-primary);
-}
-
-.ticket-timeline time {
-  display: block;
-  color: var(--bs-secondary-color);
-  font-size: .7rem;
-}
-
-/* ===================== PERFIL ===================== */
-.profile-layout {
-  display: grid;
-  grid-template-columns: 300px minmax(0, 1fr);
-  gap: 16px;
-  align-items: start;
-}
-
-.profile-card {
-  padding: 26px 22px 22px;
-  text-align: center;
-}
-
-.profile-avatar {
-  display: grid;
-  place-items: center;
-  width: 112px;
-  height: 112px;
-  margin: 0 auto 14px;
-  overflow: hidden;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--brand-blue), color-mix(in srgb, var(--brand-blue) 60%, #000));
-  color: #fff;
-  font-size: 2.3rem;
-  font-weight: 700;
-}
-
-.profile-avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.profile-avatar--lg {
-  width: 160px;
-  height: 160px;
-  font-size: 3.2rem;
-}
-
-.profile-name {
-  margin: 0;
-  font-size: 1.15rem;
-  font-weight: 700;
-}
-
-.profile-meta {
-  margin: 4px 0 12px;
-  color: var(--bs-secondary-color);
-  font-size: .8rem;
-}
-
-.profile-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 18px;
-}
-
-.profile-facts {
-  margin: 20px 0 0;
-  padding-top: 14px;
-  border-top: 1px solid var(--bs-border-color);
-  font-size: .78rem;
-  text-align: left;
-}
-
-.profile-facts div {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 4px 0;
-}
-
-.profile-facts dt {
-  color: var(--bs-secondary-color);
-  font-weight: 400;
-}
-
-.profile-facts dd {
-  margin: 0;
-  font-weight: 600;
-  text-align: right;
-}
-
-.profile-stack {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  margin-top: 16px;
-}
-
-.password-meter .progress {
-  height: 6px;
-}
-
-.password-rules {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-  gap: 4px 12px;
-  margin: 10px 0 0;
-  padding: 0;
-  color: var(--bs-secondary-color);
-  font-size: .76rem;
-  list-style: none;
-}
-
-.password-rules li.is-ok {
-  color: var(--bs-success);
-}
-
-@media (max-width: 900px) {
-  .profile-layout {
-    grid-template-columns: 1fr;
-  }
-}
-/* ===== Destaques do portal: cartões de resumo ===== */
+/* Resumo da semana: uma coluna por dia com as disciplinas. */
 .mini-week {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
@@ -3933,13 +1656,16 @@ html[data-bs-theme="light"] .theme-toggle .icon-moon {
   border-radius: 9px;
   font-size: .62rem;
   line-height: 1.25;
+  overflow-wrap: normal;
+  hyphens: auto;
 }
 
 .mini-week__chip strong {
   font-size: .66rem;
 }
 
-.mini-week__chip-name {
+/* Nome da disciplina em no máximo 2 linhas. O seletor duplo vence ".schedule-cell span". */
+.mini-week__chip .mini-week__chip-name {
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -3967,6 +1693,7 @@ html[data-bs-theme="light"] .theme-toggle .icon-moon {
   opacity: .7;
 }
 
+/* Cartão de destaque; as variantes mudam a cor da borda superior e do ícone. */
 .dashboard-card__highlight {
   display: block;
   margin: 4px 0 8px;
@@ -4050,6 +1777,7 @@ html[data-bs-theme="light"] .theme-toggle .icon-moon {
   letter-spacing: .04em;
 }
 
+/* Carrossel de avisos dentro do cartão de destaques. */
 .summary-carousel {
   margin: 4px 0 2px;
 }
@@ -4100,8 +1828,13 @@ html[data-bs-theme="light"] .theme-toggle .icon-moon {
   transition: background .18s ease, color .18s ease;
 }
 
-.summary-carousel .carousel-control-prev { left: 7px; }
-.summary-carousel .carousel-control-next { right: 7px; }
+.summary-carousel .carousel-control-prev {
+  left: 7px;
+}
+
+.summary-carousel .carousel-control-next {
+  right: 7px;
+}
 
 .summary-carousel .carousel-control-prev:hover,
 .summary-carousel .carousel-control-next:hover,
@@ -4134,18 +1867,3571 @@ html[data-bs-theme="light"] .theme-toggle .icon-moon {
   background-color: var(--brand-blue-text);
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 1199.98px) {
   .mini-week__day {
     min-height: 104px;
   }
 }
 
-@media (max-width: 760px) {
+@media (max-width: 991.98px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dashboard-grid > .g-col-2 {
+    grid-column: span 2;
+  }
+
+  .quick-access__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767.98px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .quick-access__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .dashboard-grid > .g-col-2,
+  .dashboard-grid>* {
+    grid-column: 1 / -1;
+    grid-row: auto;
+  }
+
+  .dashboard-card {
+    min-height: 0;
+  }
+
+  .dashboard-card .box-content {
+    padding-top: 1.5rem;
+  }
+
+  .quick-access__item {
+    min-height: 96px;
+  }
+
+  .quick-access {
+    margin-top: 28px;
+  }
+
+  .dashboard-hero {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 14px;
+    padding: 20px 18px;
+  }
+
+  .dashboard-hero__status {
+    width: 100%;
+    white-space: normal;
+  }
+
+  .dashboard-overview {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+
+  .dashboard-section__heading {
+    align-items: flex-start;
+  }
+
+  .dashboard-section__heading > a {
+    padding-top: 15px;
+    white-space: nowrap;
+  }
+
   .mini-week {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .summary-carousel .carousel-item {
     padding: 12px 10px 24px;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .mini-week {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .mini-week__day {
+    min-height: 0;
+  }
+}
+
+/* ======================================================================
+   06. ACADÊMICO
+   Central acadêmica, calendário de provas, desempenho, carteirinha e quadro de horários.
+   ====================================================================== */
+
+/* Quadro de horários; rola na horizontal em telas pequenas. */
+.class-schedule {
+  width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+.class-schedule__table {
+  width: 100%;
+  min-width: 1080px;
+  border-collapse: separate;
+  border-spacing: 3px;
+  table-layout: fixed;
+  font-size: clamp(.65rem, 1vw, .9rem);
+}
+
+.class-schedule__table th,
+.schedule-cell {
+  border: 1px solid var(--bs-border-color);
+  border-radius: 8px;
+}
+
+.class-schedule__table th {
+  padding: .45rem;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.class-schedule__table thead th {
+  background: var(--bs-tertiary-bg);
+  color: var(--bs-body-color);
+  font-weight: 700;
+}
+
+.class-schedule__time-header,
+.class-schedule__table tbody th {
+  width: 88px;
+}
+
+.class-schedule__table tbody th {
+  background: var(--bs-secondary-bg);
+  color: var(--bs-secondary-color);
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+/* Célula do quadro de horários; a cor vem da disciplina. */
+.schedule-cell {
+  padding: .55rem .6rem;
+  background: var(--bs-secondary-bg);
+  color: var(--bs-body-color);
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: left;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+}
+
+.schedule-cell strong,
+.schedule-cell span,
+.schedule-cell small {
+  display: block;
+}
+
+.schedule-cell strong {
+  margin-bottom: .2rem;
+  font-size: .72rem;
+  line-height: 1.25;
+}
+
+.schedule-cell span {
+  font-size: .78rem;
+  line-height: 1.3;
+}
+
+.schedule-cell small {
+  margin-top: .55rem;
+  color: inherit;
+  opacity: .8;
+  font-size: .72rem;
+  font-weight: 600;
+}
+
+.schedule-cell--online {
+  border-style: dashed;
+}
+
+.schedule-cell--empty {
+  text-align: center;
+  vertical-align: middle;
+  color: var(--bs-secondary-color);
+  background: transparent;
+}
+
+.schedule-cell--green {
+  background: #80c99a;
+  color: #10281a;
+}
+
+.schedule-cell--blue {
+  background: #4d91d0;
+  color: #fff;
+}
+
+.schedule-cell--soft-blue {
+  background: #b8cde8;
+  color: #182638;
+}
+
+.schedule-cell--orange {
+  background: #c95d10;
+  color: #fff;
+}
+
+.schedule-cell--purple {
+  background: #c65ac7;
+  color: #241126;
+}
+
+/* Cartão que envolve o quadro de horários. */
+.class-schedule-card {
+  min-width: 0;
+  padding: 1rem;
+}
+
+.class-schedule-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: .75rem;
+}
+
+.class-schedule-card__term {
+  flex-shrink: 0;
+  margin-top: .15rem;
+}
+
+/* Quadro de horários; rola na horizontal em telas pequenas. */
+.class-schedule__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .65rem 1rem;
+  margin-top: .75rem;
+  padding-top: .75rem;
+  border-top: 1px solid var(--bs-border-color);
+  color: var(--bs-secondary-color);
+  font-size: .75rem;
+}
+
+/* Cartão do curso no topo da Central Acadêmica. */
+.academic-hero-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 0 4px 20px;
+  padding: 20px 22px;
+  border: 1px solid var(--bs-border-color);
+  border-radius: 16px;
+  background: var(--bs-secondary-bg);
+  box-shadow: 0 8px 24px rgba(13, 27, 52, .06);
+}
+
+.academic-hero-card__icon {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--brand-blue) 12%, transparent);
+  color: var(--brand-blue-text);
+  font-size: 1.35rem;
+  flex: 0 0 auto;
+}
+
+.academic-hero-card h2 {
+  font-size: 1rem;
+  margin: 0 0 4px;
+  font-weight: 750;
+}
+
+.academic-hero-card p {
+  margin: 0;
+  color: var(--bs-secondary-color);
+  font-size: .78rem;
+}
+
+.academic-hero-card__status {
+  margin-left: auto;
+  flex: 0 0 auto;
+  font-size: .75rem;
+  color: var(--bs-secondary-color);
+  font-weight: 650;
+}
+
+/* Grade de atalhos da Central Acadêmica. */
+.academic-links-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  padding: 0 4px 24px;
+}
+
+/* Atalho da Central Acadêmica com ícone, texto e seta. */
+.academic-link-card {
+  min-height: 144px;
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 20px 42px 20px 20px;
+  border: 1px solid var(--bs-border-color);
+  border-radius: 14px;
+  background: var(--bs-secondary-bg);
+  color: var(--bs-body-color);
+  text-decoration: none;
+  transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease;
+}
+
+.academic-link-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--brand-blue);
+  box-shadow: 0 8px 20px rgba(13, 27, 52, .08);
+  color: var(--bs-body-color);
+}
+
+.academic-link-card > i:first-child {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 11px;
+  background: color-mix(in srgb, var(--brand-blue) 10%, transparent);
+  color: var(--brand-blue-text);
+  font-size: 1.2rem;
+  flex: 0 0 auto;
+}
+
+.academic-link-card > div {
+  min-width: 0;
+  padding-top: 1px;
+}
+
+.academic-link-card strong {
+  display: block;
+  font-size: .84rem;
+  line-height: 1.3;
+  margin: 0 0 8px;
+}
+
+.academic-link-card span {
+  display: block;
+  color: var(--bs-secondary-color);
+  font-size: .72rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.academic-link-card .arrow {
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--bs-secondary-color);
+  font-size: .85rem;
+}
+
+.academic-link-card:hover .arrow {
+  color: var(--brand-blue-text);
+}
+
+/* Resumo do calendário de provas (próxima prova e contagens). */
+.academic-calendar-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(280px, 1fr);
+  gap: 16px;
+  margin: 0 4px 16px;
+  padding: 18px 20px;
+  border: 1px solid var(--bs-border-color);
+  border-radius: 16px;
+  background: var(--bs-secondary-bg);
+}
+
+.academic-calendar-summary__next {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.academic-calendar-summary__icon {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--brand-blue) 12%, transparent);
+  color: var(--brand-blue-text);
+  font-size: 1.15rem;
+}
+
+.academic-calendar-summary__next span,
+.academic-calendar-summary__metrics span {
+  display: block;
+  color: var(--bs-secondary-color);
+  font-size: .72rem;
+}
+
+.academic-calendar-summary__next strong {
+  display: block;
+  margin-top: 3px;
+  font-size: .9rem;
+}
+
+.academic-calendar-summary__next small {
+  display: block;
+  margin-top: 3px;
+  color: var(--bs-secondary-color);
+  font-size: .72rem;
+}
+
+.academic-calendar-summary__metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.academic-calendar-summary__metrics > div {
+  padding: 10px 12px;
+  border-left: 1px solid var(--bs-border-color);
+}
+
+.academic-calendar-summary__metrics strong {
+  display: block;
+  margin-top: 4px;
+  color: var(--brand-blue-text);
+  font-size: 1.25rem;
+}
+
+/* Lista de provas. */
+.academic-calendar-list {
+  display: grid;
+  gap: 10px;
+}
+
+/* Prova: data à esquerda, disciplina, horário e local. */
+.academic-calendar-item {
+  display: flex;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--bs-border-color);
+}
+
+.academic-calendar-item:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.academic-calendar-item__date {
+  width: 76px;
+  flex: 0 0 auto;
+  padding: 9px 6px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--brand-blue) 9%, var(--bs-secondary-bg));
+  color: var(--brand-blue-text);
+  text-align: center;
+}
+
+.academic-calendar-item__date strong,
+.academic-calendar-item__date small {
+  display: block;
+}
+
+.academic-calendar-item__date strong {
+  font-size: .75rem;
+}
+
+.academic-calendar-item__date small {
+  margin-top: 3px;
+  color: var(--bs-secondary-color);
+  font-size: .72rem;
+}
+
+.academic-calendar-item__content {
+  min-width: 0;
+  flex: 1;
+}
+
+.academic-calendar-item__title {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.academic-calendar-item__title strong,
+.academic-calendar-item__title small {
+  display: block;
+}
+
+.academic-calendar-item__title strong {
+  font-size: .78rem;
+}
+
+.academic-calendar-item__title small {
+  margin-top: 4px;
+  color: var(--bs-secondary-color);
+  font-size: .72rem;
+}
+
+.academic-calendar-item__details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin-top: 10px;
+  color: var(--bs-secondary-color);
+  font-size: .72rem;
+}
+
+.academic-calendar-item__details span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.academic-calendar-item__details i {
+  color: var(--brand-blue-text);
+}
+
+/* Lista de orientações antes da prova. */
+.academic-calendar-checklist li {
+  align-items: center;
+}
+
+.academic-calendar-checklist i {
+  color: var(--bs-success);
+  font-size: .95rem;
+}
+
+/* Gráfico de barras horizontal das médias. */
+.bar-chart {
+  display: grid;
+  gap: 15px;
+}
+
+/* Linha do gráfico: nome, barra e valor. */
+.bar-row {
+  display: grid;
+  grid-template-columns: 160px 1fr 38px;
+  align-items: center;
+  gap: 10px;
+  font-size: .72rem;
+}
+
+/* Trilho e preenchimento da barra. */
+.bar {
+  height: 10px;
+  border-radius: 99px;
+  background: var(--bs-tertiary-bg);
+  overflow: hidden;
+}
+
+.bar i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--brand-blue);
+}
+
+/* Linha do gráfico: nome, barra e valor. */
+.bar-row strong {
+  text-align: right;
+  font-size: .72rem;
+}
+
+/* Carteirinha digital com fundo em degradê. */
+.digital-card {
+  max-width: 480px;
+  margin: auto;
+  padding: 22px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #0c5aa6, #17345f);
+  color: #fff;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, .18);
+  position: relative;
+  overflow: hidden;
+}
+
+.digital-card__brand {
+  font-size: .7rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+}
+
+.digital-card__avatar {
+  width: 64px;
+  height: 64px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .18);
+  font-weight: 800;
+  font-size: 1.15rem;
+  margin: 28px 0 14px;
+}
+
+.digital-card__name {
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.digital-card__course {
+  font-size: .72rem;
+  opacity: .85;
+  margin-top: 4px;
+}
+
+.digital-card__ra {
+  font-size: .7rem;
+  margin-top: 14px;
+}
+
+.digital-card__footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 28px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, .25);
+  font-size: .72rem;
+  opacity: .85;
+}
+
+/* Espaço reservado para o QR Code. */
+.qr-placeholder {
+  width: 150px;
+  height: 150px;
+  margin: auto;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 7px;
+  border: 1px dashed var(--bs-border-color);
+  border-radius: 12px;
+  color: var(--bs-secondary-color);
+}
+
+.qr-placeholder i {
+  font-size: 4rem;
+}
+
+.qr-placeholder span {
+  font-size: .72rem;
+  letter-spacing: .1em;
+}
+
+@media (max-width: 991.98px) {
+  .academic-links-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767.98px) {
+  .class-schedule-card {
+    padding: .75rem;
+  }
+
+  .class-schedule-card__header {
+    align-items: flex-start;
+    gap: .75rem;
+  }
+
+  .class-schedule-card__header h2 {
+    font-size: 1rem;
+  }
+
+  .class-schedule-card__header p {
+    font-size: .72rem;
+  }
+
+  .class-schedule__table {
+    min-width: 900px;
+    font-size: .7rem;
+  }
+
+  .class-schedule__table th,
+  .schedule-cell {
+    padding: .45rem;
+  }
+
+  .class-schedule__time-header,
+  .class-schedule__table tbody th {
+    width: 78px;
+  }
+
+  .schedule-cell strong {
+    font-size: .72rem;
+  }
+
+  .schedule-cell span {
+    font-size: .7rem;
+  }
+
+  .schedule-cell small {
+    font-size: .72rem;
+  }
+
+  .class-schedule__legend {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: .4rem;
+  }
+
+  .academic-hero-card {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding: 16px;
+  }
+
+  .academic-hero-card__status {
+    width: calc(100% - 60px);
+    margin-left: 60px;
+    margin-top: -4px;
+  }
+
+  .academic-links-grid,
+  .grid-mesh--academic {
+    grid-template-columns: 1fr;
+  }
+
+  .academic-links-grid {
+    gap: 10px;
+    padding-inline: 0;
+  }
+
+  .academic-link-card {
+    min-height: 0;
+    padding: 16px 38px 16px 16px;
+  }
+
+  .academic-link-card > i:first-child {
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+  }
+
+  .bar-row {
+    grid-template-columns: 110px 1fr 34px;
+  }
+
+  .academic-calendar-summary {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 14px;
+  }
+
+  .academic-calendar-summary__metrics > div {
+    border-top: 1px solid var(--bs-border-color);
+    border-left: 0;
+    padding: 10px 6px 0;
+  }
+
+  .academic-calendar-item {
+    gap: 10px;
+  }
+
+  .academic-calendar-item__date {
+    width: 68px;
+  }
+
+  .academic-calendar-item__title {
+    display: block;
+  }
+
+  .academic-calendar-item__title .badge {
+    display: inline-block;
+    margin-top: 8px;
+  }
+}
+
+/* ======================================================================
+   07. FINANCEIRO
+   Extrato, boleto online, contrato e comprovante de IR.
+   ====================================================================== */
+
+/* Resumo do extrato: situação financeira e último pagamento. */
+.finance-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 4px 4px 1.25rem;
+}
+
+/* Cartão do resumo do extrato. */
+.finance-summary-card {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  min-width: 0;
+  padding: 22px 24px;
+  box-shadow: 0 2px 10px rgba(15, 35, 80, .05);
+}
+
+.finance-summary-card__icon {
+  width: 56px;
+  height: 56px;
+  flex: 0 0 56px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--brand-blue) 14%, transparent);
+  color: var(--brand-blue-text);
+  font-size: 1.5rem;
+}
+
+.finance-summary-card__icon--success {
+  background: color-mix(in srgb, var(--brand-green) 18%, transparent);
+  color: #3ccf8e;
+}
+
+.finance-summary-card__icon--danger {
+  background: color-mix(in srgb, var(--bs-danger) 16%, transparent);
+  color: var(--bs-danger);
+}
+
+.finance-summary-card__label {
+  margin: 0 0 4px;
+  color: var(--bs-secondary-color);
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.finance-summary-card__value {
+  margin: 0;
+  color: var(--bs-emphasis-color);
+  font-size: clamp(1.15rem, 2vw, 1.5rem);
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.finance-summary-card__value small {
+  color: var(--bs-secondary-color);
+  font-size: .8rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.finance-summary-card__value--success {
+  color: #3ccf8e;
+}
+
+/* Cartão da tabela de lançamentos com filtro. */
+.finance-table-card {
+  margin: 0 4px 24px;
+  padding: 20px 24px 12px;
+  box-shadow: 0 2px 10px rgba(15, 35, 80, .05);
+}
+
+.finance-table-card__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.finance-table-card__head h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.finance-table-card__head h2 small {
+  margin-left: 6px;
+  color: var(--bs-secondary-color);
+  font-size: .8rem;
+  font-weight: 500;
+}
+
+.finance-table-card__head .form-select {
+  width: auto;
+  min-width: 220px;
+}
+
+/* Tabela de lançamentos; no celular cada linha vira um bloco com rótulos. */
+.finance-ledger {
+  width: 100%;
+  margin: 0;
+  --bs-table-bg: transparent;
+}
+
+.finance-ledger thead th {
+  padding: 14px 12px;
+  color: var(--bs-secondary-color);
+  background: var(--bs-tertiary-bg);
+  border-bottom: 1px solid var(--bs-border-color);
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.finance-ledger td {
+  padding: 16px 12px;
+  vertical-align: middle;
+  border-color: var(--bs-border-color);
+}
+
+.finance-ledger__desc strong {
+  display: block;
+  color: var(--bs-emphasis-color);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.finance-ledger__desc small,
+.finance-ledger__paid-at {
+  display: block;
+  color: var(--bs-secondary-color);
+  font-size: .8rem;
+}
+
+.finance-ledger__paid-at {
+  margin-top: 4px;
+}
+
+.finance-ledger__actions {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.finance-ledger__empty {
+  margin: 0;
+  padding: 24px 12px;
+  color: var(--bs-secondary-color);
+  text-align: center;
+}
+
+/* Selo verde "Pago". */
+.status-pago {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--brand-green) 18%, transparent);
+  color: #3ccf8e;
+  font-size: .8rem;
+  font-weight: 700;
+}
+
+/* Cartão do resumo do extrato. */
+[data-bs-theme="light"] .finance-summary-card__value--success,
+[data-bs-theme="light"] .finance-summary-card__icon--success,
+[data-bs-theme="light"] .status-pago {
+  color: var(--brand-green);
+}
+
+/* Boleto em aberto com valor, vencimento e ações de pagamento. */
+.invoice-card {
+  margin: 0 4px 24px;
+  padding: 22px 24px 22px 30px;
+  border: 2px solid var(--bs-primary);
+  border-radius: 16px;
+  background: var(--bs-secondary-bg);
+  box-shadow: inset 6px 0 0 var(--brand-orange);
+}
+
+.invoice-card__top {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--bs-border-color);
+}
+
+.invoice-card__title {
+  margin: 10px 0 4px;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.invoice-card__meta {
+  margin: 0;
+  color: var(--bs-secondary-color);
+  font-size: .76rem;
+}
+
+.invoice-card__amount {
+  text-align: right;
+}
+
+.invoice-card__amount small {
+  display: block;
+  color: var(--bs-secondary-color);
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+}
+
+.invoice-card__value {
+  display: block;
+  font-size: 1.9rem;
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+.invoice-card__due {
+  font-size: .78rem;
+  font-weight: 700;
+}
+
+/* QR Code ilustrativo do PIX. */
+.pix-qr {
+  width: 168px;
+  height: 168px;
+  margin: 0 auto 14px;
+  display: grid;
+  place-items: center;
+  border: 1px dashed var(--bs-border-color);
+  border-radius: 14px;
+  color: var(--bs-secondary-color);
+  font-size: 5.5rem;
+}
+
+/* Folha do contrato com aparência de documento impresso. */
+.contract-paper {
+  max-width: 900px;
+  margin: 8px auto 32px;
+  padding: 56px 64px;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, .14);
+  color: #000;
+  font-family: "Times New Roman", Times, serif;
+  font-size: .95rem;
+  line-height: 1.5;
+}
+
+.contract-paper h2 {
+  margin: 0 0 28px;
+  padding-bottom: 18px;
+  border-bottom: 2px solid #000;
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.contract-paper p {
+  margin: 0 0 8px;
+}
+
+/* Título de seção do contrato. */
+.contract-section {
+  margin: 30px 0 14px;
+  font-weight: 700;
+  text-decoration: underline;
+  text-transform: uppercase;
+}
+
+/* Linha de campos do contrato. */
+.contract-line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 22px;
+  margin-bottom: 10px;
+}
+
+/* Campos do contrato em duas colunas. */
+.contract-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 24px;
+}
+
+/* Cláusulas do contrato. */
+.contract-clauses p {
+  margin-bottom: 14px;
+  font-size: .82rem;
+  text-align: justify;
+}
+
+/* Local e data do contrato. */
+.contract-date {
+  margin: 22px 0;
+  text-align: right;
+}
+
+/* Área de assinaturas. */
+.contract-signatures {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  margin-top: 52px;
+  font-size: .72rem;
+  text-align: center;
+}
+
+/* Linha de assinatura. */
+.contract-signature {
+  padding-top: 4px;
+  border-top: 1px solid #000;
+}
+
+/* Divisória tracejada entre as partes do contrato. */
+.contract-divider {
+  margin: 36px 0 20px;
+  border: 0;
+  border-top: 1px dashed #9ca3af;
+  opacity: 1;
+}
+
+/* Total pago e beneficiário do comprovante de IR. */
+.irpf-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.irpf-summary small {
+  display: block;
+  color: var(--bs-secondary-color);
+  font-size: .76rem;
+}
+
+/* Valor total em destaque. */
+.irpf-total {
+  display: block;
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+/* Nome e CPF do aluno beneficiário. */
+.irpf-beneficiary {
+  text-align: right;
+}
+
+.irpf-beneficiary strong {
+  display: block;
+  font-size: 1rem;
+  text-transform: uppercase;
+}
+
+@media (max-width: 767.98px) {
+  .finance-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .finance-summary-card {
+    padding: 16px 18px;
+  }
+
+  .finance-summary-card__icon {
+    width: 46px;
+    height: 46px;
+    flex-basis: 46px;
+    font-size: 1.2rem;
+  }
+
+  .finance-table-card {
+    padding: 16px;
+  }
+
+  .finance-table-card__head .form-select {
+    width: 100%;
+  }
+
+  .finance-ledger thead {
+    display: none;
+  }
+
+  .finance-ledger,
+  .finance-ledger tbody,
+  .finance-ledger tr,
+  .finance-ledger td {
+    display: block;
+    width: 100%;
+  }
+
+  .finance-ledger tr {
+    padding: 14px 0;
+    border-bottom: 1px solid var(--bs-border-color);
+  }
+
+  .finance-ledger tr[hidden] {
+    display: none;
+  }
+
+  .finance-ledger tr:last-child {
+    border-bottom: 0;
+  }
+
+  .finance-ledger td {
+    padding: 4px 0;
+    border: 0;
+  }
+
+  .finance-ledger td[data-label] {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .finance-ledger td[data-label]::before {
+    content: attr(data-label);
+    color: var(--bs-secondary-color);
+    font-size: .8rem;
+    font-weight: 600;
+  }
+
+  .finance-ledger td[data-label="Status"] {
+    flex-wrap: wrap;
+  }
+
+  .finance-ledger__paid-at {
+    width: 100%;
+    margin-top: 0;
+    text-align: right;
+  }
+
+  .finance-ledger__desc {
+    margin-bottom: 6px;
+  }
+
+  .finance-ledger__actions {
+    margin-top: 8px;
+    text-align: left;
+  }
+
+  .finance-ledger__actions .btn {
+    width: 100%;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .invoice-card {
+    padding: 18px 16px 18px 22px;
+  }
+
+  .invoice-card__amount {
+    text-align: left;
+  }
+
+  .contract-paper {
+    padding: 28px 20px;
+  }
+
+  .contract-cols,
+  .contract-signatures {
+    grid-template-columns: 1fr;
+  }
+
+  .irpf-beneficiary {
+    text-align: left;
+  }
+}
+
+/* ======================================================================
+   08. PROTOCOLOS
+   Cartões de requerimento rápido.
+   ====================================================================== */
+
+/* Cartão de requerimento rápido com botão "Solicitar" no rodapé. */
+.request-card {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.request-card__icon {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 11px;
+  background: color-mix(in srgb, var(--brand-blue) 10%, transparent);
+  color: var(--brand-blue-text);
+  font-size: 1.2rem;
+}
+
+.request-card h3 {
+  margin: 16px 0 6px;
+  font-size: .95rem;
+  font-weight: 700;
+}
+
+.request-card p {
+  margin: 0 0 20px;
+  color: var(--bs-secondary-color);
+  font-size: .76rem;
+  line-height: 1.5;
+}
+
+.request-card .btn {
+  margin-top: auto;
+}
+
+/* ======================================================================
+   09. AVALIAÇÃO INSTITUCIONAL
+   Escala de notas de 1 a 5 da CPA.
+   ====================================================================== */
+
+/* Bloco de perguntas da avaliação. */
+.rating-section + .rating-section {
+  margin-top: 28px;
+  padding-top: 28px;
+  border-top: 1px solid var(--bs-border-color);
+}
+
+.rating-section__title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 10px;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.rating-section__title i {
+  color: var(--brand-blue-text);
+}
+
+/* Pergunta com a escala de notas; .is-invalid mostra o erro. */
+.rating-group {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.rating-group legend {
+  float: none;
+  width: auto;
+  margin: 0 0 14px;
+  padding: 0;
+  color: var(--bs-secondary-color);
+  font-size: .84rem;
+  font-weight: 400;
+}
+
+/* Escala de 1 a 5 em cinco colunas. */
+.rating-scale {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+}
+
+/* Opção da escala; fica destacada quando marcada. */
+.rating-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 18px 8px 14px;
+  border: 1px solid var(--bs-border-color);
+  border-radius: 12px;
+  background: var(--bs-tertiary-bg);
+  cursor: pointer;
+  text-align: center;
+  transition: border-color .15s ease, background-color .15s ease;
+}
+
+.rating-option .form-check-input {
+  width: 1.1rem;
+  height: 1.1rem;
+  margin: 0 0 8px;
+  cursor: pointer;
+}
+
+.rating-option strong {
+  font-size: .9rem;
+}
+
+.rating-option span {
+  color: var(--bs-secondary-color);
+  font-size: .72rem;
+}
+
+.rating-option:hover {
+  border-color: var(--bs-primary);
+}
+
+.rating-option:has(input:checked) {
+  border-color: var(--bs-primary);
+  background: color-mix(in srgb, var(--bs-primary) 10%, var(--bs-secondary-bg));
+}
+
+.rating-option:has(input:focus-visible) {
+  outline: 2px solid var(--bs-primary);
+  outline-offset: 2px;
+}
+
+/* Pergunta com a escala de notas; .is-invalid mostra o erro. */
+.rating-group .invalid-feedback {
+  display: none;
+  margin-top: 8px;
+}
+
+.rating-group.is-invalid .invalid-feedback {
+  display: block;
+}
+
+.rating-group.is-invalid .rating-option {
+  border-color: var(--bs-danger);
+}
+
+@media (max-width: 575.98px) {
+  .rating-scale {
+    gap: 8px;
+  }
+
+  .rating-option {
+    padding: 12px 4px;
+  }
+
+  .rating-option span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+}
+
+/* ======================================================================
+   10. REPOSITÓRIO DO ALUNO
+   Navegação de pastas, arquivos, pré-visualização e cores por tipo de arquivo.
+   ====================================================================== */
+
+/* Repositório: menu lateral + área de arquivos. */
+.repo-layout {
+  display: grid;
+  grid-template-columns: 250px minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+/* Menu lateral do repositório (Meus arquivos, Recentes, Favoritos e espaço usado). */
+.repo-side {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 18px;
+  overflow: visible;
+}
+
+/* Itens do menu lateral do repositório. */
+.repo-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.repo-nav__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--bs-body-color);
+  font-size: .82rem;
+  font-weight: 600;
+  text-align: left;
+}
+
+.repo-nav__item:hover {
+  background: var(--bs-tertiary-bg);
+}
+
+.repo-nav__item.active {
+  background: color-mix(in srgb, var(--bs-primary) 12%, transparent);
+  color: var(--brand-blue-text);
+}
+
+/* Barra de espaço usado. */
+.repo-storage small {
+  color: var(--bs-secondary-color);
+  font-size: .72rem;
+}
+
+.repo-storage .progress {
+  height: 6px;
+  margin-bottom: 6px;
+}
+
+/* Área de arquivos; .is-dragging aparece ao arrastar arquivos para enviar. */
+.repo-main {
+  min-height: 480px;
+  padding: 18px 20px 24px;
+}
+
+.repo-main.is-dragging {
+  outline: 2px dashed var(--bs-primary);
+  outline-offset: -8px;
+}
+
+/* Busca, ordenação e modo de exibição. */
+.repo-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Campo de busca do repositório. */
+.repo-search {
+  flex: 1 1 240px;
+  width: auto;
+}
+
+/* Seletor de ordenação. */
+.repo-sort {
+  flex: 0 0 auto;
+  width: auto;
+}
+
+/* Caminho da pasta atual. */
+.repo-crumbs {
+  margin: 16px 0 6px;
+  font-size: .86rem;
+}
+
+/* Pasta clicável no caminho. */
+.repo-crumb {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--brand-blue-text);
+  font: inherit;
+}
+
+.repo-crumb:hover {
+  text-decoration: underline;
+}
+
+/* Título "Pastas" / "Arquivos". */
+.repo-section-title {
+  margin: 18px 0 10px;
+  color: var(--bs-secondary-color);
+  font-size: .76rem;
+  font-weight: 700;
+}
+
+/* Grade de pastas. */
+.repo-folders {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 12px;
+}
+
+/* Pasta. */
+.repo-folder,
+.repo-file {
+  border: 1px solid var(--bs-border-color);
+  border-radius: 12px;
+  transition: border-color .15s ease;
+}
+
+.repo-folder:hover,
+.repo-file:hover {
+  border-color: var(--bs-primary);
+}
+
+.repo-folder {
+  background: var(--bs-tertiary-bg);
+}
+
+.repo-folder__open {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+  padding: 12px 14px;
+  border: 0;
+  background: none;
+  color: inherit;
+  font-size: .82rem;
+  font-weight: 600;
+  text-align: left;
+}
+
+.repo-folder__open span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Grade de arquivos. */
+.repo-files {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 14px;
+}
+
+/* Arquivo com miniatura, nome e ações. */
+.repo-file {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bs-secondary-bg);
+}
+
+.repo-file__thumb {
+  display: grid;
+  place-items: center;
+  height: 128px;
+  border: 0;
+  border-bottom: 1px solid var(--bs-border-color);
+  background: var(--bs-tertiary-bg);
+  font-size: 3.4rem;
+}
+
+.repo-file__foot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 6px 10px 12px;
+}
+
+.repo-file__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.repo-file__name {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: .8rem;
+  font-weight: 600;
+}
+
+.repo-file__meta {
+  display: block;
+  color: var(--bs-secondary-color);
+  font-size: .7rem;
+}
+
+/* Botão de ícone (favoritar, baixar). */
+.repo-icon-btn {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--bs-secondary-color);
+}
+
+.repo-icon-btn:hover {
+  background: var(--bs-tertiary-bg);
+  color: var(--bs-body-color);
+}
+
+.repo-icon-btn.is-starred {
+  color: #f0b429;
+}
+
+/* Nome clicável no modo lista. */
+.repo-name-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font-weight: 600;
+  text-align: left;
+}
+
+/* Local do arquivo nos resultados de busca. */
+.repo-path {
+  display: block;
+  margin: 2px 0 0 30px;
+  color: var(--bs-secondary-color);
+  font-size: .72rem;
+}
+
+/* Estado vazio do repositório. */
+.repo-empty {
+  padding: 56px 16px;
+  color: var(--bs-secondary-color);
+  text-align: center;
+}
+
+.repo-empty i {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 2.6rem;
+}
+
+/* Ícone grande na pré-visualização. */
+.repo-preview {
+  display: grid;
+  place-items: center;
+  height: 140px;
+  margin-bottom: 16px;
+  border-radius: 12px;
+  background: var(--bs-tertiary-bg);
+  font-size: 4rem;
+}
+
+/* Cor do ícone conforme o tipo de arquivo. */
+.file-icon--folder {
+  color: #f0b429;
+}
+
+.file-icon--pdf {
+  color: #d93025;
+}
+
+.file-icon--doc {
+  color: #1a73e8;
+}
+
+.file-icon--ppt {
+  color: #e8710a;
+}
+
+.file-icon--xls {
+  color: #188038;
+}
+
+.file-icon--zip {
+  color: #8d6e63;
+}
+
+.file-icon--img {
+  color: #a142f4;
+}
+
+.file-icon--video {
+  color: #c2185b;
+}
+
+.file-icon--code,
+.file-icon--other {
+  color: #6b7280;
+}
+
+@media (max-width: 991.98px) {
+  .repo-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .repo-side {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .repo-nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .repo-nav__item {
+    width: auto;
+  }
+
+  .repo-storage {
+    flex: 1 1 200px;
+  }
+}
+
+/* ======================================================================
+   11. FEED DE AVISOS
+   Cartões de aviso com prioridade, leitura e anexos.
+   ====================================================================== */
+
+/* Container do feed de avisos. */
+.notice-wrap {
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+/* Filtros e busca do feed. */
+.notice-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 4px 0 18px;
+}
+
+/* Campo de busca de avisos. */
+.notice-search {
+  width: 240px;
+  max-width: 100%;
+}
+
+/* Lista de avisos. */
+.notice-feed {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Aviso; a barra à esquerda indica a prioridade e .is-unread destaca os não lidos. */
+.notice-card {
+  position: relative;
+  padding: 18px 20px 12px 26px;
+  border: 1px solid var(--bs-border-color);
+  border-radius: 14px;
+  background: var(--bs-secondary-bg);
+}
+
+.notice-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 5px;
+  border-radius: 14px 0 0 14px;
+  background: var(--bs-border-color);
+}
+
+.notice-card--urgente::before {
+  background: var(--bs-danger);
+}
+
+.notice-card--importante::before {
+  background: var(--brand-orange);
+}
+
+.notice-card.is-unread {
+  border-color: color-mix(in srgb, var(--bs-primary) 45%, var(--bs-border-color));
+}
+
+.notice-card__head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.notice-card__avatar {
+  display: grid;
+  place-items: center;
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--brand-blue) 12%, transparent);
+  color: var(--brand-blue-text);
+  font-size: 1.1rem;
+}
+
+.notice-card__meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.notice-card__meta strong {
+  display: block;
+  font-size: .84rem;
+}
+
+.notice-card__meta time {
+  color: var(--bs-secondary-color);
+  font-size: .72rem;
+}
+
+.notice-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+/* Bolinha azul de "não lido". */
+.notice-dot {
+  display: none;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--bs-primary);
+}
+
+/* Aviso; a barra à esquerda indica a prioridade e .is-unread destaca os não lidos. */
+.notice-card.is-unread .notice-dot {
+  display: inline-block;
+}
+
+.notice-card__title {
+  margin: 14px 0 6px;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.notice-card__text {
+  display: -webkit-box;
+  overflow: hidden;
+  margin: 0;
+  font-size: .84rem;
+  line-height: 1.6;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+}
+
+.notice-card.is-expanded .notice-card__text {
+  display: block;
+  overflow: visible;
+}
+
+.notice-card__more {
+  display: none;
+  margin-top: 12px;
+}
+
+.notice-card.is-expanded .notice-card__more {
+  display: block;
+}
+
+/* Lista de anexos do aviso. */
+.notice-attachments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+/* Anexo em formato de etiqueta. */
+.notice-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border: 1px solid var(--bs-border-color);
+  border-radius: 10px;
+  background: var(--bs-tertiary-bg);
+  color: var(--bs-body-color);
+  font-size: .76rem;
+  text-decoration: none;
+}
+
+.notice-chip small {
+  color: var(--bs-secondary-color);
+}
+
+/* Aviso; a barra à esquerda indica a prioridade e .is-unread destaca os não lidos. */
+.notice-card__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px solid var(--bs-border-color);
+}
+
+/* Ações do aviso (fixar, ler mais, marcar como lido). */
+.notice-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--bs-secondary-color);
+  font-size: .76rem;
+  font-weight: 600;
+}
+
+.notice-action:hover {
+  background: var(--bs-tertiary-bg);
+  color: var(--bs-body-color);
+}
+
+.notice-action.is-pinned {
+  color: var(--brand-blue-text);
+}
+
+/* ======================================================================
+   12. BIBLIOTECA
+   Busca no acervo, capas por área e lista de empréstimos.
+   ====================================================================== */
+
+/* Busca e filtros do acervo. */
+.library-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 4px 0 14px;
+}
+
+/* Campo de busca do acervo. */
+.library-search {
+  flex: 1 1 280px;
+  width: auto;
+}
+
+/* Busca e filtros do acervo. */
+.library-toolbar .form-select {
+  flex: 0 0 auto;
+  width: auto;
+}
+
+/* Quantidade de livros encontrados. */
+.library-count {
+  margin: 0 0 12px;
+  color: var(--bs-secondary-color);
+  font-size: .8rem;
+}
+
+/* Grade de livros. */
+.book-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+/* Livro com capa, dados, disponibilidade e botão de agendar. */
+.book-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--bs-border-color);
+  border-radius: 14px;
+  background: var(--bs-secondary-bg);
+}
+
+/* Capa ilustrativa; a cor muda conforme a área (--computacao, --direito...). */
+.book-cover {
+  --cover: #3b5b92;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 140px;
+  background: linear-gradient(135deg, var(--cover), color-mix(in srgb, var(--cover) 60%, #000));
+  color: #fff;
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+.book-cover i {
+  font-size: 2.4rem;
+}
+
+.book-cover--computacao {
+  --cover: #2f5fa7;
+}
+
+.book-cover--direito {
+  --cover: #8e3b46;
+}
+
+.book-cover--matematica {
+  --cover: #1f7a74;
+}
+
+.book-cover--literatura {
+  --cover: #b7791f;
+}
+
+.book-cover--metodologia {
+  --cover: #5b6470;
+}
+
+.book-cover--mini {
+  flex: 0 0 56px;
+  width: 56px;
+  height: 76px;
+  border-radius: 8px;
+  font-size: 0;
+}
+
+.book-cover--mini i {
+  font-size: 1.5rem;
+}
+
+/* Livro com capa, dados, disponibilidade e botão de agendar. */
+.book-card__body {
+  flex: 1;
+  padding: 14px 16px 8px;
+}
+
+.book-card__title {
+  margin: 0 0 4px;
+  font-size: .95rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.book-card__author {
+  margin: 0 0 6px;
+  color: var(--bs-secondary-color);
+  font-size: .8rem;
+}
+
+.book-card__meta,
+.book-card__where {
+  margin: 0;
+  color: var(--bs-secondary-color);
+  font-size: .72rem;
+}
+
+.book-card__availability {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 10px 0 6px;
+  font-size: .74rem;
+}
+
+.book-card__foot {
+  padding: 8px 16px 16px;
+}
+
+/* ======================================================================
+   13. CALENDÁRIO DE EVENTOS
+   Calendário mensal, legenda por categoria e lista de próximos eventos.
+   ====================================================================== */
+
+/* Cor de cada categoria de evento (usada por chips, legendas e detalhes). */
+.cat--prova {
+  --cat: #d93025;
+}
+
+.cat--apresentacao {
+  --cat: #7e57c2;
+}
+
+.cat--feriado {
+  --cat: #188038;
+}
+
+.cat--palestra {
+  --cat: #1a73e8;
+}
+
+.cat--oficina {
+  --cat: #e8710a;
+}
+
+.cat--prazo {
+  --cat: #0f9aa8;
+}
+
+/* Calendário + lista de próximos eventos. */
+.cal-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 16px;
+  align-items: start;
+}
+
+/* Cartão do calendário. */
+.cal-card {
+  padding: 18px 20px 20px;
+}
+
+/* Navegação entre meses. */
+.cal-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+/* Mês e ano atuais. */
+.cal-title {
+  flex: 1 1 auto;
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+/* Legenda que também filtra as categorias. */
+.cal-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 8px;
+  margin-bottom: 14px;
+}
+
+.cal-legend__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px;
+  border: 1px solid var(--bs-border-color);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--bs-body-color);
+  font-size: .74rem;
+  font-weight: 600;
+}
+
+.cal-legend__item.is-off {
+  opacity: .45;
+  text-decoration: line-through;
+}
+
+/* Bolinha colorida da categoria. */
+.cal-dot {
+  flex: 0 0 10px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--cat);
+}
+
+/* Cabeçalho com os dias da semana. */
+.cal-weekdays,
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.cal-weekdays span {
+  padding: 8px 4px;
+  color: var(--bs-secondary-color);
+  font-size: .72rem;
+  font-weight: 700;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+/* Grade de 7 colunas do mês. */
+.cal-grid {
+  border-top: 1px solid var(--bs-border-color);
+  border-left: 1px solid var(--bs-border-color);
+}
+
+/* Dia do calendário; marca fim de semana, hoje e feriado. */
+.cal-day {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+  min-width: 0;
+  min-height: 108px;
+  padding: 6px;
+  border: 0;
+  border-right: 1px solid var(--bs-border-color);
+  border-bottom: 1px solid var(--bs-border-color);
+  background: transparent;
+  color: inherit;
+  text-align: left;
+}
+
+.cal-day:disabled {
+  color: inherit;
+  cursor: default;
+  opacity: 1;
+}
+
+.cal-day:not(:disabled):hover {
+  background: var(--bs-tertiary-bg);
+}
+
+.cal-day:focus-visible {
+  outline: 2px solid var(--bs-primary);
+  outline-offset: -2px;
+}
+
+.cal-day.is-weekend {
+  background: color-mix(in srgb, var(--bs-tertiary-bg) 40%, transparent);
+}
+
+.cal-day.is-outside {
+  background: color-mix(in srgb, var(--bs-tertiary-bg) 60%, transparent);
+  color: var(--bs-secondary-color);
+}
+
+.cal-day.has-holiday {
+  background: color-mix(in srgb, #188038 10%, transparent);
+}
+
+.cal-day__num {
+  display: inline-grid;
+  place-items: center;
+  align-self: flex-start;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 4px;
+  border-radius: 50%;
+  font-size: .78rem;
+  font-weight: 600;
+}
+
+.cal-day.is-today .cal-day__num {
+  background: var(--bs-primary);
+  color: #fff;
+}
+
+.cal-day__chips {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+/* Evento dentro do dia (vira bolinha no celular). */
+.cal-chip {
+  display: block;
+  overflow: hidden;
+  padding: 2px 6px;
+  border-left: 3px solid var(--cat);
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--cat) 16%, transparent);
+  color: color-mix(in srgb, var(--cat) 60%, var(--bs-emphasis-color));
+  font-size: .72rem;
+  font-weight: 600;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Indicador "+N mais". */
+.cal-more {
+  color: var(--bs-secondary-color);
+  font-size: .72rem;
+  font-weight: 600;
+}
+
+/* Coluna de próximos eventos. */
+.cal-side {
+  padding: 18px;
+}
+
+.cal-side h2 {
+  margin: 0 0 12px;
+  font-size: .95rem;
+  font-weight: 700;
+}
+
+/* Próximo evento clicável. */
+.cal-upcoming {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cal-upcoming__item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 8px;
+  border: 1px solid var(--bs-border-color);
+  border-radius: 12px;
+  background: var(--bs-secondary-bg);
+  color: inherit;
+  text-align: left;
+}
+
+.cal-upcoming__item:hover {
+  border-color: var(--bs-primary);
+}
+
+.cal-upcoming__date {
+  display: flex;
+  flex: 0 0 46px;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 0;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--cat) 14%, transparent);
+  color: color-mix(in srgb, var(--cat) 60%, var(--bs-emphasis-color));
+  line-height: 1.1;
+}
+
+.cal-upcoming__date strong {
+  font-size: 1.15rem;
+}
+
+.cal-upcoming__date span {
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.cal-upcoming__title {
+  display: block;
+  font-size: .8rem;
+  font-weight: 600;
+}
+
+.cal-upcoming__meta {
+  display: block;
+  color: var(--bs-secondary-color);
+  font-size: .7rem;
+}
+
+/* Evento no modal do dia. */
+.cal-detail {
+  padding: 12px 14px;
+  border: 1px solid var(--bs-border-color);
+  border-left: 4px solid var(--cat);
+  border-radius: 10px;
+  background: var(--bs-secondary-bg);
+}
+
+.cal-detail + .cal-detail {
+  margin-top: 10px;
+}
+
+.cal-detail h3 {
+  margin: 0 0 6px;
+  font-size: .95rem;
+  font-weight: 700;
+}
+
+/* Selo da categoria no modal. */
+.cal-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--cat) 16%, transparent);
+  color: color-mix(in srgb, var(--cat) 60%, var(--bs-emphasis-color));
+  font-size: .72rem;
+  font-weight: 700;
+}
+
+/* Evento no modal do dia. */
+.cal-detail__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin: 8px 0 0;
+  color: var(--bs-secondary-color);
+  font-size: .76rem;
+}
+
+.cal-detail p {
+  margin: 8px 0 0;
+  font-size: .8rem;
+}
+
+@media (max-width: 1199.98px) {
+  .cal-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .cal-card {
+    padding: 14px 10px 16px;
+  }
+
+  .cal-day {
+    min-height: 58px;
+    padding: 4px;
+  }
+
+  .cal-day__chips {
+    flex-flow: row wrap;
+    gap: 3px;
+  }
+
+  .cal-chip {
+    width: 8px;
+    height: 8px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: var(--cat);
+    font-size: 0;
+  }
+
+  .cal-more {
+    display: none;
+  }
+}
+
+/* ======================================================================
+   14. SUPORTE
+   Abertura de chamado em etapas e linha do tempo do atendimento.
+   ====================================================================== */
+
+/* Etapa numerada do formulário de chamado. */
+.ticket-step {
+  margin-bottom: 26px;
+}
+
+.ticket-step__title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 12px;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.ticket-step__num {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 26px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--bs-primary);
+  color: #fff;
+  font-size: .8rem;
+}
+
+.ticket-step__error {
+  display: none;
+  margin-top: 8px;
+  color: var(--bs-danger);
+  font-size: .78rem;
+}
+
+.ticket-step.is-invalid .ticket-step__error {
+  display: block;
+}
+
+/* Grade de opções (departamento, tipo). */
+.choice-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 12px;
+}
+
+.choice-grid--compact {
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+}
+
+/* Opção selecionável com o rádio escondido; destaca quando marcada. */
+.choice-card {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--bs-border-color);
+  border-radius: 12px;
+  background: var(--bs-secondary-bg);
+  cursor: pointer;
+  transition: border-color .15s ease, background-color .15s ease;
+}
+
+.choice-card:hover {
+  border-color: var(--bs-primary);
+}
+
+.choice-card:has(input:checked) {
+  border-color: var(--bs-primary);
+  background: color-mix(in srgb, var(--bs-primary) 10%, var(--bs-secondary-bg));
+}
+
+.choice-card:has(input:focus-visible) {
+  outline: 2px solid var(--bs-primary);
+  outline-offset: 2px;
+}
+
+.choice-card input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.choice-card strong {
+  display: block;
+  font-size: .86rem;
+}
+
+.choice-card__icon,
+.ticket-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 38px;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--brand-blue) 12%, transparent);
+  color: var(--brand-blue-text);
+  font-size: 1.15rem;
+}
+
+.choice-card:has(input:checked) .choice-card__icon {
+  background: var(--bs-primary);
+  color: #fff;
+}
+
+.choice-card__desc {
+  display: block;
+  margin-top: 2px;
+  color: var(--bs-secondary-color);
+  font-size: .74rem;
+  line-height: 1.4;
+}
+
+/* Linha do tempo do atendimento. */
+.ticket-timeline {
+  flex: 0 0 100%;
+  margin: 0;
+  padding: 4px 0 0 14px;
+  border-left: 2px solid var(--bs-border-color);
+  list-style: none;
+}
+
+.ticket-timeline li {
+  position: relative;
+  padding: 0 0 12px 14px;
+  font-size: .78rem;
+}
+
+.ticket-timeline li::before {
+  content: "";
+  position: absolute;
+  top: 4px;
+  left: -21px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--bs-primary);
+}
+
+.ticket-timeline time {
+  display: block;
+  color: var(--bs-secondary-color);
+  font-size: .7rem;
+}
+
+/* ======================================================================
+   15. PERFIL
+   Foto, dados do aluno, troca de senha e preferências.
+   ====================================================================== */
+
+/* Perfil: cartão do aluno + abas. */
+.profile-layout {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+/* Cartão com foto e dados principais. */
+.profile-card {
+  padding: 26px 22px 22px;
+  text-align: center;
+}
+
+/* Foto ou iniciais do aluno. */
+.profile-avatar {
+  display: grid;
+  place-items: center;
+  width: 112px;
+  height: 112px;
+  margin: 0 auto 14px;
+  overflow: hidden;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--brand-blue), color-mix(in srgb, var(--brand-blue) 60%, #000));
+  color: #fff;
+  font-size: 2.3rem;
+  font-weight: 700;
+}
+
+.profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-avatar--lg {
+  width: 160px;
+  height: 160px;
+  font-size: 3.2rem;
+}
+
+/* Nome do aluno. */
+.profile-name {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+/* Matrícula abaixo do nome. */
+.profile-meta {
+  margin: 4px 0 12px;
+  color: var(--bs-secondary-color);
+  font-size: .8rem;
+}
+
+/* Botões do cartão de perfil. */
+.profile-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+/* Curso, período e turno. */
+.profile-facts {
+  margin: 20px 0 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--bs-border-color);
+  font-size: .78rem;
+  text-align: left;
+}
+
+.profile-facts div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px 0;
+}
+
+.profile-facts dt {
+  color: var(--bs-secondary-color);
+  font-weight: 400;
+}
+
+.profile-facts dd {
+  margin: 0;
+  font-weight: 600;
+  text-align: right;
+}
+
+/* Cartões empilhados nas abas. */
+.profile-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+/* Medidor de força da senha. */
+.password-meter .progress {
+  height: 6px;
+}
+
+/* Regras da senha; .is-ok marca as cumpridas. */
+.password-rules {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 4px 12px;
+  margin: 10px 0 0;
+  padding: 0;
+  color: var(--bs-secondary-color);
+  font-size: .76rem;
+  list-style: none;
+}
+
+.password-rules li.is-ok {
+  color: var(--bs-success);
+}
+
+@media (max-width: 991.98px) {
+  .profile-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ======================================================================
+   16. LOGIN
+   Tela de acesso: topbar, apresentação, card do formulário e rodapé.
+   ====================================================================== */
+
+/* Fundo da tela de login com brilho nos cantos e grade sutil. */
+.login-page {
+  --login-glow-1: rgba(47, 95, 176, .45);
+  --login-glow-2: rgba(217, 139, 62, .18);
+  --login-grid: rgba(255, 255, 255, .035);
+  --login-highlight: #f6c58f;
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background: radial-gradient(circle at 0% 0%, var(--login-glow-1), transparent 45%), radial-gradient(circle at 100% 100%, var(--login-glow-2), transparent 45%), var(--bs-body-bg);
+  background-attachment: fixed;
+}
+
+[data-bs-theme="light"] .login-page {
+  --login-glow-1: rgba(47, 95, 176, .16);
+  --login-glow-2: rgba(217, 139, 62, .14);
+  --login-grid: rgba(27, 70, 142, .05);
+  --login-highlight: #b5641b;
+}
+
+.login-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image: linear-gradient(var(--login-grid) 1px, transparent 1px), linear-gradient(90deg, var(--login-grid) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+}
+
+/* Topbar do login: logo, selo e links. */
+.login-topbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px clamp(16px, 4vw, 48px);
+  border-bottom: 1px solid var(--bs-border-color);
+  background: color-mix(in srgb, var(--bs-body-bg) 60%, transparent);
+  backdrop-filter: blur(10px);
+}
+
+.login-topbar__brand {
+  display: flex;
+}
+
+.login-topbar__tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding-left: 16px;
+  border-left: 1px solid var(--bs-border-color);
+  color: var(--bs-secondary-color);
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.login-topbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+}
+
+.login-topbar__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  color: var(--bs-secondary-color);
+  font-size: .85rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.login-topbar__link:hover {
+  background: var(--bs-secondary-bg);
+  color: var(--bs-body-color);
+}
+
+.login-topbar__link .bi {
+  font-size: .75rem;
+}
+
+/* Duas colunas: apresentação à esquerda e formulário à direita. */
+.login-shell {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 440px);
+  align-items: center;
+  gap: clamp(32px, 6vw, 88px);
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: clamp(32px, 6vh, 64px) clamp(16px, 4vw, 48px);
+}
+
+/* Título, texto e destaques do portal. */
+.login-hero h1 {
+  max-width: 15ch;
+  margin: 0 0 16px;
+  color: var(--bs-emphasis-color);
+  font-size: clamp(2rem, 3.8vw, 3.2rem);
+  font-weight: 800;
+  letter-spacing: -.02em;
+  line-height: 1.08;
+}
+
+.login-hero h1 span {
+  color: var(--login-highlight);
+}
+
+.login-hero__lead {
+  max-width: 48ch;
+  margin: 0 0 28px;
+  color: var(--bs-secondary-color);
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+.login-hero__list {
+  display: grid;
+  gap: 12px;
+  margin: 28px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.login-hero__list li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--bs-body-color);
+  font-size: .95rem;
+}
+
+.login-hero__list i {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--brand-blue-bright) 18%, transparent);
+  color: var(--brand-blue-text);
+}
+
+/* Atalho para o Moodle. */
+.login-moodle {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 20px;
+  border: 1px solid color-mix(in srgb, var(--brand-orange) 35%, var(--bs-border-color));
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--brand-orange) 8%, var(--bs-secondary-bg));
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.login-moodle:hover {
+  border-color: var(--brand-orange);
+  box-shadow: 0 10px 30px color-mix(in srgb, var(--brand-orange) 18%, transparent);
+}
+
+.login-moodle__icon {
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #f0a04b, #c96f1d);
+  color: #fff;
+  font-size: 1.35rem;
+}
+
+.login-moodle__text {
+  flex: 1;
+  min-width: 0;
+}
+
+.login-moodle__text h2 {
+  margin: 0 0 2px;
+  color: var(--bs-emphasis-color);
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.login-moodle__text p {
+  margin: 0;
+  color: var(--bs-secondary-color);
+  font-size: .85rem;
+}
+
+.login-moodle__text .login-moodle__eyebrow {
+  margin-bottom: 2px;
+  color: var(--login-highlight);
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.login-moodle__button {
+  --bs-btn-bg: #a85a16;
+  --bs-btn-border-color: #a85a16;
+  --bs-btn-color: #fff;
+  --bs-btn-hover-bg: #8f4c12;
+  --bs-btn-hover-border-color: #8f4c12;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-active-bg: #7a410f;
+  --bs-btn-active-border-color: #7a410f;
+  --bs-btn-active-color: #fff;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  font-size: .85rem;
+  font-weight: 700;
+}
+
+.login-moodle__button .bi {
+  font-size: .75rem;
+}
+
+/* Cartão do formulário de acesso. */
+.login-card {
+  position: relative;
+  overflow: hidden;
+  padding: 40px 36px 32px;
+  border: 1px solid var(--bs-border-color);
+  border-radius: 20px;
+  background: var(--bs-secondary-bg);
+  box-shadow: 0 24px 60px rgba(5, 15, 40, .2);
+  animation: login-card-in .45s ease both;
+}
+
+.login-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: linear-gradient(90deg, var(--brand-blue), var(--brand-blue-bright) 55%, var(--brand-orange));
+}
+
+.login-card__title {
+  margin: 0 0 6px;
+  color: var(--bs-emphasis-color);
+  font-size: 1.65rem;
+  font-weight: 800;
+  letter-spacing: -.01em;
+}
+
+.login-card__subtitle {
+  margin: 0 0 24px;
+  color: var(--bs-secondary-color);
+}
+
+.login-card__alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: .88rem;
+}
+
+.login-card__alert[hidden] {
+  display: none;
+}
+
+.login-card__help {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.login-card__help-button {
+  --bs-btn-color: var(--bs-body-color);
+  --bs-btn-border-color: var(--bs-border-color);
+  --bs-btn-hover-bg: var(--bs-tertiary-bg);
+  --bs-btn-hover-border-color: var(--bs-border-color);
+  --bs-btn-hover-color: var(--bs-emphasis-color);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 42px;
+  border-radius: 12px;
+  font-size: .85rem;
+  font-weight: 600;
+}
+
+/* Campos, opções e botão de entrar. */
+.login-form .form-label {
+  margin-bottom: 6px;
+  font-size: .85rem;
+  font-weight: 600;
+}
+
+.login-form__label-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.login-form__label-row .login-form__link {
+  font-size: .82rem;
+}
+
+/* Campo com ícone à esquerda e botão de mostrar senha. */
+.login-field {
+  position: relative;
+}
+
+.login-field > .bi {
+  position: absolute;
+  top: 0;
+  left: 14px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  color: var(--bs-secondary-color);
+  pointer-events: none;
+}
+
+.login-field .form-control {
+  height: 48px;
+  padding-left: 42px;
+  border-radius: 12px;
+  background-color: var(--bs-body-bg);
+}
+
+.login-field .form-control.is-invalid {
+  background-image: none;
+  padding-right: 12px;
+}
+
+.login-field .form-control:focus {
+  border-color: var(--bs-primary);
+  box-shadow: 0 0 0 4px rgba(var(--bs-primary-rgb), .2);
+}
+
+.login-field:has(.login-field__toggle) .form-control {
+  padding-right: 48px;
+}
+
+.login-field__toggle {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--bs-secondary-color);
+}
+
+.login-field__toggle:hover {
+  background: var(--bs-tertiary-bg);
+  color: var(--bs-body-color);
+}
+
+.login-field__toggle:focus-visible {
+  outline: 2px solid var(--bs-primary);
+  outline-offset: 1px;
+}
+
+/* Campos, opções e botão de entrar. */
+.login-form__caps {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 8px 0 0;
+  color: var(--bs-warning-text-emphasis);
+  font-size: .8rem;
+}
+
+.login-form__caps[hidden] {
+  display: none;
+}
+
+.login-form__options {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 16px 0 24px;
+  font-size: .88rem;
+}
+
+.login-form__link {
+  color: var(--bs-link-color);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.login-form__link:hover {
+  text-decoration: underline;
+}
+
+.login-form__link--muted {
+  color: var(--bs-secondary-color);
+}
+
+.login-form__submit {
+  --bs-btn-bg: var(--brand-blue-bright);
+  --bs-btn-border-color: var(--brand-blue-bright);
+  --bs-btn-hover-bg: var(--brand-blue);
+  --bs-btn-hover-border-color: var(--brand-blue);
+  --bs-btn-active-bg: var(--brand-blue);
+  --bs-btn-active-border-color: var(--brand-blue);
+  width: 100%;
+  height: 50px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border-radius: 12px;
+  font-weight: 700;
+  box-shadow: 0 8px 20px rgba(47, 95, 176, .3);
+}
+
+.login-form__submit i {
+  transition: transform .2s ease;
+}
+
+.login-form__submit:hover i {
+  transform: translateX(4px);
+}
+
+.login-form__submit:active {
+  transform: scale(.98);
+}
+
+.login-form__submit.is-loading {
+  pointer-events: none;
+  opacity: .8;
+}
+
+.login-form__submit.is-loading i {
+  transform: none;
+  animation: login-spin .8s linear infinite;
+}
+
+/* Rodapé com links legais. */
+.login-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 24px;
+  padding: 18px clamp(16px, 4vw, 48px);
+  border-top: 1px solid var(--bs-border-color);
+  color: var(--bs-secondary-color);
+  font-size: .8rem;
+}
+
+.login-footer strong {
+  color: var(--bs-body-color);
+}
+
+.login-footer nav {
+  display: flex;
+  gap: 20px;
+}
+
+.login-footer a {
+  color: var(--bs-secondary-color);
+  text-decoration: none;
+}
+
+.login-footer a:hover {
+  color: var(--bs-body-color);
+  text-decoration: underline;
+}
+
+@keyframes login-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes login-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 991.98px) {
+  .login-shell {
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+    max-width: 520px;
+    gap: 20px;
+    padding-top: 24px;
+  }
+
+  .login-card {
+    order: -1;
+  }
+
+  .login-hero h1,
+  .login-hero__lead,
+  .login-hero__list {
+    display: none;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .login-topbar {
+    gap: 12px;
+  }
+
+  .login-topbar__tag {
+    display: none;
+  }
+
+  .login-topbar__link {
+    font-size: .8rem;
+  }
+
+  .login-card {
+    padding: 32px 20px 24px;
+    box-shadow: none;
+  }
+
+  .login-card__help {
+    grid-template-columns: 1fr;
+  }
+
+  .login-moodle {
+    flex-wrap: wrap;
+  }
+
+  .login-moodle__button {
+    width: 100%;
+    justify-content: center;
+    min-height: 44px;
+  }
+
+  .login-footer {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+/* ======================================================================
+   17. ALERT DIALOG
+   Confirmação no estilo do Bootstrap, usada no "Sair".
+   ====================================================================== */
+
+/* Modal de confirmação: título, descrição e botões Cancelar/Confirmar. */
+.alert-dialog .modal-dialog {
+  max-width: 460px;
+}
+
+.alert-dialog__content {
+  gap: 20px;
+  padding: 24px;
+  border: 1px solid var(--bs-border-color);
+  border-radius: 14px;
+  background: var(--bs-secondary-bg);
+  box-shadow: 0 24px 60px rgba(5, 15, 40, .35);
+}
+
+.alert-dialog__header {
+  display: grid;
+  gap: 8px;
+}
+
+.alert-dialog__icon {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 4px;
+  border-radius: 12px;
+  background: rgba(var(--bs-danger-rgb), .12);
+  color: var(--bs-danger);
+  font-size: 1.25rem;
+}
+
+.alert-dialog__title {
+  margin: 0;
+  color: var(--bs-emphasis-color);
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+
+.alert-dialog__description {
+  margin: 0;
+  color: var(--bs-secondary-color);
+  font-size: .9rem;
+  line-height: 1.5;
+}
+
+.alert-dialog__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.alert-dialog__footer .btn {
+  min-height: 40px;
+  padding: 8px 18px;
+  border-radius: 10px;
+  font-size: .9rem;
+  font-weight: 600;
+}
+
+.alert-dialog__cancel {
+  --bs-btn-color: var(--bs-body-color);
+  --bs-btn-border-color: var(--bs-border-color);
+  --bs-btn-hover-color: var(--bs-emphasis-color);
+  --bs-btn-hover-bg: var(--bs-tertiary-bg);
+  --bs-btn-hover-border-color: var(--bs-border-color);
+  --bs-btn-active-bg: var(--bs-tertiary-bg);
+}
+
+.alert-dialog__footer .btn:focus-visible {
+  outline: 2px solid var(--bs-primary);
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
+@media (max-width: 575.98px) {
+  .alert-dialog__footer {
+    flex-direction: column-reverse;
+  }
+
+  .alert-dialog__footer .btn {
+    width: 100%;
+    min-height: 44px;
+  }
+}
+
+/* ======================================================================
+   18. MOVIMENTO REDUZIDO
+   Fica no fim para vencer as animações de hover definidas acima.
+   ====================================================================== */
+
+/* Quem pede menos movimento no sistema não vê transições, animações nem cartões "pulando" no hover. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+
+  .dashboard-card:hover,
+  .quick-access__item:hover,
+  .academic-link-card:hover,
+  .login-form__submit:hover i,
+  .login-form__submit:active {
+    transform: none;
+  }
+}
+
+/* ======================================================================
+   19. IMPRESSÃO
+   Esconde a navegação e ajusta contrato e comprovante de IR para o papel.
+   ====================================================================== */
+
+@media print {
+  @page {
+    size: A4;
+    margin: 14mm;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+  }
+
+  .sidebar-nav,
+  .sidebar-backdrop,
+  .portal-topbar,
+  .skip-link,
+  .no-print {
+    display: none !important;
+  }
+
+  .app-shell {
+    display: block !important;
+  }
+
+  .page-content {
+    max-width: none !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+  }
+
+  .contract-paper {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+    font-size: 10.5pt;
+  }
+
+  .contract-clauses p,
+  .contract-signatures,
+  .contract-cols,
+  .contract-line {
+    break-inside: avoid;
+  }
+
+  .contract-cols,
+  .contract-signatures {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .print-only {
+    display: block !important;
+    margin-bottom: 18px;
+  }
+
+  .print-only h1 {
+    margin: 0;
+    font-size: 16pt;
+    font-weight: 700;
+  }
+
+  .print-only p {
+    margin: 0;
+    font-size: 10pt;
+  }
+
+  .irpf-report {
+    --bs-body-color: #000;
+    --bs-body-bg: #fff;
+    --bs-emphasis-color: #000;
+    --bs-secondary-color: #4b5563;
+    --bs-secondary-bg: #fff;
+    --bs-tertiary-bg: #f3f4f6;
+    --bs-border-color: #d1d5db;
+    color: #000;
+  }
+
+  .irpf-report .grid-card {
+    box-shadow: none;
+    break-inside: avoid;
+  }
+
+  .irpf-report tr {
+    break-inside: avoid;
   }
 }

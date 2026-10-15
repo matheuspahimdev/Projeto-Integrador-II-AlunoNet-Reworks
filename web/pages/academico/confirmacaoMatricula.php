@@ -4,11 +4,11 @@ require_once __DIR__ . '/../../components/layout.php';
 const ENROLLMENT_CONFIRMATION_DATE = '2026-08-10';
 
 $enrollment = [
-    ['label' => 'RA', 'value' => STUDENT['registration']],
-    ['label' => 'Curso', 'value' => STUDENT['course']],
-    ['label' => 'Modalidade', 'value' => STUDENT['modality']],
-    ['label' => 'Período', 'value' => STUDENT['period']],
-    ['label' => 'Disciplinas matriculadas', 'value' => count(DISCIPLINES)],
+    ['label' => 'RA', 'value' => currentStudent()['registration']],
+    ['label' => 'Curso', 'value' => currentStudent()['course']],
+    ['label' => 'Modalidade', 'value' => currentStudent()['modality']],
+    ['label' => 'Período', 'value' => currentStudent()['period']],
+    ['label' => 'Disciplinas matriculadas', 'value' => count(studentDisciplines())],
     ['label' => 'Data da confirmação', 'value' => formatDate(ENROLLMENT_CONFIRMATION_DATE)],
 ];
 
@@ -18,8 +18,7 @@ $steps = [
     ['label' => 'Confirmação do semestre', 'date' => ENROLLMENT_CONFIRMATION_DATE],
 ];
 
-renderPageStart('Confirmação de Matrícula');
-renderAcademicHeader('Confirmação de Matrícula');
+renderAcademicPageStart('Confirmação de Matrícula');
 ?>
       <section class="academic-page-grid">
         <section class="grid-card grid-card--wide">
@@ -27,7 +26,7 @@ renderAcademicHeader('Confirmação de Matrícula');
           <div class="grid-card__body">
             <div class="status-card">
               <i class="bi bi-patch-check-fill"></i>
-              <div><strong>Matrícula confirmada</strong><span><?= e(STUDENT['term']) ?> • <?= e(STUDENT['course']) ?> • <?= e(STUDENT['semester']) ?></span></div>
+              <div><strong>Matrícula confirmada</strong><span><?= e(currentStudent()['term']) ?> • <?= e(currentStudent()['course']) ?> • <?= e(currentStudent()['semester']) ?></span></div>
             </div>
             <hr>
             <dl class="data-grid">

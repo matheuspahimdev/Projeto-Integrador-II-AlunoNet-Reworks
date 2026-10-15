@@ -2,24 +2,23 @@
 require_once __DIR__ . '/../../components/layout.php';
 
 $academicData = [
-    ['label' => 'Nome completo', 'value' => STUDENT['name']],
-    ['label' => 'RA', 'value' => STUDENT['registration']],
-    ['label' => 'Curso', 'value' => STUDENT['course']],
-    ['label' => 'Período', 'value' => STUDENT['period']],
-    ['label' => 'Semestre atual', 'value' => STUDENT['semester'] . ' • ' . STUDENT['term']],
-    ['label' => 'Situação acadêmica', 'value' => STUDENT['status'], 'badge' => true],
-    ['label' => 'E-mail institucional', 'value' => STUDENT['email']],
-    ['label' => 'Telefone', 'value' => STUDENT['phone']],
+    ['label' => 'Nome completo', 'value' => currentStudent()['name']],
+    ['label' => 'RA', 'value' => currentStudent()['registration']],
+    ['label' => 'Curso', 'value' => currentStudent()['course']],
+    ['label' => 'Período', 'value' => currentStudent()['period']],
+    ['label' => 'Semestre atual', 'value' => currentStudent()['semester'] . ' • ' . currentStudent()['term']],
+    ['label' => 'Situação acadêmica', 'value' => currentStudent()['status'], 'badge' => true],
+    ['label' => 'E-mail institucional', 'value' => currentStudent()['email']],
+    ['label' => 'Telefone', 'value' => currentStudent()['phone']],
 ];
 
 $contacts = [
-    ['label' => 'E-mail alternativo', 'value' => STUDENT['alternative_email']],
-    ['label' => 'Cidade', 'value' => STUDENT['city']],
+    ['label' => 'E-mail alternativo', 'value' => currentStudent()['alternative_email']],
+    ['label' => 'Cidade', 'value' => currentStudent()['city']],
     ['label' => 'Última atualização', 'value' => formatDate('2026-08-08')],
 ];
 
-renderPageStart('Consultar Dados Cadastrais');
-renderAcademicHeader('Consultar Dados Cadastrais');
+renderAcademicPageStart('Consultar Dados Cadastrais');
 ?>
       <section class="academic-page-grid">
         <section class="grid-card grid-card--wide">

@@ -1,26 +1,67 @@
 <?php
-require_once __DIR__ . '/dados.php';
+require_once __DIR__ . '/autenticacao.php';
 require_once __DIR__ . '/formatacao.php';
+
+// Dados acadêmicos do aluno logado, vindos de ACADEMIC_RECORDS.
+function academicRecord(): array
+{
+    return ACADEMIC_RECORDS[currentStudent()['registration']];
+}
+
+function studentDisciplines(): array
+{
+    return academicRecord()['disciplines'];
+}
+
+function classSlots(): array
+{
+    return academicRecord()['class_slots'];
+}
+
+function weeklySchedule(): array
+{
+    return academicRecord()['weekly_schedule'];
+}
+
+function studentExams(): array
+{
+    return academicRecord()['exams'];
+}
+
+function complementaryActivities(): array
+{
+    return academicRecord()['complementary_activities'];
+}
+
+function curriculumComponents(): array
+{
+    return academicRecord()['curriculum'];
+}
 
 function studentFirstName(): string
 {
-    return explode(' ', STUDENT['name'])[0];
+    return explode(' ', currentStudent()['name'])[0];
 }
 
 function studentInitials(): string
 {
-    $names = explode(' ', STUDENT['name']);
+    $names = explode(' ', currentStudent()['name']);
     return mb_substr($names[0], 0, 1) . mb_substr(end($names), 0, 1);
+}
+
+function average(array $values): float
+{
+    return $values === [] ? 0.0 : array_sum($values) / count($values);
 }
 
 function disciplineAverage(array $discipline): float
 {
-    return array_sum($discipline['grades']) / count($discipline['grades']);
+    return average($discipline['grades']);
 }
 
 function isDisciplineGradingComplete(array $discipline): bool
 {
-    return count($discipline['grades']) === 2;
+    return count($discipline['grades']) === GRADES_PER_SEMESTER;
 }
 
 function disciplineStatus(array $discipline): string
@@ -33,8 +74,7 @@ function disciplineStatus(array $discipline): string
 
 function disciplineAttendance(array $discipline): int
 {
-    $totalClasses = $discipline['attended'] + $discipline['absences'];
-    return (int) round($discipline['attended'] / $totalClasses * 100);
+    return percentage($discipline['attended'], $discipline['attended'] + $discipline['absences']);
 }
 
 function attendanceStatus(array $discipline): string
@@ -44,19 +84,19 @@ function attendanceStatus(array $discipline): string
 
 function overallAverage(): float
 {
-    return array_sum(array_map('disciplineAverage', DISCIPLINES)) / count(DISCIPLINES);
+    return average(array_map('disciplineAverage', studentDisciplines()));
 }
 
 function overallAttendance(): int
 {
-    $attended = array_sum(array_column(DISCIPLINES, 'attended'));
-    $absences = array_sum(array_column(DISCIPLINES, 'absences'));
-    return (int) round($attended / ($attended + $absences) * 100);
+    $attended = array_sum(array_column(studentDisciplines(), 'attended'));
+    $absences = array_sum(array_column(studentDisciplines(), 'absences'));
+    return percentage($attended, $attended + $absences);
 }
 
 function upcomingExams(): array
 {
-    return array_values(array_filter(EXAMS, static fn (array $exam): bool => $exam['date'] >= SIMULATED_TODAY));
+    return array_values(array_filter(studentExams(), static fn (array $exam): bool => $exam['date'] >= SIMULATED_TODAY));
 }
 
 function examStatus(array $exam): string
@@ -64,37 +104,66 @@ function examStatus(array $exam): string
     return $exam === upcomingExams()[0] ? 'Próxima' : 'Agendada';
 }
 
-function classesOn(string $date): array
+// Resumo da semana para a página inicial: disciplinas de cada dia, sem repetir os horários seguidos.
+function weekSummary(): array
 {
-    $weekday = WEEKDAYS[(int) date('N', strtotime($date))];
-    return WEEKLY_SCHEDULE[$weekday] ?? [];
+    $todayWeekday = WEEKDAYS[(int) today()->format('N')];
+
+    return array_map(
+        static fn (string $weekday, array $disciplineKeys): array => [
+            'short_name' => WEEKDAY_ABBREVIATIONS[$weekday],
+            'is_today' => $weekday === $todayWeekday,
+            'classes' => array_map(
+                static fn (string $key): array => studentDisciplines()[$key],
+                array_values(array_unique(array_filter($disciplineKeys))),
+            ),
+        ],
+        array_keys(weeklySchedule()),
+        weeklySchedule(),
+    );
 }
 
-function firstClassOn(string $date): ?array
+// Legenda do horário: agrupa dias seguidos que acontecem no mesmo local.
+function scheduleLegend(): array
 {
-    $slots = array_filter(classesOn($date));
-    if ($slots === []) {
-        return null;
+    $disciplines = studentDisciplines();
+    $groups = [];
+
+    foreach (weeklySchedule() as $weekday => $disciplineKeys) {
+        $rooms = array_unique(array_map(
+            static fn (string $key): string => $disciplines[$key]['online'] ? 'Online' : $disciplines[$key]['room'],
+            array_filter($disciplineKeys),
+        ));
+        $label = $rooms === [] ? 'sem aula' : implode(' / ', $rooms);
+        $last = array_key_last($groups);
+
+        if ($last !== null && $groups[$last]['label'] === $label) {
+            $groups[$last]['days'][] = $weekday;
+        } else {
+            $groups[] = ['days' => [$weekday], 'label' => $label];
+        }
     }
 
-    $disciplineKey = reset($slots);
-    $disciplineSlots = array_keys(classesOn($date), $disciplineKey, true);
-
-    return [
-        'discipline' => DISCIPLINES[$disciplineKey],
-        'start' => CLASS_SLOTS[min($disciplineSlots)]['start'],
-        'end' => CLASS_SLOTS[max($disciplineSlots)]['end'],
-    ];
+    return array_map(static fn (array $group): array => [
+        'icon' => match ($group['label']) {
+            'Online' => 'bi-camera-video',
+            'sem aula' => 'bi-calendar-x',
+            default => 'bi-building',
+        },
+        'text' => (count($group['days']) === 1
+            ? $group['days'][0]
+            : WEEKDAY_ABBREVIATIONS[$group['days'][0]] . ' a ' . WEEKDAY_ABBREVIATIONS[end($group['days'])]) . ': ' . $group['label'],
+    ], $groups);
 }
 
 function approvedComplementaryHours(): int
 {
-    return complementaryHoursWithStatus('Deferido');
+    return complementaryHoursWithStatus(ACTIVITY_APPROVED);
 }
 
 function complementaryHoursWithStatus(string $status): int
 {
-    $activities = array_filter(COMPLEMENTARY_ACTIVITIES, static fn (array $activity): bool => $activity['status'] === $status);
+    $activities = array_filter(complementaryActivities(), static fn (array $activity): bool => $activity['status'] === $status);
     return array_sum(array_column($activities, 'hours'));
 }
 

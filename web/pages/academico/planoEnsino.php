@@ -1,15 +1,14 @@
 <?php
 require_once __DIR__ . '/../../components/layout.php';
 
-renderPageStart('Plano de Ensino');
-renderAcademicHeader('Plano de Ensino');
+renderAcademicPageStart('Plano de Ensino');
 ?>
       <section class="academic-page-grid">
         <section class="grid-card grid-card--wide">
           <?php renderCardHead('bi-journal-richtext', 'Disciplinas do semestre', 'Consulte os conteúdos e critérios previstos para cada disciplina.'); ?>
           <div class="grid-card__body">
             <div class="academic-list">
-              <?php foreach (DISCIPLINES as $discipline): ?>
+              <?php foreach (studentDisciplines() as $discipline): ?>
                 <article class="academic-list__item">
                   <div>
                     <strong><?= e($discipline['name']) ?></strong>

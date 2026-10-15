@@ -2,9 +2,7 @@
 require_once __DIR__ . '/../../components/layout.php';
 require_once __DIR__ . '/../../lib/protocolo.php';
 
-$curso = STUDENT['course'];
-$acoesRapidas = QUICK_REQUESTS;
-$outrosRequerimentos = OTHER_REQUESTS;
+$course = currentStudent()['course'];
 renderPageStart('Entrada de Requerimentos');
 ?>
 
@@ -21,12 +19,12 @@ renderPageStart('Entrada de Requerimentos');
     <h2 class="section-title">Ações rápidas (mais solicitadas)</h2>
 
     <section class="grid-mesh grid-mesh--static grid-mesh--academic grid-mesh--auto" aria-label="Ações rápidas">
-      <?php foreach ($acoesRapidas as $acao): ?>
+      <?php foreach (QUICK_REQUESTS as $quickRequest): ?>
         <article class="g-box g-col-1 grid-card request-card">
-          <div class="request-card__icon"><i class="bi <?= e($acao['icon']) ?>"></i></div>
-          <h3><?= e($acao['title']) ?></h3>
-          <p><?= e($acao['description']) ?></p>
-          <button class="btn btn-outline-primary w-100" type="button" data-request="<?= e($acao['title']) ?>" data-attachment="<?= $acao['attachment'] ? 'true' : 'false' ?>">Solicitar</button>
+          <div class="request-card__icon"><i class="bi <?= e($quickRequest['icon']) ?>"></i></div>
+          <h3><?= e($quickRequest['title']) ?></h3>
+          <p><?= e($quickRequest['description']) ?></p>
+          <button class="btn btn-outline-primary w-100" type="button" data-request="<?= e($quickRequest['title']) ?>" data-attachment="<?= $quickRequest['attachment'] ? 'true' : 'false' ?>">Solicitar</button>
         </article>
       <?php endforeach; ?>
     </section>
@@ -39,7 +37,7 @@ renderPageStart('Entrada de Requerimentos');
             <div class="row g-3 mb-3">
               <div class="col-12 col-lg-5">
                 <label class="form-label" for="requestCourse">Curso selecionado</label>
-                <input class="form-control" id="requestCourse" type="text" value="<?= e($curso) ?>" disabled>
+                <input class="form-control" id="requestCourse" type="text" value="<?= e($course) ?>" disabled>
               </div>
             </div>
             <div class="row g-3">
@@ -47,10 +45,10 @@ renderPageStart('Entrada de Requerimentos');
                 <label class="form-label" for="requestType">Selecione o tipo do requerimento</label>
                 <select class="form-select" id="requestType" name="request_type" required>
                   <option value="" selected disabled>-- Selecione uma opção --</option>
-                  <?php foreach ($outrosRequerimentos as $grupo => $itens): ?>
-                    <optgroup label="<?= e($grupo) ?>">
-                      <?php foreach ($itens as $item): ?>
-                        <option value="<?= e($item) ?>"><?= e($item) ?></option>
+                  <?php foreach (OTHER_REQUESTS as $group => $requestTypes): ?>
+                    <optgroup label="<?= e($group) ?>">
+                      <?php foreach ($requestTypes as $requestType): ?>
+                        <option value="<?= e($requestType) ?>"><?= e($requestType) ?></option>
                       <?php endforeach; ?>
                     </optgroup>
                   <?php endforeach; ?>
@@ -78,7 +76,7 @@ renderPageStart('Entrada de Requerimentos');
       <div class="modal-body">
         <dl class="data-grid data-grid--single mb-3">
           <div><dt>Requerimento</dt><dd id="requestModalType"></dd></div>
-          <div><dt>Curso</dt><dd><?= e($curso) ?></dd></div>
+          <div><dt>Curso</dt><dd><?= e($course) ?></dd></div>
         </dl>
         <div class="mb-3 d-none" id="requestAttachmentField">
           <label class="form-label" for="requestAttachment">Anexar atestado (PDF, JPG ou PNG)</label>
@@ -99,36 +97,24 @@ renderPageStart('Entrada de Requerimentos');
   </div>
 </div>
 
-<div class="toast-container position-fixed bottom-0 end-0 p-3">
-  <div id="requestToast" class="toast align-items-center text-bg-success border-0" role="status" aria-live="polite" aria-atomic="true">
-    <div class="d-flex">
-      <div class="toast-body" id="requestToastBody"></div>
-      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
-    </div>
-  </div>
-</div>
-
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  const modalEl = document.getElementById('requestModal');
   const form = document.getElementById('requestForm');
-  const typeEl = document.getElementById('requestModalType');
-  const attachField = document.getElementById('requestAttachmentField');
-  const attachInput = document.getElementById('requestAttachment');
-  const toastBody = document.getElementById('requestToastBody');
+  const requestTypeLabel = document.getElementById('requestModalType');
+  const attachmentField = document.getElementById('requestAttachmentField');
+  const attachmentInput = document.getElementById('requestAttachment');
   const otherForm = document.getElementById('otherRequestForm');
   const otherSelect = document.getElementById('requestType');
-  const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
-  const toast = bootstrap.Toast.getOrCreateInstance(document.getElementById('requestToast'), { delay: 5000 });
+  const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('requestModal'));
   let currentRequest = '';
 
   const openRequest = (name, needsAttachment = false) => {
     currentRequest = name;
     form.reset();
     form.classList.remove('was-validated');
-    typeEl.textContent = name;
-    attachField.classList.toggle('d-none', !needsAttachment);
-    attachInput.required = needsAttachment;
+    requestTypeLabel.textContent = name;
+    attachmentField.classList.toggle('d-none', !needsAttachment);
+    attachmentInput.required = needsAttachment;
     modal.show();
   };
 
@@ -148,8 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
     form.classList.add('was-validated');
     if (!form.checkValidity()) return;
     modal.hide();
-    toastBody.textContent = `Solicitação de “${currentRequest}” enviada para a secretaria.`;
-    toast.show();
+    showToast(`Solicitação de “${currentRequest}” enviada para a secretaria.`);
     otherForm.reset();
     otherForm.classList.remove('was-validated');
   });

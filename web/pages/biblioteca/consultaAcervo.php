@@ -2,9 +2,6 @@
 require_once __DIR__ . '/../../components/layout.php';
 require_once __DIR__ . '/../../lib/biblioteca.php';
 
-$categorias = BOOK_CATEGORIES;
-$horarios = PICKUP_TIMES;
-$livros = libraryCollectionByTitle();
 renderPageStart('Consulta ao Acervo');
 ?>
 
@@ -14,7 +11,7 @@ renderPageStart('Consulta ao Acervo');
       <div class="info-banner__icon"><i class="bi bi-info-circle"></i></div>
       <div>
         <strong>Como funciona</strong>
-        <span>Escolha um livro disponível e agende a retirada. A biblioteca atende de segunda a sexta, das 08h às 21h, e o prazo de empréstimo é de 7 dias.</span>
+        <span>Escolha um livro disponível e agende a retirada. A biblioteca atende de segunda a sexta, das 08h às 21h, e o prazo de empréstimo é de <?= LOAN_DAYS ?> dias.</span>
       </div>
     </div>
 
@@ -25,8 +22,8 @@ renderPageStart('Consulta ao Acervo');
       </div>
       <select class="form-select" id="bookCategory" aria-label="Filtrar por área">
         <option value="">Todas as áreas</option>
-        <?php foreach ($categorias as $slug => $categoria): ?>
-          <option value="<?= e($slug) ?>"><?= e($categoria['label']) ?></option>
+        <?php foreach (BOOK_CATEGORIES as $slug => $category): ?>
+          <option value="<?= e($slug) ?>"><?= e($category['label']) ?></option>
         <?php endforeach; ?>
       </select>
       <select class="form-select" id="bookSort" aria-label="Ordenar por">
@@ -43,46 +40,48 @@ renderPageStart('Consulta ao Acervo');
     <p class="library-count" id="bookCount" aria-live="polite"></p>
 
     <div class="book-grid" id="bookGrid">
-      <?php foreach ($livros as $item): ?>
+      <?php foreach (libraryCollectionByTitle() as $book): ?>
         <?php
-          $categoria = $categorias[$item['categoria']];
-          $disponivel = $item['disponiveis'] > 0;
-          $meta = implode(' • ', array_filter([$item['edicao'], $item['editora'], (string) $item['ano']]));
-          $busca = mb_strtolower($item['titulo'] . ' ' . $item['autor'] . ' ' . $item['editora'] . ' ' . $categoria['label'] . ' ' . $item['tombo']);
+          $category = BOOK_CATEGORIES[$book['category']];
+          $isAvailable = $book['available'] > 0;
+          $registryCode = bookRegistryCode($book);
+          $details = implode(' • ', array_filter([$book['edition'], $book['publisher'], (string) $book['year']]));
+          $searchText = mb_strtolower($book['title'] . ' ' . $book['author'] . ' ' . $book['publisher'] . ' ' . $category['label'] . ' ' . $registryCode);
         ?>
         <article class="book-card"
-                 data-id="<?= (int) $item['id'] ?>"
-                 data-category="<?= e($item['categoria']) ?>"
-                 data-available="<?= $disponivel ? 'true' : 'false' ?>"
-                 data-titulo="<?= e($item['titulo']) ?>"
-                 data-autor="<?= e($item['autor']) ?>"
-                 data-ano="<?= (int) $item['ano'] ?>"
-                 data-search="<?= e($busca) ?>">
-          <div class="book-cover book-cover--<?= e($item['categoria']) ?>" aria-hidden="true">
-            <i class="bi <?= e($categoria['icon']) ?>"></i>
-            <span><?= e($categoria['label']) ?></span>
+                 data-id="<?= (int) $book['id'] ?>"
+                 data-category="<?= e($book['category']) ?>"
+                 data-available="<?= $isAvailable ? 'true' : 'false' ?>"
+                 data-title="<?= e($book['title']) ?>"
+                 data-author="<?= e($book['author']) ?>"
+                 data-year="<?= (int) $book['year'] ?>"
+                 data-loan-status="<?= e(activeLoanStatus((int) $book['id']) ?? '') ?>"
+                 data-search="<?= e($searchText) ?>">
+          <div class="book-cover book-cover--<?= e($book['category']) ?>" aria-hidden="true">
+            <i class="bi <?= e($category['icon']) ?>"></i>
+            <span><?= e($category['label']) ?></span>
           </div>
           <div class="book-card__body">
-            <h2 class="book-card__title"><?= e($item['titulo']) ?></h2>
-            <p class="book-card__author"><?= e($item['autor']) ?></p>
-            <p class="book-card__meta"><?= e($meta) ?></p>
+            <h2 class="book-card__title"><?= e($book['title']) ?></h2>
+            <p class="book-card__author"><?= e($book['author']) ?></p>
+            <p class="book-card__meta"><?= e($details) ?></p>
             <div class="book-card__availability">
-              <?php if ($disponivel): ?>
+              <?php if ($isAvailable): ?>
                 <span class="badge rounded-pill text-bg-success">Disponível</span>
-                <span class="text-secondary"><?= (int) $item['disponiveis'] ?> de <?= (int) $item['total'] ?> exemplares</span>
+                <span class="text-secondary"><?= (int) $book['available'] ?> de <?= (int) $book['copies'] ?> exemplares</span>
               <?php else: ?>
                 <span class="badge rounded-pill text-bg-secondary">Indisponível</span>
-                <?php if ($item['previsao']): ?>
-                  <span class="text-secondary">Devolução prevista: <?= e((new DateTimeImmutable($item['previsao']))->format('d/m/Y')) ?></span>
+                <?php if ($book['expected_return']): ?>
+                  <span class="text-secondary">Devolução prevista: <?= e(formatDate($book['expected_return'])) ?></span>
                 <?php endif; ?>
               <?php endif; ?>
               <span class="badge rounded-pill text-bg-warning" data-pending-badge hidden>Pedido em análise</span>
             </div>
-            <p class="book-card__where">Estante <?= e($item['estante']) ?> • <?= e($item['tombo']) ?></p>
+            <p class="book-card__where">Estante <?= e($book['shelf']) ?> • <?= e($registryCode) ?></p>
           </div>
           <div class="book-card__foot">
-            <button class="btn btn-accent w-100" type="button" data-action="schedule"<?= $disponivel ? '' : ' disabled' ?>>
-              <i class="bi <?= $disponivel ? 'bi-calendar-plus' : 'bi-x-circle' ?> me-2"></i><?= $disponivel ? 'Agendar empréstimo' : 'Indisponível no momento' ?>
+            <button class="btn btn-accent w-100" type="button" data-action="schedule"<?= $isAvailable ? '' : ' disabled' ?>>
+              <i class="bi <?= $isAvailable ? 'bi-calendar-plus' : 'bi-x-circle' ?> me-2"></i><?= $isAvailable ? 'Agendar empréstimo' : 'Indisponível no momento' ?>
             </button>
           </div>
         </article>
@@ -121,8 +120,8 @@ renderPageStart('Consulta ao Acervo');
             <label class="form-label" for="loanTime">Horário</label>
             <select class="form-select" id="loanTime">
               <option value="" selected disabled>Escolha</option>
-              <?php foreach ($horarios as $horario): ?>
-                <option value="<?= e($horario) ?>"><?= e($horario) ?></option>
+              <?php foreach (PICKUP_TIMES as $pickupTime): ?>
+                <option value="<?= e($pickupTime) ?>"><?= e($pickupTime) ?></option>
               <?php endforeach; ?>
             </select>
             <div class="invalid-feedback">Escolha um horário.</div>
@@ -135,7 +134,7 @@ renderPageStart('Consulta ao Acervo');
 
         <div class="form-check mb-3">
           <input class="form-check-input" type="checkbox" id="loanTerms">
-          <label class="form-check-label small" for="loanTerms">Estou ciente de que o prazo é de 7 dias a partir da retirada e de que o atraso na devolução gera multa conforme o regulamento da biblioteca.</label>
+          <label class="form-check-label small" for="loanTerms">Estou ciente de que o prazo é de <?= LOAN_DAYS ?> dias a partir da retirada e de que o atraso na devolução gera multa conforme o regulamento da biblioteca.</label>
           <div class="invalid-feedback">Confirme que está ciente das regras.</div>
         </div>
 
@@ -149,107 +148,123 @@ renderPageStart('Consulta ao Acervo');
   </div>
 </div>
 
-<div class="toast-container position-fixed bottom-0 end-0 p-3">
-  <div id="libraryToast" class="toast align-items-center text-bg-success border-0" role="status" aria-live="polite" aria-atomic="true">
-    <div class="d-flex">
-      <div class="toast-body" id="libraryToastBody"></div>
-      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
-    </div>
-  </div>
-</div>
-
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  const STORAGE_KEY = 'alunonet.emprestimos';
-  const LOAN_DAYS = 7;
-  const MAX_DAYS_AHEAD = 14;
+  const STORAGE_KEY = <?= jsonForScript(studentStorageKey('loans')) ?>;
+  const LOAN_DAYS = <?= LOAN_DAYS ?>;
+  const MAX_DAYS_AHEAD = <?= MAX_PICKUP_DAYS_AHEAD ?>;
+  const STATUS_PENDING = <?= jsonForScript(LOAN_STATUS_PENDING) ?>;
+  const LOAN_LABELS = {
+    [STATUS_PENDING]: { icon: 'bi-hourglass-split', text: 'Pedido em análise' },
+    [<?= jsonForScript(LOAN_STATUS_PICKED_UP) ?>]: { icon: 'bi-bookmark-check', text: 'Já está com você' },
+  };
 
   const $ = (id) => document.getElementById(id);
   const grid = $('bookGrid');
   const cards = [...grid.querySelectorAll('.book-card')];
-  const empty = $('bookEmpty');
-  const count = $('bookCount');
   const form = $('loanForm');
   const dateInput = $('loanDate');
   const timeSelect = $('loanTime');
   const termsInput = $('loanTerms');
-  const toastEl = $('libraryToast');
-  const toast = bootstrap.Toast.getOrCreateInstance(toastEl, { delay: 5000 });
   const modal = bootstrap.Modal.getOrCreateInstance($('loanModal'));
 
   const state = { query: '', category: '', onlyAvailable: false, sort: 'title' };
   let currentCard = null;
 
-  const normalize = (text) => text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-  const toISO = (date) => date.toLocaleDateString('sv-SE');
-  const fromISO = (iso) => new Date(`${iso}T00:00:00`);
-  const addDays = (date, days) => { const copy = new Date(date); copy.setDate(copy.getDate() + days); return copy; };
-  const fmt = (date) => date.toLocaleDateString('pt-BR');
-  const icon = (className) => {
-    const node = document.createElement('i');
-    node.className = className;
-    node.setAttribute('aria-hidden', 'true');
-    return node;
-  };
+  const normalize = (text) => text.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 
-  const loadRequests = () => {
-    try {
-      const value = JSON.parse(localStorage.getItem(STORAGE_KEY));
-      return Array.isArray(value) ? value : [];
-    } catch (error) { return []; }
-  };
-  const saveRequests = (list) => {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); return true; } catch (error) { return false; }
-  };
-  const hasPending = (bookId) => loadRequests().some((r) => r.bookId === bookId && r.status === 'analise' && !r.devolvidoEm);
+  const hasPendingRequest = (bookId) => readStoredList(STORAGE_KEY)
+    .some((request) => request.book_id === bookId && request.status === STATUS_PENDING && !request.returned_at);
 
-  const showToast = (message, ok = true, linkHref = '') => {
-    toastEl.classList.toggle('text-bg-success', ok);
-    toastEl.classList.toggle('text-bg-danger', !ok);
-    const body = $('libraryToastBody');
-    body.replaceChildren(document.createTextNode(message));
-    if (linkHref) {
-      const link = document.createElement('a');
-      link.href = linkHref;
-      link.className = 'text-white fw-bold ms-1';
-      link.textContent = 'Ver meus empréstimos';
-      body.append(link);
-    }
-    toast.show();
-  };
+  const loanStatusOf = (card) => card.dataset.loanStatus || (hasPendingRequest(Number(card.dataset.id)) ? STATUS_PENDING : '');
 
   const paintCard = (card) => {
-    const pending = hasPending(Number(card.dataset.id));
-    const available = card.dataset.available === 'true';
-    card.querySelector('[data-pending-badge]').hidden = !pending;
+    const loan = LOAN_LABELS[loanStatusOf(card)];
+    const isAvailable = card.dataset.available === 'true';
+    const badge = card.querySelector('[data-pending-badge]');
+    badge.hidden = !loan;
+    if (loan) badge.textContent = loan.text;
+
     const button = card.querySelector('[data-action="schedule"]');
-    button.disabled = pending || !available;
+    button.disabled = Boolean(loan) || !isAvailable;
     button.replaceChildren(
-      icon(`bi ${pending ? 'bi-hourglass-split' : available ? 'bi-calendar-plus' : 'bi-x-circle'} me-2`),
-      document.createTextNode(pending ? 'Pedido em análise' : available ? 'Agendar empréstimo' : 'Indisponível no momento'),
+      createIcon(`bi ${loan ? loan.icon : isAvailable ? 'bi-calendar-plus' : 'bi-x-circle'} me-2`),
+      document.createTextNode(loan ? loan.text : isAvailable ? 'Agendar empréstimo' : 'Indisponível no momento'),
     );
   };
 
   const sorters = {
-    title: (a, b) => a.dataset.titulo.localeCompare(b.dataset.titulo, 'pt-BR'),
-    author: (a, b) => a.dataset.autor.localeCompare(b.dataset.autor, 'pt-BR'),
-    year: (a, b) => Number(b.dataset.ano) - Number(a.dataset.ano) || sorters.title(a, b),
+    title: (a, b) => a.dataset.title.localeCompare(b.dataset.title, 'pt-BR'),
+    author: (a, b) => a.dataset.author.localeCompare(b.dataset.author, 'pt-BR'),
+    year: (a, b) => Number(b.dataset.year) - Number(a.dataset.year) || sorters.title(a, b),
   };
+
+  const matchesFilters = (card) => (!state.category || card.dataset.category === state.category)
+    && (!state.onlyAvailable || card.dataset.available === 'true')
+    && (!state.query || card.dataset.search.includes(state.query));
 
   const render = () => {
     const sorted = [...cards].sort(sorters[state.sort]);
     grid.append(...sorted);
     let shown = 0;
     sorted.forEach((card) => {
-      const ok = (!state.category || card.dataset.category === state.category)
-        && (!state.onlyAvailable || card.dataset.available === 'true')
-        && (!state.query || card.dataset.search.includes(state.query));
-      card.hidden = !ok;
-      if (ok) shown += 1;
+      const visible = matchesFilters(card);
+      card.hidden = !visible;
+      if (visible) shown += 1;
     });
-    count.textContent = `${shown} ${shown === 1 ? 'livro encontrado' : 'livros encontrados'}`;
-    empty.hidden = shown > 0;
+    $('bookCount').textContent = pluralize(shown, 'livro encontrado', 'livros encontrados');
+    $('bookEmpty').hidden = shown > 0;
   };
+
+  const openLoanModal = (card) => {
+    currentCard = card;
+    $('loanBookTitle').textContent = card.dataset.title;
+    $('loanBookAuthor').textContent = card.dataset.author;
+    const cover = $('loanCover');
+    cover.className = `book-cover book-cover--mini book-cover--${card.dataset.category}`;
+    cover.replaceChildren(card.querySelector('.book-cover i').cloneNode(true));
+
+    form.reset();
+    form.querySelectorAll('.is-invalid').forEach((field) => field.classList.remove('is-invalid'));
+    dateInput.min = toIsoDate(addDays(portalToday(), 1));
+    dateInput.max = toIsoDate(addDays(portalToday(), MAX_DAYS_AHEAD));
+    $('loanReturn').textContent = '—';
+    modal.show();
+  };
+
+  const pickupDateError = () => {
+    if (!dateInput.value) return 'Escolha a data de retirada.';
+    const chosen = parseIsoDate(dateInput.value);
+    const min = parseIsoDate(dateInput.min);
+    const max = parseIsoDate(dateInput.max);
+    if (chosen < min || chosen > max) return `Escolha uma data entre ${formatDateBR(min)} e ${formatDateBR(max)}.`;
+    if ([0, 6].includes(chosen.getDay())) return 'A biblioteca atende de segunda a sexta. Escolha um dia útil.';
+    return '';
+  };
+
+  const isLoanFormValid = () => {
+    const dateError = pickupDateError();
+    $('loanDateFeedback').textContent = dateError;
+    dateInput.classList.toggle('is-invalid', Boolean(dateError));
+    timeSelect.classList.toggle('is-invalid', !timeSelect.value);
+    termsInput.classList.toggle('is-invalid', !termsInput.checked);
+    return !dateError && Boolean(timeSelect.value) && termsInput.checked;
+  };
+
+  const loanRequestFromForm = () => ({
+    id: `EMP-${Date.now().toString(36).toUpperCase()}`,
+    book_id: Number(currentCard.dataset.id),
+    title: currentCard.dataset.title,
+    author: currentCard.dataset.author,
+    category: currentCard.dataset.category,
+    pickup_date: dateInput.value,
+    pickup_time: timeSelect.value,
+    due_date: toIsoDate(addDays(parseIsoDate(dateInput.value), LOAN_DAYS)),
+    requested_at: toIsoDate(portalToday()),
+    status: STATUS_PENDING,
+    renewals: 0,
+    returned_at: null,
+  });
 
   cards.forEach((card) => {
     card.dataset.search = normalize(card.dataset.search);
@@ -263,74 +278,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
   grid.addEventListener('click', (event) => {
     const button = event.target.closest('[data-action="schedule"]');
-    if (!button || button.disabled) return;
-    currentCard = button.closest('.book-card');
-
-    $('loanBookTitle').textContent = currentCard.dataset.titulo;
-    $('loanBookAuthor').textContent = currentCard.dataset.autor;
-    const cover = $('loanCover');
-    cover.className = `book-cover book-cover--mini book-cover--${currentCard.dataset.category}`;
-    cover.replaceChildren(currentCard.querySelector('.book-cover i').cloneNode(true));
-
-    form.reset();
-    form.querySelectorAll('.is-invalid').forEach((field) => field.classList.remove('is-invalid'));
-    dateInput.min = toISO(addDays(new Date(), 1));
-    dateInput.max = toISO(addDays(new Date(), MAX_DAYS_AHEAD));
-    $('loanReturn').textContent = '—';
-    modal.show();
+    if (button && !button.disabled) openLoanModal(button.closest('.book-card'));
   });
 
   dateInput.addEventListener('change', () => {
-    $('loanReturn').textContent = dateInput.value ? fmt(addDays(fromISO(dateInput.value), LOAN_DAYS)) : '—';
+    $('loanReturn').textContent = dateInput.value ? formatDateBR(addDays(parseIsoDate(dateInput.value), LOAN_DAYS)) : '—';
   });
 
   form.addEventListener('submit', (event) => {
     event.preventDefault();
+    if (!isLoanFormValid()) return;
 
-    let dateError = '';
-    if (!dateInput.value) {
-      dateError = 'Escolha a data de retirada.';
-    } else {
-      const chosen = fromISO(dateInput.value);
-      const min = fromISO(dateInput.min);
-      const max = fromISO(dateInput.max);
-      if (chosen < min || chosen > max) dateError = `Escolha uma data entre ${fmt(min)} e ${fmt(max)}.`;
-      else if ([0, 6].includes(chosen.getDay())) dateError = 'A biblioteca atende de segunda a sexta. Escolha um dia útil.';
-    }
-    $('loanDateFeedback').textContent = dateError;
-    dateInput.classList.toggle('is-invalid', Boolean(dateError));
-
-    const timeError = !timeSelect.value;
-    timeSelect.classList.toggle('is-invalid', timeError);
-    const termsError = !termsInput.checked;
-    termsInput.classList.toggle('is-invalid', termsError);
-    if (dateError || timeError || termsError) return;
-
-    const request = {
-      id: `EMP-${Date.now().toString(36).toUpperCase()}`,
-      bookId: Number(currentCard.dataset.id),
-      titulo: currentCard.dataset.titulo,
-      autor: currentCard.dataset.autor,
-      categoria: currentCard.dataset.category,
-      retirada: dateInput.value,
-      horario: timeSelect.value,
-      devolucao: toISO(addDays(fromISO(dateInput.value), LOAN_DAYS)),
-      solicitadoEm: toISO(new Date()),
-      status: 'analise',
-      renovacoes: 0,
-      devolvidoEm: null,
-    };
-
-    const requests = loadRequests();
-    requests.push(request);
-    if (!saveRequests(requests)) {
-      showToast('Não foi possível registrar o pedido neste navegador.', false);
+    const request = loanRequestFromForm();
+    if (!storeJson(STORAGE_KEY, [...readStoredList(STORAGE_KEY), request])) {
+      showToast('Não foi possível registrar o pedido neste navegador.', { ok: false });
       return;
     }
 
     modal.hide();
     paintCard(currentCard);
-    showToast(`Pedido de “${request.titulo}” enviado para análise.`, true, 'meusEmprestimos.php');
+    showToast(`Pedido de “${request.title}” enviado para análise.`, { link: { href: 'meusEmprestimos.php', label: 'Ver meus empréstimos' } });
   });
 
   render();

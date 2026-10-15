@@ -2,21 +2,16 @@
 require_once __DIR__ . '/../../components/layout.php';
 require_once __DIR__ . '/../../lib/avaliacao.php';
 
-$prazo = EVALUATION_DEADLINE;
-$escala = RATING_SCALE;
-$secoes = EVALUATION_SECTIONS;
-$disciplinas = EVALUATED_DISCIPLINES;
-
-$renderEscala = static function (string $name, string $question, array $escala): void {
+$renderRatingScale = static function (string $name, string $question): void {
     ?>
     <fieldset class="rating-group">
       <legend><?= e($question) ?></legend>
       <div class="rating-scale">
-        <?php foreach ($escala as $valor => $rotulo): ?>
+        <?php foreach (RATING_SCALE as $rating => $ratingLabel): ?>
           <label class="rating-option">
-            <input class="form-check-input" type="radio" name="<?= e($name) ?>" value="<?= $valor ?>">
-            <strong><?= $valor ?></strong>
-            <span><?= e($rotulo) ?></span>
+            <input class="form-check-input" type="radio" name="<?= e($name) ?>" value="<?= $rating ?>">
+            <strong><?= $rating ?></strong>
+            <span><?= e($ratingLabel) ?></span>
           </label>
         <?php endforeach; ?>
       </div>
@@ -27,8 +22,8 @@ $renderEscala = static function (string $name, string $question, array $escala):
 renderPageStart('Avaliação Institucional (CPA)');
 ?>
 
-<?php renderPageHeader('Avaliação Institucional (CPA)', 'Sua opinião é fundamental para a melhoria contínua da Unifio.', static function () use ($prazo): void { ?>
-      <span class="badge rounded-pill text-bg-warning px-3 py-2"><i class="bi bi-clock me-1"></i>Pendente (Prazo: <?= e($prazo) ?>)</span>
+<?php renderPageHeader('Avaliação Institucional (CPA)', 'Sua opinião é fundamental para a melhoria contínua da Unifio.', static function (): void { ?>
+      <span class="badge rounded-pill text-bg-warning px-3 py-2"><i class="bi bi-clock me-1"></i>Pendente (Prazo: <?= e(formatDayMonth(EVALUATION_DEADLINE)) ?>)</span>
 <?php }); ?>
 
     <div class="info-banner" role="note">
@@ -43,10 +38,10 @@ renderPageStart('Avaliação Institucional (CPA)');
       <section class="grid-mesh grid-mesh--static grid-mesh--academic grid-mesh--auto">
         <section class="g-box g-col-4 grid-card">
           <div class="grid-card__body">
-            <?php foreach ($secoes as $secao): ?>
+            <?php foreach (EVALUATION_SECTIONS as $section): ?>
               <div class="rating-section">
-                <h2 class="rating-section__title"><i class="bi <?= e($secao['icon']) ?>"></i><?= e($secao['title']) ?></h2>
-                <?php $renderEscala($secao['name'], $secao['question'], $escala); ?>
+                <h2 class="rating-section__title"><i class="bi <?= e($section['icon']) ?>"></i><?= e($section['title']) ?></h2>
+                <?php $renderRatingScale($section['name'], $section['question']); ?>
               </div>
             <?php endforeach; ?>
           </div>
@@ -57,21 +52,21 @@ renderPageStart('Avaliação Institucional (CPA)');
           <div class="grid-card__body academic-form">
             <div class="mb-4">
               <label class="form-label" for="disciplineSelect">Selecione a disciplina / professor para avaliar:</label>
-              <select class="form-select" id="disciplineSelect" name="disciplina">
+              <select class="form-select" id="disciplineSelect" name="discipline">
                 <option value="" selected disabled>-- Escolha a disciplina --</option>
-                <?php foreach ($disciplinas as $disciplina): ?>
-                  <option value="<?= e($disciplina['id']) ?>"><?= e($disciplina['label']) ?></option>
+                <?php foreach (evaluatedDisciplines() as $discipline): ?>
+                  <option value="<?= e($discipline['id']) ?>"><?= e($discipline['label']) ?></option>
                 <?php endforeach; ?>
               </select>
               <div class="invalid-feedback">Selecione a disciplina que deseja avaliar.</div>
             </div>
 
-            <?php $renderEscala('docente', 'Como avalia o domínio do conteúdo e a didática do professor selecionado?', $escala); ?>
+            <?php $renderRatingScale('teaching', 'Como avalia o domínio do conteúdo e a didática do professor selecionado?'); ?>
 
             <hr class="my-4">
 
             <label class="form-label" for="commentField">Críticas, elogios ou sugestões (opcional):</label>
-            <textarea class="form-control" id="commentField" name="comentario" rows="4" maxlength="1000" placeholder="Deixe aqui o seu comentário..."></textarea>
+            <textarea class="form-control" id="commentField" name="comment" rows="4" maxlength="1000" placeholder="Deixe aqui o seu comentário..."></textarea>
           </div>
         </section>
       </section>
@@ -82,20 +77,10 @@ renderPageStart('Avaliação Institucional (CPA)');
     </form>
 
 
-<div class="toast-container position-fixed bottom-0 end-0 p-3">
-  <div id="evaluationToast" class="toast align-items-center text-bg-success border-0" role="status" aria-live="polite" aria-atomic="true">
-    <div class="d-flex">
-      <div class="toast-body">Avaliação enviada com sucesso. Obrigado pela sua participação!</div>
-      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
-    </div>
-  </div>
-</div>
-
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('evaluationForm');
   const select = document.getElementById('disciplineSelect');
-  const toast = bootstrap.Toast.getOrCreateInstance(document.getElementById('evaluationToast'), { delay: 5000 });
 
   form.addEventListener('change', (event) => {
     const group = event.target.closest('.rating-group');
@@ -124,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
     evaluated.disabled = true;
     evaluated.textContent += ' (avaliada)';
     form.reset();
-    toast.show();
+    showToast('Avaliação enviada com sucesso. Obrigado pela sua participação!');
   });
 });
 </script>

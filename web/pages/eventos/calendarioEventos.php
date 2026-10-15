@@ -2,8 +2,7 @@
 require_once __DIR__ . '/../../components/layout.php';
 require_once __DIR__ . '/../../lib/eventos.php';
 
-$categorias = EVENT_CATEGORIES;
-$dadosJson = jsonForScript(['categories' => $categorias, 'events' => calendarEvents()]);
+$calendarData = jsonForScript(['categories' => EVENT_CATEGORIES, 'events' => calendarEvents()]);
 renderPageStart('Eventos');
 ?>
 
@@ -19,9 +18,9 @@ renderPageStart('Eventos');
         </div>
 
         <div class="cal-legend" role="group" aria-label="Legenda e filtro de categorias">
-          <?php foreach ($categorias as $slug => $categoria): ?>
+          <?php foreach (EVENT_CATEGORIES as $slug => $category): ?>
             <button class="cal-legend__item cat--<?= e($slug) ?>" type="button" data-category="<?= e($slug) ?>" aria-pressed="true">
-              <span class="cal-dot"></span><?= e($categoria['label']) ?>
+              <span class="cal-dot"></span><?= e($category['label']) ?>
             </button>
           <?php endforeach; ?>
         </div>
@@ -52,59 +51,45 @@ renderPageStart('Eventos');
   </div>
 </div>
 
-<script id="calData" type="application/json"><?= $dadosJson ?></script>
+<script id="calData" type="application/json"><?= $calendarData ?></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  const data = JSON.parse(document.getElementById('calData').textContent);
+  const data = readPageData('calData');
   const categories = data.categories;
-  const events = data.events.sort((a, b) => a.data.localeCompare(b.data) || (a.hora || '').localeCompare(b.hora || ''));
+  const events = data.events.sort((a, b) => a.date.localeCompare(b.date) || (a.time || '').localeCompare(b.time || ''));
 
   const $ = (id) => document.getElementById(id);
   const grid = $('calGrid');
   const legendButtons = [...document.querySelectorAll('.cal-legend__item')];
   const dayModal = bootstrap.Modal.getOrCreateInstance($('dayModal'));
 
-  const now = new Date();
+  const now = portalToday();
   const state = { year: now.getFullYear(), month: now.getMonth(), hidden: new Set() };
 
-  const toISO = (date) => date.toLocaleDateString('sv-SE');
-  const parse = (iso) => new Date(`${iso}T00:00:00`);
   const capitalize = (text) => text.charAt(0).toUpperCase() + text.slice(1);
-  const todayISO = () => toISO(new Date());
-
-  const el = (tag, className = '', text = '') => {
-    const node = document.createElement(tag);
-    if (className) node.className = className;
-    if (text) node.textContent = text;
-    return node;
-  };
-  const icon = (className) => {
-    const node = el('i', className);
-    node.setAttribute('aria-hidden', 'true');
-    return node;
-  };
+  const todayISO = () => toIsoDate(portalToday());
 
   const byDate = new Map();
   events.forEach((event) => {
-    if (!byDate.has(event.data)) byDate.set(event.data, []);
-    byDate.get(event.data).push(event);
+    if (!byDate.has(event.date)) byDate.set(event.date, []);
+    byDate.get(event.date).push(event);
   });
-  const visibleOn = (iso) => (byDate.get(iso) || []).filter((event) => !state.hidden.has(event.categoria));
+  const visibleOn = (iso) => (byDate.get(iso) || []).filter((event) => !state.hidden.has(event.category));
 
   const openDay = (iso) => {
     const list = visibleOn(iso);
     if (!list.length) return;
-    $('dayModalLabel').textContent = capitalize(parse(iso).toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }));
+    $('dayModalLabel').textContent = capitalize(parseIsoDate(iso).toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }));
     const body = $('dayModalBody');
     body.replaceChildren(...list.map((event) => {
-      const item = el('article', `cal-detail cat--${event.categoria}`);
-      item.append(el('span', 'cal-badge', categories[event.categoria].label), el('h3', 'mt-2', event.titulo));
-      const meta = el('div', 'cal-detail__meta');
-      if (event.hora) { const time = el('span'); time.append(icon('bi bi-clock me-1'), document.createTextNode(event.hora)); meta.append(time); }
-      if (event.local) { const place = el('span'); place.append(icon('bi bi-geo-alt me-1'), document.createTextNode(event.local)); meta.append(place); }
+      const item = createNode('article', `cal-detail cat--${event.category}`);
+      item.append(createNode('span', 'cal-badge', categories[event.category].label), createNode('h3', 'mt-2', event.title));
+      const meta = createNode('div', 'cal-detail__meta');
+      if (event.time) { const time = createNode('span'); time.append(createIcon('bi bi-clock me-1'), document.createTextNode(event.time)); meta.append(time); }
+      if (event.place) { const place = createNode('span'); place.append(createIcon('bi bi-geo-alt me-1'), document.createTextNode(event.place)); meta.append(place); }
       if (meta.children.length) item.append(meta);
-      if (event.descricao) item.append(el('p', '', event.descricao));
+      if (event.description) item.append(createNode('p', '', event.description));
       return item;
     }));
     dayModal.show();
@@ -120,26 +105,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
     for (let i = 0; i < 42; i += 1) {
       const date = new Date(start.getFullYear(), start.getMonth(), start.getDate() + i);
-      const iso = toISO(date);
+      const iso = toIsoDate(date);
       const list = visibleOn(iso);
 
-      const cell = el('button', 'cal-day');
+      const cell = createNode('button', 'cal-day');
       cell.type = 'button';
       cell.disabled = list.length === 0;
       if (date.getMonth() !== state.month) cell.classList.add('is-outside');
       if (date.getDay() === 0 || date.getDay() === 6) cell.classList.add('is-weekend');
       if (iso === today) cell.classList.add('is-today');
-      if (list.some((event) => event.categoria === 'feriado')) cell.classList.add('has-holiday');
+      if (list.some((event) => event.category === 'feriado')) cell.classList.add('has-holiday');
 
       const dayLabel = date.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
       cell.setAttribute('aria-label', list.length ? `${dayLabel}, ${list.length} ${list.length === 1 ? 'evento' : 'eventos'}` : dayLabel);
-      cell.append(el('span', 'cal-day__num', String(date.getDate())));
+      cell.append(createNode('span', 'cal-day__num', String(date.getDate())));
 
       if (list.length) {
-        const chips = el('div', 'cal-day__chips');
+        const chips = createNode('div', 'cal-day__chips');
         const max = list.length > 3 ? 2 : list.length;
-        list.slice(0, max).forEach((event) => chips.append(el('span', `cal-chip cat--${event.categoria}`, event.titulo)));
-        if (list.length > 3) chips.append(el('span', 'cal-more', `+${list.length - max} mais`));
+        list.slice(0, max).forEach((event) => chips.append(createNode('span', `cal-chip cat--${event.category}`, event.title)));
+        if (list.length > 3) chips.append(createNode('span', 'cal-more', `+${list.length - max} mais`));
         cell.append(chips);
         cell.addEventListener('click', () => openDay(iso));
       }
@@ -149,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const goTo = (iso) => {
-    const date = parse(iso);
+    const date = parseIsoDate(iso);
     state.year = date.getFullYear();
     state.month = date.getMonth();
     render();
@@ -158,23 +143,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const renderUpcoming = () => {
     const today = todayISO();
-    const list = events.filter((event) => !state.hidden.has(event.categoria) && event.data >= today).slice(0, 6);
+    const list = events.filter((event) => !state.hidden.has(event.category) && event.date >= today).slice(0, 6);
     $('calUpcomingEmpty').hidden = list.length > 0;
     $('calUpcoming').replaceChildren(...list.map((event) => {
-      const date = parse(event.data);
-      const item = el('li');
-      const button = el('button', `cal-upcoming__item cat--${event.categoria}`);
+      const date = parseIsoDate(event.date);
+      const item = createNode('li');
+      const button = createNode('button', `cal-upcoming__item cat--${event.category}`);
       button.type = 'button';
 
-      const block = el('span', 'cal-upcoming__date');
-      block.append(el('strong', '', String(date.getDate())), el('span', '', date.toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '')));
+      const block = createNode('span', 'cal-upcoming__date');
+      block.append(createNode('strong', '', String(date.getDate())), createNode('span', '', date.toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '')));
 
-      const text = el('span');
-      const when = event.data === today ? 'Hoje' : capitalize(date.toLocaleDateString('pt-BR', { weekday: 'long' }));
-      text.append(el('span', 'cal-upcoming__title', event.titulo), el('span', 'cal-upcoming__meta', `${when}${event.hora ? ` • ${event.hora}` : ''} • ${categories[event.categoria].label}`));
+      const text = createNode('span');
+      const when = event.date === today ? 'Hoje' : capitalize(date.toLocaleDateString('pt-BR', { weekday: 'long' }));
+      text.append(createNode('span', 'cal-upcoming__title', event.title), createNode('span', 'cal-upcoming__meta', `${when}${event.time ? ` • ${event.time}` : ''} • ${categories[event.category].label}`));
 
       button.append(block, text);
-      button.addEventListener('click', () => goTo(event.data));
+      button.addEventListener('click', () => goTo(event.date));
       item.append(button);
       return item;
     }));
@@ -195,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
   $('calPrev').addEventListener('click', () => shiftMonth(-1));
   $('calNext').addEventListener('click', () => shiftMonth(1));
   $('calToday').addEventListener('click', () => {
-    const current = new Date();
+    const current = portalToday();
     state.year = current.getFullYear();
     state.month = current.getMonth();
     render();

@@ -1,17 +1,16 @@
 <?php
 require_once __DIR__ . '/../../components/layout.php';
 
-$highestAverage = max(array_map('disciplineAverage', DISCIPLINES));
+$highestAverage = max([0.0, ...array_map('disciplineAverage', studentDisciplines())]);
 
-renderPageStart('Gráficos de Desempenho');
-renderAcademicHeader('Gráficos de Desempenho');
+renderAcademicPageStart('Gráficos de Desempenho');
 ?>
       <section class="academic-page-grid">
         <section class="grid-card grid-card--wide">
           <?php renderCardHead('bi-bar-chart', 'Média por disciplina', 'Compare o desempenho nas disciplinas com notas lançadas.'); ?>
           <div class="grid-card__body">
             <div class="bar-chart" aria-label="Gráfico de médias por disciplina">
-              <?php foreach (DISCIPLINES as $discipline): ?>
+              <?php foreach (studentDisciplines() as $discipline): ?>
                 <?php $average = disciplineAverage($discipline); ?>
                 <div class="bar-row">
                   <span title="<?= e($discipline['name']) ?>"><?= e($discipline['short_name']) ?></span>

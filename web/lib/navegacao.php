@@ -2,6 +2,8 @@
 
 const WEB_ROOT = __DIR__ . '/..';
 
+const MOODLE_URL = 'https://conhecer.unifio.edu.br/login/index.php';
+
 const NAVIGATION = [
     ['label' => 'Início', 'icon' => 'bi-house-door-fill', 'href' => 'index.php'],
     [
@@ -69,7 +71,7 @@ const NAVIGATION = [
             ['label' => 'Calendário de Eventos', 'href' => 'pages/eventos/calendarioEventos.php'],
         ],
     ],
-    ['label' => 'Moodle', 'icon' => 'bi-easel2', 'href' => 'https://conhecer.unifio.edu.br/login/index.php', 'external' => true],
+    ['label' => 'Moodle', 'icon' => 'bi-easel2', 'href' => MOODLE_URL, 'external' => true],
     ['label' => 'Carreiras', 'icon' => 'bi-rocket-takeoff', 'href' => 'https://workability.worka.love/#/login/unifio/matriculados', 'external' => true],
     [
         'label' => 'Suporte', 'icon' => 'bi-headset', 'accent' => true,
@@ -80,10 +82,11 @@ const NAVIGATION = [
     ],
 ];
 
+const HOME_LINK = ['label' => 'Início', 'icon' => 'bi-house-door', 'href' => 'index.php'];
+
 const PROFILE_LINK = ['label' => 'Meu Perfil', 'href' => 'pages/perfil/perfil.php'];
 
-// Quando houver autenticação real, aponte para o endpoint de logout.
-const LOGOUT_LINK = ['label' => 'Sair', 'icon' => 'bi-box-arrow-right', 'href' => 'index.php', 'variant' => 'danger'];
+const LOGOUT_LINK = ['label' => 'Sair', 'icon' => 'bi-box-arrow-right', 'href' => 'pages/auth/logout.php', 'variant' => 'danger'];
 
 function isExternalLink(array $link): bool
 {
@@ -118,6 +121,31 @@ function isActiveSection(array $item): bool
     }
 
     return false;
+}
+
+// Trilha da página atual: Início › seção do menu › página. Seções não têm link, só agrupam.
+function breadcrumbTrail(string $pageTitle): array
+{
+    if (isCurrentPage(HOME_LINK)) {
+        return [HOME_LINK];
+    }
+
+    foreach ([...NAVIGATION, PROFILE_LINK] as $item) {
+        if (!hasSubmenu($item)) {
+            if (isCurrentPage($item)) {
+                return [HOME_LINK, $item];
+            }
+            continue;
+        }
+
+        foreach ($item['items'] as $subitem) {
+            if (isCurrentPage($subitem)) {
+                return [HOME_LINK, ['label' => $item['label']], $subitem];
+            }
+        }
+    }
+
+    return [HOME_LINK, ['label' => $pageTitle]];
 }
 
 function linkUrl(array $link, string $assetRoot): string

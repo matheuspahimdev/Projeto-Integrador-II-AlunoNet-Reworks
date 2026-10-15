@@ -21,7 +21,7 @@ function renderAcademicHeader(string $title): void
 {
   renderPageHeader(
     $title,
-    'Central Acadêmica • ' . STUDENT['course'] . ' • ' . STUDENT['term'],
+    'Central Acadêmica • ' . currentStudent()['course'] . ' • ' . currentStudent()['term'],
     static fn() => renderActionLink('centralAcademico.php', 'bi-arrow-left', 'Central Acadêmica'),
   );
 }
@@ -33,21 +33,17 @@ function renderActionLink(string $href, string $icon, string $label, string $var
 <?php
 }
 
-function renderActionButton(string $id, string $icon, string $label, string $variant = 'btn-outline-primary', string $hint = ''): void
+function renderActionButton(string $id, string $icon, string $label): void
 {
 ?>
-  <button class="btn <?= e($variant) ?>" type="button" id="<?= e($id) ?>" <?= $hint === '' ? '' : ' title="' . e($hint) . '"' ?>><i class="bi <?= e($icon) ?> me-2" aria-hidden="true"></i><?= e($label) ?></button>
+  <button class="btn btn-outline-primary" type="button" id="<?= e($id) ?>"><i class="bi <?= e($icon) ?> me-2" aria-hidden="true"></i><?= e($label) ?></button>
 <?php
 }
 
-function renderUnderConstruction(string $icon, string $description): void
+// Abre a impressão do navegador com o nome de arquivo sugerido para "Salvar como PDF".
+function renderPrintButton(string $icon, string $label, string $documentName): void
 {
 ?>
-  <section class="grid-card under-construction">
-    <div class="under-construction__icon"><i class="bi <?= e($icon) ?>" aria-hidden="true"></i></div>
-    <h2>Em construção</h2>
-    <p><?= e($description) ?></p>
-    <a class="btn btn-primary" href="../../index.php"><i class="bi bi-house-door me-1" aria-hidden="true"></i>Voltar ao início</a>
-  </section>
+  <button class="btn btn-primary" type="button" data-print-title="<?= e($documentName) ?>" title="Na janela de impressão, escolha “Salvar como PDF”"><i class="bi <?= e($icon) ?> me-2" aria-hidden="true"></i><?= e($label) ?></button>
 <?php
 }

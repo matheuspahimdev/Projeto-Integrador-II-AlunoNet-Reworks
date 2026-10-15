@@ -4,11 +4,10 @@ require_once __DIR__ . '/../../components/layout.php';
 $validations = [
     ['label' => 'Identificação acadêmica', 'value' => 'Ativa'],
     ['label' => 'Vínculo acadêmico', 'value' => 'Regular'],
-    ['label' => 'Validade', 'value' => 'Semestre ' . STUDENT['term']],
+    ['label' => 'Validade', 'value' => 'Semestre ' . currentStudent()['term']],
 ];
 
-renderPageStart('Carteirinha Digital');
-renderAcademicHeader('Carteirinha Digital');
+renderAcademicPageStart('Carteirinha Digital');
 ?>
       <section class="academic-page-grid">
         <section class="grid-card grid-card--wide">
@@ -17,10 +16,10 @@ renderAcademicHeader('Carteirinha Digital');
             <div class="digital-card">
               <div class="digital-card__brand">UNIFIO</div>
               <div class="digital-card__avatar"><?= e(studentInitials()) ?></div>
-              <div class="digital-card__name"><?= e(STUDENT['name']) ?></div>
-              <div class="digital-card__course"><?= e(STUDENT['course']) ?> • <?= e(STUDENT['period']) ?></div>
-              <div class="digital-card__ra">RA <?= e(STUDENT['registration']) ?></div>
-              <div class="digital-card__footer"><span><?= e(STUDENT['term']) ?></span><span>Aluno regular</span></div>
+              <div class="digital-card__name"><?= e(currentStudent()['name']) ?></div>
+              <div class="digital-card__course"><?= e(currentStudent()['course']) ?> • <?= e(currentStudent()['period']) ?></div>
+              <div class="digital-card__ra">RA <?= e(currentStudent()['registration']) ?></div>
+              <div class="digital-card__footer"><span><?= e(currentStudent()['term']) ?></span><span>Aluno regular</span></div>
             </div>
           </div>
         </section>
