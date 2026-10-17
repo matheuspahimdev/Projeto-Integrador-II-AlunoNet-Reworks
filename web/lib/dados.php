@@ -1,19 +1,31 @@
 <?php
+
+// As paginas que devem ser editadas estão no final 
+//depois que ler a linha 3 e 4 pode apagar viu :)
+
 require_once __DIR__ . '/tempo.php';
 
+// nota mínima para aprovação em uma disciplina
 const PASSING_GRADE = 6.0;
 
+// percentual mínimo de frequência
 const MINIMUM_ATTENDANCE = 75;
 
+// total de horas em atividades complementares exigidas pelo curso
 const REQUIRED_COMPLEMENTARY_HOURS = 160;
 
+// quantidade de notas lançadas por disciplina em cada semestre
 const GRADES_PER_SEMESTER = 2;
 
+//rótulos de status usados em atividades complementares
 const ACTIVITY_APPROVED = 'Deferido';
 
 const ACTIVITY_UNDER_REVIEW = 'Em análise';
 
 // Alunos de demonstração para o login simulado (matrícula e senha em texto puro, sem segurança real).
+// Cada chave do array (ex.: '274769') é a matrícula e precisa ter uma entrada correspondente em
+// ACADEMIC_RECORDS logo abaixo, além das entradas nos outros arquivos listados no comentário acima.
+
 const STUDENTS = [
     '274769' => [
         'name' => 'Victor H. Oliveira',
@@ -99,6 +111,13 @@ const STUDENTS = [
         'current_course' => '2026/2 · Administração',
     ],
 ];
+// Histórico acadêmico por matrícula: disciplinas, horário de aulas, provas, atividades
+// complementares e progresso curricular do semestre. Cada chave de disciplina (ex.: 'labProgramacao',
+// 'bancoDados', 'projetoIntegrador') é usada como referência em 'weekly_schedule', 'exams' e também
+// em outros arquivos do projeto (ex.: web/lib/materiais.php usa essas mesmas chaves no campo
+// 'discipline' das pastas do repositório, e web/lib/eventos.php usa 'projetoIntegrador' diretamente
+// via INTEGRATOR_PROJECT_KEY). Se uma chave de disciplina for renomeada aqui, precisa ser renomeada
+// em todos esses lugares também.
 
 const ACADEMIC_RECORDS = [
     '274769' => [
@@ -448,6 +467,12 @@ const ACADEMIC_RECORDS = [
     ],
 ];
 
+// Mapa de "texto do status" -> classe de cor do Bootstrap (badge), usado em várias páginas
+// para colorir etiquetas de status (ex.: 'Aprovado' fica verde, 'Em análise' fica amarelo).
+// Se um novo status for criado em qualquer arquivo (ex.: um novo status de chamado em
+// web/lib/suporte.php), ele também precisa ganhar uma entrada aqui, senão cai no badge
+// cinza padrão (ver função statusBadgeClass() em web/lib/academico.php).
+
 const STATUS_BADGES = [
     'Aprovado' => 'text-bg-success',
     'Reprovado' => 'text-bg-danger',
@@ -463,3 +488,21 @@ const STATUS_BADGES = [
     'Pago' => 'text-bg-success',
     'Em aberto' => 'text-bg-warning',
 ];
+
+// matheus eu vou escrever aqui em baixo as paginas que devem ser editadas
+// aṕos ler e atualizar pode apagar esses comentários :)
+//para digitar mais que uma linha de comentário basta fazer igaul ai embaixo
+
+/*
+ * -- web/lib/financeiro.php  linha 12 (FINANCIAL_RECORDS) — boletos/contrato por matrícula
+ * -- web/lib/biblioteca.php  linha 41 (STUDENT_LOANS) — empréstimos por matrícula
+ * -- web/lib/suporte.php     linha 59 (SUPPORT_TICKETS) — chamados por matrícula
+ * -- web/lib/materiais.php   linha 8  (REPOSITORY_RECORDS) — pastas/arquivos por matrícula;
+ *    chaves 'discipline' precisam bater com ACADEMIC_RECORDS
+ * -- web/lib/protocolo.php   linha 12 (STUDENT_REQUESTS) — requerimentos por matrícula
+ * -- web/lib/avisos.php      linha 20 (NOTICES) — 'audience' usa matrícula; autores
+ *    nas linhas 23 e 55 estão com nomes genéricos/errados, revisar
+ *
+ * web/lib/autenticacao.php e web/lib/academico.php só leem os dados,
+ * não precisam de edição manual.
+ */
