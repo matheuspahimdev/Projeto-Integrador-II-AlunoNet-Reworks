@@ -1,7 +1,21 @@
 <?php
 
-// As paginas que devem ser editadas estão no final 
-//depois que ler a linha 3 e 4 pode apagar viu :)
+/*
+ * DADOS CENTRALIZADOS DO ALUNONET
+ *
+ * Este arquivo reúne os dados simulados utilizados pelo sistema:
+ * - constantes e regras acadêmicas;
+ * - cadastro dos alunos e informações de acesso;
+ * - histórico acadêmico, disciplinas, notas e frequência;
+ * - horários, avaliações e atividades complementares;
+ * - classes visuais associadas aos status.
+ *
+ * ATENÇÃO:
+ * Ao adicionar ou alterar um aluno, confira os arquivos dependentes
+ * indicados no final deste arquivo. As matrículas devem permanecer
+ * consistentes entre os cadastros, e as chaves das disciplinas devem
+ * corresponder às referências utilizadas nas demais funcionalidades.
+ */
 
 require_once __DIR__ . '/tempo.php';
 
@@ -22,9 +36,15 @@ const ACTIVITY_APPROVED = 'Deferido';
 
 const ACTIVITY_UNDER_REVIEW = 'Em análise';
 
-// Alunos de demonstração para o login simulado (matrícula e senha em texto puro, sem segurança real).
-// Cada chave do array (ex.: '274769') é a matrícula e precisa ter uma entrada correspondente em
-// ACADEMIC_RECORDS logo abaixo, além das entradas nos outros arquivos listados no comentário acima.
+/*
+ * Cadastro dos alunos de demonstração.
+ *
+ * A chave de cada registro é a matrícula utilizada no login.
+ * O campo 'registration' deve corresponder à chave do cadastro.
+ *
+ * Os dados são fictícios e as senhas estão em texto puro porque
+ * o projeto utiliza autenticação simulada, sem segurança real.
+ */
 
 const STUDENTS = [
     '274769' => [
@@ -111,13 +131,21 @@ const STUDENTS = [
         'current_course' => '2026/2 · Administração',
     ],
 ];
-// Histórico acadêmico por matrícula: disciplinas, horário de aulas, provas, atividades
-// complementares e progresso curricular do semestre. Cada chave de disciplina (ex.: 'labProgramacao',
-// 'bancoDados', 'projetoIntegrador') é usada como referência em 'weekly_schedule', 'exams' e também
-// em outros arquivos do projeto (ex.: web/lib/materiais.php usa essas mesmas chaves no campo
-// 'discipline' das pastas do repositório, e web/lib/eventos.php usa 'projetoIntegrador' diretamente
-// via INTEGRATOR_PROJECT_KEY). Se uma chave de disciplina for renomeada aqui, precisa ser renomeada
-// em todos esses lugares também.
+
+/*
+ * Histórico acadêmico organizado por matrícula.
+ *
+ * Cada aluno possui suas disciplinas, notas, frequência, horários,
+ * avaliações, atividades complementares e progresso curricular.
+ *
+ * As chaves internas das disciplinas, como 'labProgramacao',
+ * 'bancoDados' e 'projetoIntegrador', funcionam como identificadores.
+ * Elas são utilizadas pelo cronograma, pelas avaliações e por outros
+ * módulos, especialmente web/lib/materiais.php e web/lib/eventos.php.
+ *
+ * Ao renomear uma chave, atualize todas as referências dependentes
+ * para evitar erros ou informações ausentes nas páginas.
+ */
 
 const ACADEMIC_RECORDS = [
     '274769' => [
@@ -467,11 +495,17 @@ const ACADEMIC_RECORDS = [
     ],
 ];
 
-// Mapa de "texto do status" -> classe de cor do Bootstrap (badge), usado em várias páginas
-// para colorir etiquetas de status (ex.: 'Aprovado' fica verde, 'Em análise' fica amarelo).
-// Se um novo status for criado em qualquer arquivo (ex.: um novo status de chamado em
-// web/lib/suporte.php), ele também precisa ganhar uma entrada aqui, senão cai no badge
-// cinza padrão (ver função statusBadgeClass() em web/lib/academico.php).
+/*
+ * Classes visuais dos status.
+ *
+ * Relaciona cada texto de status à classe do Bootstrap utilizada
+ * para exibir sua etiqueta colorida.
+ *
+ * Se um novo status precisar utilizar uma cor específica, verifique
+ * se ele deve ser incluído neste mapa. Status sem correspondência
+ * recebem a classe padrão definida em statusBadgeClass(), em
+ * web/lib/academico.php.
+ */
 
 const STATUS_BADGES = [
     'Aprovado' => 'text-bg-success',
@@ -489,20 +523,81 @@ const STATUS_BADGES = [
     'Em aberto' => 'text-bg-warning',
 ];
 
-// matheus eu vou escrever aqui em baixo as paginas que devem ser editadas
-// aṕos ler e atualizar pode apagar esses comentários :)
-//para digitar mais que uma linha de comentário basta fazer igaul ai embaixo
-
 /*
- * -- web/lib/financeiro.php  linha 12 (FINANCIAL_RECORDS) — boletos/contrato por matrícula
- * -- web/lib/biblioteca.php  linha 41 (STUDENT_LOANS) — empréstimos por matrícula
- * -- web/lib/suporte.php     linha 59 (SUPPORT_TICKETS) — chamados por matrícula
- * -- web/lib/materiais.php   linha 8  (REPOSITORY_RECORDS) — pastas/arquivos por matrícula;
- *    chaves 'discipline' precisam bater com ACADEMIC_RECORDS
- * -- web/lib/protocolo.php   linha 12 (STUDENT_REQUESTS) — requerimentos por matrícula
- * -- web/lib/avisos.php      linha 20 (NOTICES) — 'audience' usa matrícula; autores
- *    nas linhas 23 e 55 estão com nomes genéricos/errados, revisar
+ * ============================================================
+ * ARQUIVOS DEPENDENTES DE DADOS.PHP
+ * ============================================================
  *
- * web/lib/autenticacao.php e web/lib/academico.php só leem os dados,
- * não precisam de edição manual.
+ * Ao adicionar alunos, alterar matrículas ou modificar disciplinas,
+ * confira os arquivos abaixo para manter os dados consistentes.
+ *
+ * 1. web/lib/financeiro.php — linhas 12–150
+ *    Array: FINANCIAL_RECORDS
+ *    Mantém registros financeiros, parcelas, contratos e dados
+ *    dos responsáveis associados às matrículas.
+ *    ATENÇÃO: revisar especialmente a linha 30.
+ *
+ * 2. web/lib/biblioteca.php — linhas 41–80
+ *    Array: STUDENT_LOANS
+ *    Mantém empréstimos e solicitações de livros vinculados
+ *    às matrículas dos alunos.
+ *
+ * 3. web/lib/suporte.php — linhas 59–167
+ *    Array: SUPPORT_TICKETS
+ *    Mantém os chamados de suporte associados a cada aluno.
+ *
+ * 4. web/lib/materiais.php — linhas 8–84
+ *    Array: REPOSITORY_RECORDS
+ *    Mantém as pastas e os arquivos do repositório de cada aluno.
+ *    As referências do campo 'discipline' devem corresponder
+ *    às chaves das disciplinas em ACADEMIC_RECORDS.
+ *    ATENÇÃO: conferir também as linhas 13–14, que contêm
+ *    nomes de professores que precisam ser revisados.
+ *
+ * 5. web/lib/protocolo.php — linhas 12–62
+ *    Array: STUDENT_REQUESTS
+ *    Mantém os requerimentos acadêmicos vinculados às matrículas.
+ *
+ * 6. web/lib/avisos.php — linhas 21–84
+ *    Array: NOTICES
+ *    O campo 'audience' define quais alunos podem visualizar
+ *    cada aviso. Conferir os autores e o público-alvo.
+ *    ATENÇÃO: revisar especialmente as linhas 23 e 55,
+ *    que contêm nomes genéricos de professores.
+ *
+ * 7. web/lib/eventos.php — linhas 15 e 87
+ *    Constante: INTEGRATOR_PROJECT_KEY
+ *    Deve corresponder à chave 'projetoIntegrador' utilizada
+ *    em ACADEMIC_RECORDS para localizar os eventos da disciplina.
+ *
+ * ============================================================
+ * ARQUIVOS QUE CONSOMEM OS DADOS
+ * ============================================================
+ *
+ * 8. web/lib/autenticacao.php — linhas 77–120
+ *    Consulta STUDENTS para validar o login simulado.
+ *    Conferir caso a estrutura do cadastro ou as matrículas mudem.
+ *
+ * 9. web/lib/academico.php — linhas 8–11 e 172
+ *    Consulta ACADEMIC_RECORDS e utiliza as constantes acadêmicas
+ *    e STATUS_BADGES para calcular e apresentar os dados.
+ *    Conferir caso a estrutura do histórico ou os status mudem.
+ *
+ * ============================================================
+ * REFERÊNCIAS INTERNAS DESTE ARQUIVO
+ * ============================================================
+ *
+ * web/lib/dados.php — linhas 29–120:
+ * Cadastro dos alunos e suas matrículas (STUDENTS).
+ *
+ * web/lib/dados.php — linhas 122–468:
+ * Histórico acadêmico, disciplinas, notas, frequência e demais
+ * informações acadêmicas (ACADEMIC_RECORDS).
+ *
+ * web/lib/dados.php — linhas 476–490:
+ * Classes visuais associadas aos status (STATUS_BADGES).
+ *
+ * IMPORTANTE:
+ * Os números das linhas podem mudar conforme o código for editado.
+ * Sempre confirme a posição atual antes de fazer alterações.
  */
