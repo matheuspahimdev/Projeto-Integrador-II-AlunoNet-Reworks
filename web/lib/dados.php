@@ -561,9 +561,9 @@ const STATUS_BADGES = [
  * 6. web/lib/avisos.php — linhas 21–84
  *    Array: NOTICES
  *    O campo 'audience' define quais alunos podem visualizar
- *    cada aviso. Conferir os autores e o público-alvo.
- *    ATENÇÃO: revisar especialmente as linhas 23 e 55,
- *    que contêm nomes genéricos de professores.
+ *    cada aviso. Avisos ligados a disciplinas usam a chave
+ *    'discipline'; o autor é resolvido pelo histórico da matrícula
+ *    em web/lib/avisos.php. Confira as disciplinas e o público-alvo.
  *
  * 7. web/lib/eventos.php — linhas 15 e 87
  *    Constante: INTEGRATOR_PROJECT_KEY

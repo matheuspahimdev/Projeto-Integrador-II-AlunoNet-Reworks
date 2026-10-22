@@ -20,7 +20,7 @@ const NOTICE_PREVIEW_LENGTH = 170;
 // Avisos com 'audience' aparecem só para as matrículas listadas; os demais são para todos.
 const NOTICES = [
     [
-        'id' => 1, 'category' => 'professores', 'author' => 'Prof. Nome do Professor 1', 'published_at' => '2026-10-12 08:40',
+        'id' => 1, 'category' => 'professores', 'discipline' => 'projetoIntegrador', 'published_at' => '2026-10-12 08:40',
         'priority' => 'urgente', 'pinned' => true, 'read' => false, 'audience' => ['274769'],
         'title' => 'Alteração de sala da prova de Projeto Integrador II',
         'text' => 'Atenção, turma: a prova de Projeto Integrador II será realizada na Sala 712 (Bloco 2) e não mais no local divulgado anteriormente. O horário permanece o mesmo. Chegue com 15 minutos de antecedência e leve um documento com foto.',
@@ -52,7 +52,7 @@ const NOTICES = [
         'text' => 'Palestras, minicursos e maratona de programação fazem parte da programação deste ano. As vagas dos minicursos são limitadas e preenchidas por ordem de inscrição. Participantes podem solicitar certificado de atividade complementar.',
     ],
     [
-        'id' => 6, 'category' => 'professores', 'author' => 'Prof. Nome do Professor 3', 'published_at' => '2026-10-05 09:10',
+        'id' => 6, 'category' => 'professores', 'discipline' => 'bancoDados', 'published_at' => '2026-10-05 09:10',
         'priority' => 'normal', 'pinned' => false, 'read' => true, 'audience' => ['274769', '281450'],
         'title' => 'Novos materiais de Banco de Dados no Repositório',
         'text' => 'Publiquei os slides das aulas 1 e 2, as listas de exercícios com gabarito e o script do banco usado em sala. Revisem antes da próxima aula para tirarmos dúvidas.',
@@ -80,10 +80,37 @@ const NOTICES = [
     ],
 ];
 
+
+/*
+Função que percorre as noticias de cada aluno e retorna um array com as noticias que ele pode ver, ordenadas por fixadas primeiro e depois por data de publicação, 
+e também adiciona o nome do professor responsável pela disciplina, caso o aviso seja vinculado a uma disciplina, 
+isso tudo personalizado para cada aluno logado, de acordo com seu histórico acadêmico e matrícula.
+*/
 function noticesPinnedFirst(): array
 {
     $registration = currentStudent()['registration'];
-    $notices = array_filter(NOTICES, static fn (array $notice): bool => in_array($registration, $notice['audience'] ?? [$registration], true));
+    $studentDisciplines = ACADEMIC_RECORDS[$registration]['disciplines'] ?? [];
+    $notices = [];
+
+    foreach (NOTICES as $notice) {
+        if (!in_array($registration, $notice['audience'] ?? [$registration], true)) {
+            continue;
+        }
+
+        // Avisos vinculados a uma disciplina só aparecem se ela existir no histórico do aluno.
+        if (isset($notice['discipline'])) {
+            $teacher = $studentDisciplines[$notice['discipline']]['teacher'] ?? null;
+            if (!is_string($teacher) || $teacher === '') {
+                continue;
+            }
+
+            // O nome exibido vem do histórico acadêmico da matrícula atualmente logada.
+            $notice['author'] = $teacher;
+        }
+
+        $notices[] = $notice;
+    }
+
     usort($notices, static fn (array $a, array $b): int => [(int) $b['pinned'], $b['published_at']] <=> [(int) $a['pinned'], $a['published_at']]);
     return $notices;
 }
