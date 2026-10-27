@@ -1,19 +1,51 @@
 <?php
+
+/*
+ * DADOS CENTRALIZADOS DO ALUNONET
+ *
+ * Este arquivo reúne os dados simulados utilizados pelo sistema:
+ * - constantes e regras acadêmicas;
+ * - cadastro dos alunos e informações de acesso;
+ * - histórico acadêmico, disciplinas, notas e frequência;
+ * - horários, avaliações e atividades complementares;
+ * - classes visuais associadas aos status.
+ *
+ * ATENÇÃO:
+ * Ao adicionar ou alterar um aluno, confira os arquivos dependentes
+ * indicados no final deste arquivo. As matrículas devem permanecer
+ * consistentes entre os cadastros, e as chaves das disciplinas devem
+ * corresponder às referências utilizadas nas demais funcionalidades.
+ */
+
 require_once __DIR__ . '/tempo.php';
 
+// nota mínima para aprovação em uma disciplina
 const PASSING_GRADE = 6.0;
 
+// percentual mínimo de frequência
 const MINIMUM_ATTENDANCE = 75;
 
+// total de horas em atividades complementares exigidas pelo curso
 const REQUIRED_COMPLEMENTARY_HOURS = 160;
 
+// quantidade de notas lançadas por disciplina em cada semestre
 const GRADES_PER_SEMESTER = 2;
 
+//rótulos de status usados em atividades complementares
 const ACTIVITY_APPROVED = 'Deferido';
 
 const ACTIVITY_UNDER_REVIEW = 'Em análise';
 
-// Alunos de demonstração para o login simulado (matrícula e senha em texto puro, sem segurança real).
+/*
+ * Cadastro dos alunos de demonstração.
+ *
+ * A chave de cada registro é a matrícula utilizada no login.
+ * O campo 'registration' deve corresponder à chave do cadastro.
+ *
+ * Os dados são fictícios e as senhas estão em texto puro porque
+ * o projeto utiliza autenticação simulada, sem segurança real.
+ */
+
 const STUDENTS = [
     '274769' => [
         'name' => 'Victor H. Oliveira',
@@ -99,6 +131,21 @@ const STUDENTS = [
         'current_course' => '2026/2 · Administração',
     ],
 ];
+
+/*
+ * Histórico acadêmico organizado por matrícula.
+ *
+ * Cada aluno possui suas disciplinas, notas, frequência, horários,
+ * avaliações, atividades complementares e progresso curricular.
+ *
+ * As chaves internas das disciplinas, como 'labProgramacao',
+ * 'bancoDados' e 'projetoIntegrador', funcionam como identificadores.
+ * Elas são utilizadas pelo cronograma, pelas avaliações e por outros
+ * módulos, especialmente web/lib/materiais.php e web/lib/eventos.php.
+ *
+ * Ao renomear uma chave, atualize todas as referências dependentes
+ * para evitar erros ou informações ausentes nas páginas.
+ */
 
 const ACADEMIC_RECORDS = [
     '274769' => [
@@ -448,6 +495,18 @@ const ACADEMIC_RECORDS = [
     ],
 ];
 
+/*
+ * Classes visuais dos status.
+ *
+ * Relaciona cada texto de status à classe do Bootstrap utilizada
+ * para exibir sua etiqueta colorida.
+ *
+ * Se um novo status precisar utilizar uma cor específica, verifique
+ * se ele deve ser incluído neste mapa. Status sem correspondência
+ * recebem a classe padrão definida em statusBadgeClass(), em
+ * web/lib/academico.php.
+ */
+
 const STATUS_BADGES = [
     'Aprovado' => 'text-bg-success',
     'Reprovado' => 'text-bg-danger',
@@ -463,3 +522,82 @@ const STATUS_BADGES = [
     'Pago' => 'text-bg-success',
     'Em aberto' => 'text-bg-warning',
 ];
+
+/*
+ * ============================================================
+ * ARQUIVOS DEPENDENTES DE DADOS.PHP
+ * ============================================================
+ *
+ * Ao adicionar alunos, alterar matrículas ou modificar disciplinas,
+ * confira os arquivos abaixo para manter os dados consistentes.
+ *
+ * 1. web/lib/financeiro.php — linhas 12–150
+ *    Array: FINANCIAL_RECORDS
+ *    Mantém registros financeiros, parcelas, contratos e dados
+ *    dos responsáveis associados às matrículas.
+ *    ATENÇÃO: revisar especialmente a linha 30.
+ *
+ * 2. web/lib/biblioteca.php — linhas 41–80
+ *    Array: STUDENT_LOANS
+ *    Mantém empréstimos e solicitações de livros vinculados
+ *    às matrículas dos alunos.
+ *
+ * 3. web/lib/suporte.php — linhas 59–167
+ *    Array: SUPPORT_TICKETS
+ *    Mantém os chamados de suporte associados a cada aluno.
+ *
+ * 4. web/lib/materiais.php — linhas 8–84
+ *    Array: REPOSITORY_RECORDS
+ *    Mantém as pastas e os arquivos do repositório de cada aluno.
+ *    As referências do campo 'discipline' devem corresponder
+ *    às chaves das disciplinas em ACADEMIC_RECORDS.
+ *    ATENÇÃO: conferir também as linhas 13–14, que contêm
+ *    nomes de professores que precisam ser revisados.
+ *
+ * 5. web/lib/protocolo.php — linhas 12–62
+ *    Array: STUDENT_REQUESTS
+ *    Mantém os requerimentos acadêmicos vinculados às matrículas.
+ *
+ * 6. web/lib/avisos.php — linhas 21–84
+ *    Array: NOTICES
+ *    O campo 'audience' define quais alunos podem visualizar
+ *    cada aviso. Conferir os autores e o público-alvo.
+ *    ATENÇÃO: revisar especialmente as linhas 23 e 55,
+ *    que contêm nomes genéricos de professores.
+ *
+ * 7. web/lib/eventos.php — linhas 15 e 87
+ *    Constante: INTEGRATOR_PROJECT_KEY
+ *    Deve corresponder à chave 'projetoIntegrador' utilizada
+ *    em ACADEMIC_RECORDS para localizar os eventos da disciplina.
+ *
+ * ============================================================
+ * ARQUIVOS QUE CONSOMEM OS DADOS
+ * ============================================================
+ *
+ * 8. web/lib/autenticacao.php — linhas 77–120
+ *    Consulta STUDENTS para validar o login simulado.
+ *    Conferir caso a estrutura do cadastro ou as matrículas mudem.
+ *
+ * 9. web/lib/academico.php — linhas 8–11 e 172
+ *    Consulta ACADEMIC_RECORDS e utiliza as constantes acadêmicas
+ *    e STATUS_BADGES para calcular e apresentar os dados.
+ *    Conferir caso a estrutura do histórico ou os status mudem.
+ *
+ * ============================================================
+ * REFERÊNCIAS INTERNAS DESTE ARQUIVO
+ * ============================================================
+ *
+ * web/lib/dados.php — linhas 29–120:
+ * Cadastro dos alunos e suas matrículas (STUDENTS).
+ *
+ * web/lib/dados.php — linhas 122–468:
+ * Histórico acadêmico, disciplinas, notas, frequência e demais
+ * informações acadêmicas (ACADEMIC_RECORDS).
+ *
+ * web/lib/dados.php — linhas 476–490:
+ * Classes visuais associadas aos status (STATUS_BADGES).
+ *
+ * IMPORTANTE:
+ * Os números das linhas podem mudar conforme o código for editado.
+ * Sempre confirme a posição atual antes de fazer alterações.
+ */
