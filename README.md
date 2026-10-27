@@ -36,13 +36,52 @@ Dessa forma, a proposta busca proporcionar uma plataforma mais acessível, organ
 - Visual Studio Code
 - Figma
 - Miro
+- PHP 8.1+ (sem frameworks)
+- Bootstrap 5.3 e Bootstrap Icons (via CDN)
+- JavaScript puro
+
+## Como executar
+
+Na raiz do projeto, inicie o servidor embutido do PHP:
+
+```bash
+php -S localhost:3000
+```
+
+Depois acesse `http://localhost:3000`. O `index.php` da raiz redireciona para
+`web/index.php`, que por sua vez leva à tela de login enquanto não houver uma
+sessão ativa.
 
 ## Modo atual de navegação
 
-Nesta etapa do projeto, o portal funciona como um protótipo navegável. O acesso é
-direto pela página inicial (`web/index.php`) e todas as páginas podem ser abertas
-manualmente pelo menu lateral, sem tela de login, sessões PHP ou banco de dados.
+Nesta etapa do projeto, o portal funciona como um protótipo navegável com
+**login simulado**. Todas as páginas exigem um aluno logado; sem sessão, o
+usuário é redirecionado para `web/pages/auth/login.php`.
 
-Os dados exibidos nas páginas são estáticos e representam o funcionamento
-proposto do portal. A autenticação e a persistência poderão ser implementadas
-posteriormente, quando fizerem parte do escopo do projeto.
+Alunos de demonstração disponíveis:
+
+| Aluno               | Matrícula | Senha       | Curso                                 |
+| ------------------- | --------- | ----------- | ------------------------------------- |
+| Victor H. Oliveira  | `274769`  | `victor123` | Engenharia de Software                |
+| Ana Beatriz Souza   | `281450`  | `ana123`    | Análise e Desenvolvimento de Sistemas |
+| Lucas Ferreira Lima | `268112`  | `lucas123`  | Administração                         |
+
+Cada aluno possui seus próprios dados: disciplinas, notas, faltas, horários,
+provas, parcelas financeiras, requerimentos, chamados, empréstimos, materiais e
+avisos. A sessão PHP guarda apenas a matrícula; o restante é lido dos dados
+simulados em `web/lib`.
+
+Observações importantes:
+
+- As senhas ficam em texto puro no código. O login serve apenas para
+  demonstração e **não oferece segurança real**.
+- Não há banco de dados. Ações feitas nas páginas (abrir chamados, reservar
+  livros, marcar avisos como lidos, foto de perfil etc.) ficam salvas no
+  `localStorage` do navegador, separadas por aluno.
+- A data de "hoje" do protótipo é fixa em **14/10/2026** (`SIMULATED_TODAY`),
+  para que provas, boletos, avisos e empréstimos sempre apareçam de forma
+  coerente.
+- O botão "Sair" do menu pede confirmação e encerra a sessão.
+
+Mais detalhes sobre a organização do código estão em
+[`docs/ARQUITETURA.md`](docs/ARQUITETURA.md).
