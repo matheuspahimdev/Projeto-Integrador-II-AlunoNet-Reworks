@@ -550,9 +550,9 @@ const STATUS_BADGES = [
  *    Array: REPOSITORY_RECORDS
  *    Mantém as pastas e os arquivos do repositório de cada aluno.
  *    As referências do campo 'discipline' devem corresponder
- *    às chaves das disciplinas em ACADEMIC_RECORDS.
- *    ATENÇÃO: conferir também as linhas 13–14, que contêm
- *    nomes de professores que precisam ser revisados.
+ *    às chaves das disciplinas em ACADEMIC_RECORDS. O dono das
+ *    pastas disciplinares é obtido do professor no histórico; pastas
+ *    de disciplinas não cursadas e seus arquivos não são exibidos.
  *
  * 5. web/lib/protocolo.php — linhas 12–62
  *    Array: STUDENT_REQUESTS

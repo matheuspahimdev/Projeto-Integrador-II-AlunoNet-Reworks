@@ -10,8 +10,8 @@ const REPOSITORY_RECORDS = [
         'folders' => [
             ['id' => 1, 'parent' => null, 'name' => 'Projeto Integrador II', 'modified' => '2026-10-08', 'discipline' => 'projetoIntegrador'],
             ['id' => 2, 'parent' => null, 'name' => 'Direito Aplicado', 'modified' => '2026-10-05', 'discipline' => 'direitoInovacao'],
-            ['id' => 3, 'parent' => null, 'name' => 'Banco de Dados', 'modified' => '2026-10-09', 'owner' => 'Prof. Nome do Professor 3'],
-            ['id' => 4, 'parent' => null, 'name' => 'Programação Web', 'modified' => '2026-09-28', 'owner' => 'Prof. Nome do Professor 4'],
+            ['id' => 3, 'parent' => null, 'name' => 'Banco de Dados', 'modified' => '2026-10-09', 'discipline' => 'bancoDados'],
+            ['id' => 4, 'parent' => null, 'name' => 'Programação Web', 'modified' => '2026-09-28', 'discipline' => 'programacaoWeb'],
             ['id' => 5, 'parent' => null, 'name' => 'Documentos Pessoais', 'modified' => '2026-10-02', 'owner' => REPOSITORY_OWNER_STUDENT],
             ['id' => 6, 'parent' => 1, 'name' => 'Aulas', 'modified' => '2026-10-08'],
             ['id' => 7, 'parent' => 1, 'name' => 'Entregas', 'modified' => '2026-10-06', 'owner' => REPOSITORY_OWNER_STUDENT],
@@ -83,7 +83,31 @@ const REPOSITORY_RECORDS = [
 
 function repositoryRecord(): array
 {
-    return REPOSITORY_RECORDS[currentStudent()['registration']] ?? ['folders' => [], 'files' => []];
+    $record = REPOSITORY_RECORDS[currentStudent()['registration']] ?? ['folders' => [], 'files' => []];
+    $disciplines = studentDisciplines();
+    $visibleFolders = [];
+    $visibleFolderIds = [];
+
+    foreach ($record['folders'] as $folder) {
+        if (isset($folder['discipline']) && !isset($disciplines[$folder['discipline']])) {
+            continue;
+        }
+
+        if ($folder['parent'] !== null && !isset($visibleFolderIds[$folder['parent']])) {
+            continue;
+        }
+
+        $visibleFolders[] = $folder;
+        $visibleFolderIds[$folder['id']] = true;
+    }
+
+    $record['folders'] = $visibleFolders;
+    $record['files'] = array_values(array_filter(
+        $record['files'],
+        static fn (array $file): bool => isset($visibleFolderIds[$file['parent']]),
+    ));
+
+    return $record;
 }
 
 // Dono da pasta: o informado, o professor da disciplina ou, para subpastas, o dono da pasta-mãe.
