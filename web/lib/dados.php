@@ -550,9 +550,9 @@ const STATUS_BADGES = [
  *    Array: REPOSITORY_RECORDS
  *    Mantém as pastas e os arquivos do repositório de cada aluno.
  *    As referências do campo 'discipline' devem corresponder
- *    às chaves das disciplinas em ACADEMIC_RECORDS.
- *    ATENÇÃO: conferir também as linhas 13–14, que contêm
- *    nomes de professores que precisam ser revisados.
+ *    às chaves das disciplinas em ACADEMIC_RECORDS. O dono das
+ *    pastas disciplinares é obtido do professor no histórico; pastas
+ *    de disciplinas não cursadas e seus arquivos não são exibidos.
  *
  * 5. web/lib/protocolo.php — linhas 12–62
  *    Array: STUDENT_REQUESTS
@@ -561,9 +561,9 @@ const STATUS_BADGES = [
  * 6. web/lib/avisos.php — linhas 21–84
  *    Array: NOTICES
  *    O campo 'audience' define quais alunos podem visualizar
- *    cada aviso. Conferir os autores e o público-alvo.
- *    ATENÇÃO: revisar especialmente as linhas 23 e 55,
- *    que contêm nomes genéricos de professores.
+ *    cada aviso. Avisos ligados a disciplinas usam a chave
+ *    'discipline'; o autor é resolvido pelo histórico da matrícula
+ *    em web/lib/avisos.php. Confira as disciplinas e o público-alvo.
  *
  * 7. web/lib/eventos.php — linhas 15 e 87
  *    Constante: INTEGRATOR_PROJECT_KEY
