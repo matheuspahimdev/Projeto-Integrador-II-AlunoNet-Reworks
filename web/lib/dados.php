@@ -70,9 +70,7 @@ const STUDENTS = [
         'address_number' => '100',
         'city' => 'Ourinhos - SP',
         'enrolled_courses' => [
-            '2026/2 · Eng. de Software',
-            '2026/2 · Análise e Desenvolvimento de Sistemas',
-            '2026/2 · Administração',
+            '2026/2 · Eng. de Software',        
         ],
         'current_course' => '2026/2 · Eng. de Software',
     ],
